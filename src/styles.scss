@@ -20,3 +20,27 @@
 .width85{
     width: 85% !important;
 }
+.apexcharts-toolbar{
+    display: none !important;
+}
+.apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
+    background: #7366ff !important;
+}
+.apexcharts-tooltip.apexcharts-theme-light {
+    border: 1px solid #7366ff !important;
+    background: rgb(115 102 255) !important;
+}
+// avatar
+.ProfileInitial{
+    margin: 0;
+    transform: translateY(-4px);
+    border-radius: 100px;
+    background-color: var(--theme-deafult) !important;
+    color: #fff;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}

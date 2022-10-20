@@ -1,0 +1,32 @@
+.ProfileInitial{
+    transform: none;
+}
+.hideChat{
+    height: 100% !important;
+    margin-bottom: 0 !important;
+}
+.sendMessage{
+    margin-left: auto;
+    width: 48%;
+    background-color: var(--theme-deafult);
+    p{
+        color: #fff;
+    }
+}
+.recivedMessage{
+    width: 48%;
+    background-color: #fff;
+    box-shadow: 0px 0px 14px -11px var(--theme-deafult);
+    // border: 1px solid #000;
+}
+.recivedMessage,
+.sendMessage{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    padding: 15px;
+}
+.time{
+    width: fit-content;
+    margin-left: auto;
+}

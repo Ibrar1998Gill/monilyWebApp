@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "cuba": {
+    "monily": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -84,7 +84,7 @@
               "apexcharts/dist/apexcharts.min.js",
               "calendar-utils/date-adapters/date-fns"
             ],
-            "outputPath": "dist/cuba",
+            "outputPath": "dist/monily",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -139,18 +139,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "cuba:build"
+            "browserTarget": "monily:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "cuba:build:production"
+              "browserTarget": "monily:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "cuba:build"
+            "browserTarget": "monily:build"
           }
         },
         "test": {
@@ -187,18 +187,18 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "cuba:serve"
+            "devServerTarget": "monily:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "cuba:serve:production"
+              "devServerTarget": "monily:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "cuba",
+  "defaultProject": "monily",
   "cli": {
     "analytics": false
   },

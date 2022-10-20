@@ -8,18 +8,18 @@ import { AuthService } from '../services/firebase/auth.service';
 })
 
 export class SecureInnerPagesGuard implements CanActivate {
-    
-    constructor(private authService: AuthService,
-        private router: Router) { }
+    constructor(private router: Router) { }
 
-    canActivate(
-        next: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        let user = JSON.parse(localStorage.getItem('user'));
-        if (this.authService.isLoggedIn) {
-            window.alert("You are not allowed to access this URL!");
-            this.router.navigate(['/dashboard/default'])
+        canActivate(next: ActivatedRouteSnapshot,
+            state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+          // Guard for user is login or not
+          let user = (localStorage.getItem('authUser'));
+          if (user) {
+            if (Object.keys(user).length > -1) {
+              this.router.navigate(['/dashboard/default']);
+              return true
+            }
+          }
+          return true
         }
-        return true;
-    }
 }

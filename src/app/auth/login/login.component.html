@@ -6,7 +6,7 @@
           <div>
             <a class="logo" routerLink='/'>
               <img class="img-fluid for-light" src="assets/images/logo/login.png" alt="looginpage">
-              <img class="img-fluid for-dark" src="assets/images/logo/logo_dark.png" alt="looginpage">
+              <img class="img-fluid for-dark" src="assets/images/logo/logo.png" alt="looginpage">
             </a>
           </div>
           <div class="login-main"> 
@@ -40,7 +40,6 @@
                   <input id="checkbox1" type="checkbox">
                   <label class="text-muted" for="checkbox1">Remember password</label>
                 </div>
-                <a [routerLink]="'/authentication/forgot-password'" class="link">Forgot password?</a>
                 <button class="btn btn-primary btn-block"
                   [class.loader--text]="authService.showLoader"
                   [disabled]="!loginForm.valid || authService.showLoader"
@@ -48,23 +47,6 @@
                   type="button"><span>{{ authService.showLoader ? '' : 'Login' }}</span>
                 </button>
               </div>
-              <h6 class="text-muted mt-4 or">Or Sign in with</h6>
-              <div class="social mt-4">
-                <div class="btn-showcase">
-                  <a class="btn btn-light" (click)="loginFacebook()" target="_blank">
-                      <app-feather-icons [icon]="'facebook'" class="txt-fb"></app-feather-icons>Facebook
-                  </a>
-                  <a class="btn btn-light" (click)="loginTwitter()" target="_blank">
-                    <app-feather-icons [icon]="'twitter'" class="txt-twitter"></app-feather-icons>twitter
-                  </a>
-                  <a class="btn btn-light" (click)="loginGoogle()" target="_blank">
-                      <app-feather-icons [icon]="'log-in'" class="txt-google"></app-feather-icons>Google +
-                  </a>
-                </div>
-              </div>
-              <p class="mt-4 mb-0">Don't have account?
-                <a [routerLink]="'/authentication/register/simple'" class="ml-2">Create Account</a>
-              </p>
             </form>
           </div>
         </div>

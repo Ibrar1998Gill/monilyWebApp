@@ -7,11 +7,18 @@ import { full } from "./shared/routes/full.routes";
 import { content } from "./shared/routes/routes";
 
 import { AdminGuard } from './shared/guard/admin.guard';
+import { SecureInnerPagesGuard } from './shared/guard/SecureInnerPagesGuard.guard';
 
 const routes: Routes = [
   {
+    path: 'auth/login',
+    component: LoginComponent,
+    canActivate: [SecureInnerPagesGuard]
+  },
+  {
     path: '',
-    redirectTo: 'dashboard/default',
+    redirectTo: 'dashboard',
+    canActivate:[AdminGuard],
     pathMatch: 'full'
   },
   {
@@ -21,7 +28,8 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: ''
+    redirectTo: 'dashboard',
+    canActivate:[AdminGuard]
   }
 ];
 

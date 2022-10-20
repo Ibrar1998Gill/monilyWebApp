@@ -1,0 +1,62 @@
+<app-breadcrumb [title]="'Documents'" [active_item]="'Documents'"></app-breadcrumb>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="file-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="media">
+              <div class="media-body text-right">
+                <form class="d-inline-flex" action="#" method="POST" enctype="multipart/form-data" name="myForm">
+                  <div style="height: 0px;width: 0px; overflow:hidden;">
+                    <input id="upfile" type="file" value="upload" onchange="sub(this)" data-original-title="" title="">
+                  </div>
+                </form>
+                <div class="btn btn-outline-primary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-upload">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>Upload </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body file-manager">
+            <h4 class="mb-3">All Files</h4>
+            <ul class="files">
+              <li class="file-box">
+                <div class="file-top"> <i class="fa fa-file-image-o txt-primary"></i><i
+                    class="fa fa-ellipsis-v f-14 ellips"></i></div>
+                    <div class="file-bottom">
+                      <h6>Logo.png </h6>
+                    </div>
+              </li>
+              <li class="file-box">
+                <div class="file-top"> <i class="fa fa-file-image-o txt-primary"></i><i
+                    class="fa fa-ellipsis-v f-14 ellips"></i></div>
+                    <div class="file-bottom">
+                      <h6>Document.png </h6>
+                    </div>
+              </li>
+              <li class="file-box">
+                <div class="file-top"> <i class="fa fa-file-text-o txt-info"></i><i
+                    class="fa fa-ellipsis-v f-14 ellips"></i></div>
+                <div class="file-bottom">
+                  <h6>requirements.txt </h6>
+                </div>
+              </li>
+              <li class="file-box">
+                <div class="file-top"> <i class="fa fa-file-text-o txt-info"></i><i
+                    class="fa fa-ellipsis-v f-14 ellips"></i></div>
+                <div class="file-bottom">
+                  <h6>requirements.txt </h6>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

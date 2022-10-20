@@ -1,0 +1,200 @@
+<app-breadcrumb [title]="'Chats'" [active_item]="'Chats'"></app-breadcrumb>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col call-chat-sidebar col-sm-12">
+      <div class="card">
+        <div class="card-body chat-body">
+          <div class="chat-box">
+            <!-- Chat left side Start-->
+            <div class="chat-left-aside">
+              <div class="media">
+                <h1 class="ProfileInitial">{{userDetails?.name?.toString().substring(0, 1)}}</h1>
+                <div class="about">
+                  <div class="name">{{userDetails?.name}}</div>
+                  <div class="status"></div>
+                </div>
+              </div>
+              <div class="people-list" id="people-list">
+                <div class="search">
+                  <form class="theme-form">
+                    <div class="form-group">
+                      <input class="form-control" [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}"
+                        (keyup)="searchTerm(searchText)" type="text" placeholder="search"><i class="fa fa-search"></i>
+                    </div>
+                  </form>
+                </div>
+                <ul class="list">
+                  <li class="clearfix" *ngFor="let message of messageLists">
+                    <a href="javascript:void(0)" (click)="userChat(message)" class="d-flex flex-end">
+                      <h1 class="ProfileInitial">{{message?.from_id == userDetails?.userId ?
+                        message?.to_name?.toString().substring(0, 1) : message?.from_name?.toString().substring(0, 1)}}
+                      </h1>
+                      <div class="about">
+                        <div class="name">{{message?.from_id == userDetails?.userId ? message?.to_name :
+                          message?.from_name}}</div>
+                        <div class="status">{{message?.message}}</div>
+                      </div>
+                    </a>
+                  </li>
+                  <ng-container *ngIf="!searchUsers.length">
+                    <div class="search-not-found chat-search text-center">
+                      <div>
+                        <img src="assets/images/search-not-found.png" alt="" class="second-search">
+                        <p>Sorry, We didn't find any results matching this search</p>
+                      </div>
+                    </div>
+                  </ng-container>
+                </ul>
+              </div>
+            </div>
+            <!-- Chat left side Ends-->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col call-chat-body">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="row chat-box">
+            <!-- Chat right side start-->
+            <div class="col pr-0 chat-right-aside">
+              <!-- chat start-->
+              <div class="chat">
+                <!-- chat-header start-->
+                <div class="chat-header clearfix d-flex justify-content-between">
+                  <div class="d-flex align-items-center mr-auto">
+                    <h1 class="ProfileInitial">{{toUser?.from_id == userDetails?.userId ?
+                      toUser?.to_name?.toString().substring(0, 1) : toUser?.from_name?.toString().substring(0, 1)}}</h1>
+                    <div class="about">
+                      <div class="name">{{toUser?.from_id == userDetails?.userId ? toUser?.to_name : toUser?.from_name}}
+                      </div>
+                      <!-- <div class="status">{{toUser?.message}}</div> -->
+                    </div>
+                  </div>
+                  <ul class="list-inline float-left float-sm-right chat-menu-icons">
+                    <li class="list-inline-item"><a href="javascript:void(0)"><i class="fa fa-ellipsis-v"></i></a></li>
+                  </ul>
+                </div>
+                <!-- chat-header end-->
+                <div class="chat-history chat-msg-box custom-scrollbar" #scrollMe>
+                  <div class="messageBody d-flex flex-column">
+                    <div class="box" *ngFor="let chat of chatMessages">
+                      <div class="sendMessage" *ngIf="chat?.to_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id) &&
+                      chat?.from_id == userDetails?.userId  &&
+                      chat?.to_id != userDetails?.userId;">
+                        <p>{{chat?.message}}</p>
+                        <p class="time">{{chat?.timestamp | date : 'shortTime'}}</p>
+                      </div>
+                      <div class="recivedMessage" *ngIf="chat?.to_id == userDetails?.userId &&
+                      chat?.from_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id)  &&
+                      chat?.to_id != (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id);">
+                        <p>{{chat?.message}}</p>
+                        <p class="time">{{chat?.timestamp | date : 'shortTime'}}</p>
+                      </div>
+                    </div>
+                    <!-- <div *ngFor="let message of chatMessages[0]">
+                      <ng-container
+                        *ngIf="chat?.to_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id) &&
+                        chat?.from_id == userDetails?.userId  &&
+                        chat?.to_id != userDetails?.userId;"
+                      >
+                        <div
+                          class="d-flex align-items-center mt-5 mb-5 sender"
+                        >
+                          <div class="message d-flex flex-column">
+                            <p>{{ chat?.message }}</p>
+                            <div class="time">
+                              <label>{{
+                                chat?.timestamp | date: "shortTime"
+                              }}</label>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+                      <ng-container
+                        *ngIf="
+                        chat?.to_id == userDetails?.userId &&
+                        chat?.from_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id)  &&
+                        chat?.to_id != (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id);
+                        "
+                      >
+                        <div
+                          class="d-flex align-items-center mt-5 mb-5 recieved"
+                        >
+                          <div class="message d-flex flex-column">
+                            <p>{{ chat?.message }}</p>
+                            <div class="time">
+                              <label>{{
+                                chat?.timestamp | date: "shortTime"
+                              }}</label>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </div> -->
+                  </div>
+                  <!-- <ul>
+                    <li *ngFor="let chat of chatMessages" [ngClass]="{'clearfix': chat.sender == profile.id }">
+                      <div class="message other-message pull-right reciever" *ngIf="chat?.to_id == userDetails?.userId &&
+                      chat?.from_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id)  &&
+                      chat?.to_id != (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id);">
+                        <img class="rounded-circle float-left chat-user-img img-30" [src]="chatUser?.profile" alt="">
+                        <div class="message-data text-right">
+                          <span class="message-data-time">{{chat?.timestamp | date :'shortTime'}}</span>
+                        </div> {{chat?.message}}
+                      </div>
+                      <div class="message my-message mb-0 sender" *ngIf="chat?.to_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id) &&
+                        chat?.from_id == userDetails?.userId  &&
+                        chat?.to_id != userDetails?.userId;">
+                        <img class="rounded-circle float-right chat-user-img img-30" [src]="profile?.profile" alt="">
+                        <div class="message-data">
+                          <span class="message-data-time">{{chat?.timestamp | date :'shortTime'}}</span>
+                        </div> {{chat?.message}}
+                      </div>
+                    </li>
+                    <ng-container *ngIf="!chatMessages?.length">
+                      <div class="image-not-found">
+                        <div class="d-block start-conversion">
+                          <img src="assets/images/start-conversion.jpg" class="img-fluid">
+                        </div>
+                      </div>
+                    </ng-container>
+                  </ul> -->
+                </div>
+                <!-- end chat-history-->
+                <form #chatForm="ngForm" (ngSubmit)="sendMessage(chatForm)">
+                  <div class="chat-message clearfix">
+                    <div class="row">
+                      <div class="col-xl-12 d-flex">
+                        <div class="smiley-box bg-primary">
+                          <div class="picker">
+                            <img src="assets/images/smiley.png" alt="" (click)=toggleEmojiPicker()>
+                          </div>
+                        </div>
+                        <div class="input-group text-box">
+                          <input class="form-control input-txt-bx" [class.border-danger]="error" [(ngModel)]="chatText"
+                            id="message-to-send" type="text" name="message" placeholder="Type a message......">
+                          <ng-container *ngIf="showEmojiPicker">
+                            <emoji-mart (emojiClick)="addEmoji($event)" set="apple" useButton="true"></emoji-mart>
+                          </ng-container>
+                          <div class="input-group-append">
+                            <button class="btn btn-primary" (click)="sendMessage(chatForm)" type="button">SEND</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <!-- end chat-message-->
+                <!-- chat end-->
+                <!-- Chat right side ends-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Container-fluid Ends -->

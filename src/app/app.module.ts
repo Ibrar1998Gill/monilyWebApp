@@ -29,8 +29,6 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
-
-import {DashboardModule} from './components/apps/dashboard/dashboard.module'
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -50,7 +48,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     HttpClientModule,
     NgbModule,
     ToastrModule.forRoot(),
-    AngularFireModule.initializeApp(environment.firebase),
+    // AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
     TranslateModule.forRoot({

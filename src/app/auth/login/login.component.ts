@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../shared/services/firebase/auth.service';
 
 @Component({
@@ -12,39 +13,45 @@ export class LoginComponent implements OnInit {
   public show: boolean = false;
   public loginForm: FormGroup;
   public errorMessage: any;
-
-  constructor(public authService: AuthService, private fb: FormBuilder) {
-      this.loginForm = this.fb.group({
-        email: ['test@gmail.com', [Validators.required, Validators.email]],
-        password: ['ahmed123', Validators.required]
-      });
+  public showLoader: boolean = false;
+  constructor(public authService: AuthService, private fb: FormBuilder, private ngZone: NgZone, private router: Router) {
+    this.loginForm = this.fb.group({
+      email: ['fahim.ahmed@arthurlawrence.net', [Validators.required, Validators.email]],
+      password: ['Volcano@123', Validators.required]
+    });
   }
 
   ngOnInit() {
   }
-
+  loginData: any;
   showPassword() {
     this.show = !this.show;
   }
-  
-  // Login With Google
-  loginGoogle() {
-    this.authService.GoogleAuth();
-  }
-
-  // Login With Twitter
-  loginTwitter(): void {
-    this.authService.signInTwitter();
-  }
-
-  // Login With Facebook
-  loginFacebook() {
-    this.authService.signInFacebok();
-  }
-
   // Simple Login
   login() {
-    this.authService.SignIn(this.loginForm.value['email'], this.loginForm.value['password']);
+    this.showLoader = true;
+    this.authService.SignIn(this.loginForm.value['email'], this.loginForm.value['password']).subscribe((res: any) => {
+      console.log('====================================');
+      console.log(res.user);
+      console.log('====================================');
+      this.loginData = {
+        authtoken: res?.user?.authtoken,
+        userId: res?.user?.id,
+        name: res?.user?.name,
+        email: res?.user?.email,
+        qbconfig: res?.user?.qb_config
+      }
+      localStorage.setItem('authUser', JSON.stringify(this.loginData))
+      this.ngZone.run(() => {
+        this.router.navigate(['/dashboard']);
+      })
+    this.showLoader = false;
+      //       });
+    }), err => {
+      console.log('====================================');
+      console.log(err);
+      console.log('====================================');
+    }
   }
 
 }

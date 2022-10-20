@@ -5,19 +5,17 @@ import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { SharedModule } from '../../../shared/shared.module';
-import { DashboardRoutingModule } from './dashboard-routing.module';
-import { DashboardComponent } from './dashboard.component';
-import {StudentsModule} from './students/students.module'
-import {EventsComponent} from './events/events.component'
-import {TeachersModule} from './teachers/teachers.module'
 import {NgApexchartsModule } from 'ng-apexcharts'
+import {dashboardComponent} from './dashboard.component'
+import {dashboardRoutingModule} from './dashboard-routing.module'
+import { Ng2GoogleChartsModule } from 'ng2-google-charts';
+
 @NgModule({
-  declarations: [DashboardComponent, EventsComponent],
+  declarations: [dashboardComponent],
   imports: [
+    Ng2GoogleChartsModule,
     CommonModule,
-    StudentsModule,
-    TeachersModule,
-    DashboardRoutingModule,
+    dashboardRoutingModule,
     NgxDropzoneModule,
     CKEditorModule,
     NgSelectModule,
@@ -27,4 +25,4 @@ import {NgApexchartsModule } from 'ng-apexcharts'
     NgApexchartsModule
   ],
 })
-export class DashboardModule { }
+export class dashboardModule { }

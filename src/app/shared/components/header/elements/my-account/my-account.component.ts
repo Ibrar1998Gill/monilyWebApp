@@ -9,8 +9,14 @@ import { AuthService } from '../../../../services/firebase/auth.service';
 export class MyAccountComponent implements OnInit {
 
   constructor(public authService: AuthService) { }
-
+  user:any;
   ngOnInit() {
+    this.getData()
   }
-
+  getData(){
+    this.user = JSON.parse(localStorage.getItem('authUser'))
+  }
+  logout() {
+    this.authService.SignOut();
+  }
 }

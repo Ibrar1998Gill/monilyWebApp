@@ -83,44 +83,40 @@ export class NavService implements OnDestroy {
 
   MENUITEMS: Menu[] = [
     {
-      path: "/dashboard/default",
+      path: "dashboard",
       title: "Dashboard",
       icon: "home",
       type: "link",
     },
     {
-      title: "Manage Students",
-      icon: "user",
-      type: "sub",
-      children: [
-        { path: "/dashboard/students", title: "Students", type: "link" },
-        {
-          path: "/dashboard/students/attendance",
-          title: "Attendance",
-          type: "link",
-        },
-        { path: "/dashboard/students/fees", title: "Fees", type: "link" },
-      ],
+      path: "expenses",
+      title: "Expenses",
+      icon: "credit-card",
+      type: "link",
     },
     {
-      title: "Manage Teachers",
-      icon: "users",
-      type: "sub",
-      children: [
-        { path: "/dashboard/teachers", title: "Teachers", type: "link" },
-        {
-          path: "/dashboard/teachers/attendance",
-          title: "Attendance",
-          type: "link",
-        },
-        { path: "/dashboard/teachers/salary", title: "Salary", type: "link" },
-      ],
+      path: "financial-status",
+      title: "Financial Status",
+      icon: "bar-chart",
+      type: "link",
     },
     {
-      title: "Manage Events",
-      icon: "database",
-      type: "sub",
-      children: [{ path: "/dashboard/events", title: "Events", type: "link" }],
+      path: "accounts-payable",
+      title: "Accounts Payable",
+      icon: "dollar-sign",
+      type: "link",
+    },
+    {
+      path: "accounts-recievable",
+      title: "Accounts Recievable",
+      icon: "dollar-sign",
+      type: "link",
+    },
+    {
+      path: "documents",
+      title: "Documents",
+      icon: "file-text",
+      type: "link",
     },
   ];
 
