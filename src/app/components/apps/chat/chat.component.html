@@ -19,8 +19,11 @@
                 <div class="search">
                   <form class="theme-form">
                     <div class="form-group">
-                      <input class="form-control" [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}"
-                        (keyup)="searchTerm(searchText)" type="text" placeholder="search"><i class="fa fa-search"></i>
+                      <ng-select [(ngModel)]="searchText" placeholder="search" (keyup)="searchTerm($event)" (change)="selectUser($event)">
+                        <ng-option *ngFor="let searchUser of searchUsers" [value]="searchUser">{{searchUser.label}}</ng-option>
+                     </ng-select>
+                      <!-- <input class="form-control" [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}"
+                        (keyup)="searchTerm(searchText)" type="text" placeholder="search"><i class="fa fa-search"></i> -->
                     </div>
                   </form>
                 </div>
@@ -37,7 +40,7 @@
                       </div>
                     </a>
                   </li>
-                  <ng-container *ngIf="!searchUsers.length">
+                  <ng-container *ngIf="!searchUsers?.length && !messageLists?.length">
                     <div class="search-not-found chat-search text-center">
                       <div>
                         <img src="assets/images/search-not-found.png" alt="" class="second-search">
@@ -54,7 +57,7 @@
       </div>
     </div>
     <div class="col call-chat-body">
-      <div class="card">
+      <div class="card" *ngIf="toUser">
         <div class="card-body p-0">
           <div class="row chat-box">
             <!-- Chat right side start-->
@@ -64,16 +67,22 @@
                 <!-- chat-header start-->
                 <div class="chat-header clearfix d-flex justify-content-between">
                   <div class="d-flex align-items-center mr-auto">
-                    <h1 class="ProfileInitial">{{toUser?.from_id == userDetails?.userId ?
+                    <h1 class="ProfileInitial">{{toUser?.hasOwnProperty('label') ? toUser?.label.toString().substring(0, 1) :toUser?.from_id == userDetails?.userId ?
                       toUser?.to_name?.toString().substring(0, 1) : toUser?.from_name?.toString().substring(0, 1)}}</h1>
                     <div class="about">
-                      <div class="name">{{toUser?.from_id == userDetails?.userId ? toUser?.to_name : toUser?.from_name}}
+                      <div class="name">{{toUser?.hasOwnProperty('label') ? toUser?.label : toUser?.from_id == userDetails?.userId ? toUser?.to_name : toUser?.from_name}}
                       </div>
                       <!-- <div class="status">{{toUser?.message}}</div> -->
                     </div>
                   </div>
                   <ul class="list-inline float-left float-sm-right chat-menu-icons">
-                    <li class="list-inline-item"><a href="javascript:void(0)"><i class="fa fa-ellipsis-v"></i></a></li>
+                    <li class="list-inline-item" ngbDropdown>
+                      <button id="dropdownBasic3" ngbDropdownToggle>
+                      </button>
+                      <div ngbDropdownMenu>
+                        <button ngbDropdownItem (click)="deleteChat(toUser)">Delete</button>
+                      </div>
+                    </li>
                   </ul>
                 </div>
                 <!-- chat-header end-->
@@ -82,85 +91,29 @@
                     <div class="box" *ngFor="let chat of chatMessages">
                       <div class="sendMessage" *ngIf="chat?.to_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id) &&
                       chat?.from_id == userDetails?.userId  &&
-                      chat?.to_id != userDetails?.userId;">
+                      chat?.to_id != userDetails?.userId;" ngbDropdown>
+                      <button id="dropdownBasic1" ngbDropdownToggle>
+                      </button>
                         <p>{{chat?.message}}</p>
                         <p class="time">{{chat?.timestamp | date : 'shortTime'}}</p>
+                        <div ngbDropdownMenu>
+                          <button ngbDropdownItem (click)="editMessage(chat)">Edit</button>
+                          <button ngbDropdownItem (click)="deleteMessage(chat)">Delete</button>
+                        </div>
                       </div>
                       <div class="recivedMessage" *ngIf="chat?.to_id == userDetails?.userId &&
                       chat?.from_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id)  &&
-                      chat?.to_id != (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id);">
+                      chat?.to_id != (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id);" ngbDropdown>
+                      <button id="dropdownBasic2" ngbDropdownToggle>
+                      </button>
                         <p>{{chat?.message}}</p>
                         <p class="time">{{chat?.timestamp | date : 'shortTime'}}</p>
+                        <div ngbDropdownMenu>
+                          <button ngbDropdownItem (click)="deleteMessage(chat)">Delete</button>
+                        </div>
                       </div>
                     </div>
-                    <!-- <div *ngFor="let message of chatMessages[0]">
-                      <ng-container
-                        *ngIf="chat?.to_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id) &&
-                        chat?.from_id == userDetails?.userId  &&
-                        chat?.to_id != userDetails?.userId;"
-                      >
-                        <div
-                          class="d-flex align-items-center mt-5 mb-5 sender"
-                        >
-                          <div class="message d-flex flex-column">
-                            <p>{{ chat?.message }}</p>
-                            <div class="time">
-                              <label>{{
-                                chat?.timestamp | date: "shortTime"
-                              }}</label>
-                            </div>
-                          </div>
-                        </div>
-                      </ng-container>
-                      <ng-container
-                        *ngIf="
-                        chat?.to_id == userDetails?.userId &&
-                        chat?.from_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id)  &&
-                        chat?.to_id != (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id);
-                        "
-                      >
-                        <div
-                          class="d-flex align-items-center mt-5 mb-5 recieved"
-                        >
-                          <div class="message d-flex flex-column">
-                            <p>{{ chat?.message }}</p>
-                            <div class="time">
-                              <label>{{
-                                chat?.timestamp | date: "shortTime"
-                              }}</label>
-                            </div>
-                          </div>
-                        </div>
-                      </ng-container>
-                    </div> -->
                   </div>
-                  <!-- <ul>
-                    <li *ngFor="let chat of chatMessages" [ngClass]="{'clearfix': chat.sender == profile.id }">
-                      <div class="message other-message pull-right reciever" *ngIf="chat?.to_id == userDetails?.userId &&
-                      chat?.from_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id)  &&
-                      chat?.to_id != (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id);">
-                        <img class="rounded-circle float-left chat-user-img img-30" [src]="chatUser?.profile" alt="">
-                        <div class="message-data text-right">
-                          <span class="message-data-time">{{chat?.timestamp | date :'shortTime'}}</span>
-                        </div> {{chat?.message}}
-                      </div>
-                      <div class="message my-message mb-0 sender" *ngIf="chat?.to_id == (toUser?.from_id == userDetails?.userId ? toUser?.to_id : toUser?.from_id) &&
-                        chat?.from_id == userDetails?.userId  &&
-                        chat?.to_id != userDetails?.userId;">
-                        <img class="rounded-circle float-right chat-user-img img-30" [src]="profile?.profile" alt="">
-                        <div class="message-data">
-                          <span class="message-data-time">{{chat?.timestamp | date :'shortTime'}}</span>
-                        </div> {{chat?.message}}
-                      </div>
-                    </li>
-                    <ng-container *ngIf="!chatMessages?.length">
-                      <div class="image-not-found">
-                        <div class="d-block start-conversion">
-                          <img src="assets/images/start-conversion.jpg" class="img-fluid">
-                        </div>
-                      </div>
-                    </ng-container>
-                  </ul> -->
                 </div>
                 <!-- end chat-history-->
                 <form #chatForm="ngForm" (ngSubmit)="sendMessage(chatForm)">
@@ -176,7 +129,7 @@
                           <input class="form-control input-txt-bx" [class.border-danger]="error" [(ngModel)]="chatText"
                             id="message-to-send" type="text" name="message" placeholder="Type a message......">
                           <ng-container *ngIf="showEmojiPicker">
-                            <emoji-mart (emojiClick)="addEmoji($event)" set="apple" useButton="true"></emoji-mart>
+                            <emoji-mart (emojiClick)="addEmoji($event, chatForm)" set="apple" useButton="true"></emoji-mart>
                           </ng-container>
                           <div class="input-group-append">
                             <button class="btn btn-primary" (click)="sendMessage(chatForm)" type="button">SEND</button>
@@ -193,6 +146,9 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="noChat" *ngIf="!toUser">
+        <p>No User Selected</p>
       </div>
     </div>
   </div>

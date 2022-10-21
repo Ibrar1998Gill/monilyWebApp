@@ -57,6 +57,19 @@ export class AuthService implements OnInit {
       }
     );
   }
+  postChat(link){
+    let authToken = JSON.parse(localStorage.getItem("authUser"))
+    let headerT = {
+      Authorization: `Bearer ${authToken?.authtoken}`,
+      Accept: "application/json",
+    };
+    return this.http.post(
+      environment.api.chatURL + link,{},
+      {
+        headers: headerT,
+      }
+    );
+  }
 
 
 }

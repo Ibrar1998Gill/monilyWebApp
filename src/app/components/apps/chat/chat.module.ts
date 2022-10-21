@@ -6,6 +6,7 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { SharedModule } from '../../../shared/shared.module';
 import {chatComponent} from './chat.component'
 import {chatRoutingModule} from './chat-routing.module'
+import { NgSelectModule } from '@ng-select/ng-select';
 @NgModule({
   declarations: [chatComponent],
   imports: [
@@ -15,7 +16,8 @@ import {chatRoutingModule} from './chat-routing.module'
     ReactiveFormsModule,
     SharedModule,
     EmojiModule,
-    PickerModule
+    PickerModule,
+    NgSelectModule
   ],
 })
 export class chatModule { }

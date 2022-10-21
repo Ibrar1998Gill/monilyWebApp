@@ -30,3 +30,24 @@
     width: fit-content;
     margin-left: auto;
 }
+#dropdownBasic1{
+    color: #fff;
+}
+#dropdownBasic1,
+#dropdownBasic2{
+    float: right;
+}
+#dropdownBasic1,
+#dropdownBasic2,
+#dropdownBasic3{
+    background:none;
+    border: none;
+}
+.noChat{
+    height: 95%;
+    border-radius: 15px;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

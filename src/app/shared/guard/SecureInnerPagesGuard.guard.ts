@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from '../services/firebase/auth.service';
+import { AuthGuardService } from '../services/auth-guard.service';
 
 @Injectable({
     providedIn: 'root'
 })
 
 export class SecureInnerPagesGuard implements CanActivate {
-    constructor(private router: Router) { }
+
+    constructor(private authService: AuthGuardService,
+        private router: Router) { }
 
         canActivate(next: ActivatedRouteSnapshot,
             state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
@@ -16,7 +18,7 @@ export class SecureInnerPagesGuard implements CanActivate {
           let user = (localStorage.getItem('authUser'));
           if (user) {
             if (Object.keys(user).length > -1) {
-              this.router.navigate(['/dashboard/default']);
+              this.router.navigate(['']);
               return true
             }
           }
