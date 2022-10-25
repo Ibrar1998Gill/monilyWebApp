@@ -16,8 +16,8 @@ export class LoginComponent implements OnInit {
   public showLoader: boolean = false;
   constructor(public authService: AuthService, private fb: FormBuilder, private ngZone: NgZone, private router: Router) {
     this.loginForm = this.fb.group({
-      email: ['fahim.ahmed@arthurlawrence.net', [Validators.required, Validators.email]],
-      password: ['Volcano@123', Validators.required]
+      email: [null, [Validators.required, Validators.email]],
+      password: [null, Validators.required]
     });
   }
 

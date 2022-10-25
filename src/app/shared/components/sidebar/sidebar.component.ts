@@ -2,6 +2,8 @@ import { Component, ViewEncapsulation, HostListener } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Menu, NavService } from '../../services/nav.service';
 import { LayoutService } from '../../services/layout.service';
+import { ThrowStmt } from '@angular/compiler';
+import { AuthService } from '../../services/firebase/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -23,6 +25,7 @@ export class SidebarComponent {
   public rightArrowNone: boolean = false;
 
   constructor(private router: Router, public navServices: NavService,
+    private authService: AuthService,
     public layout: LayoutService) {
     this.navServices.items.subscribe(menuItems => {
       this.menuItems = menuItems;
@@ -120,6 +123,8 @@ export class SidebarComponent {
       this.leftArrowNone = false;
     }
   }
-  
+  logout(){
+    this.authService.SignOut()
+  }
 
 }

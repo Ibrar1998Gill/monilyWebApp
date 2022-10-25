@@ -1,0 +1,11 @@
+.mobileView{
+    display: none;
+}
+@media only screen and (max-width:540px) {
+    .mobileView{
+        display: block;
+    }
+    .page-wrapper.compact-wrapper .nav-right .nav-menus {
+        margin-right: 0px;
+    }
+}

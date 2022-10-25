@@ -23,10 +23,10 @@ import { SecureInnerPagesGuard } from './shared/guard/SecureInnerPagesGuard.guar
 import { CookieService } from 'ngx-cookie-service';
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
-
+import { PushNotificationModule } from 'ng-push-notification';
 import { environment } from '../environments/environment';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-
+// import { PushNotificationModule } from 'ng-push-notification';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
 export function HttpLoaderFactory(http: HttpClient) {
@@ -47,6 +47,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppRoutingModule,
     HttpClientModule,
     NgbModule,
+    PushNotificationModule.forRoot(),
     ToastrModule.forRoot(),
     // AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
