@@ -29,6 +29,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 // import { PushNotificationModule } from 'ng-push-notification';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -64,7 +65,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     // for Router use:
     LoadingBarRouterModule,
     // for Core use:
-    LoadingBarModule
+    LoadingBarModule,
+    NgSelectModule
   ],
   providers: [AuthService, AdminGuard, SecureInnerPagesGuard, CookieService],
   bootstrap: [AppComponent]

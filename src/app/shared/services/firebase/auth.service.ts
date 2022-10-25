@@ -13,7 +13,7 @@ export class AuthService implements OnInit {
   public userData: any;
   public user: firebase.User;
   public showLoader: boolean = false;
-
+  public minorversion: string = '14';
   constructor(
     private http: HttpClient,
     public router: Router,
@@ -26,27 +26,27 @@ export class AuthService implements OnInit {
 
   // sign in function
   SignIn(email, password) {
-    return this.http.post(`https://monilyapp.yourhealthgrades.com/api/quickbooks/login?email=${email}&password=${password}`,{},{});
+    return this.http.post(`https://monilyapp.yourhealthgrades.com/api/quickbooks/login?email=${email}&password=${password}`, {}, {});
     //     this.toster.error('You have enter Wrong Email or Password.');
   }
 
   // Sign out
   SignOut() {
-      localStorage.clear();
-      this.cookieService.deleteAll('user', '/auth/login');
-      this.router.navigate(['/auth/login']);
+    localStorage.clear();
+    this.cookieService.deleteAll('user', '/auth/login');
+    this.router.navigate(['/auth/login']);
   }
-  getChat(link,token){
+  getChat(link, token) {
     let authToken = JSON.parse(localStorage.getItem("authUser"))
     let header = {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin" : '*',
+      "Access-Control-Allow-Origin": '*',
       Accept: "application/json",
 
     };
     let headerT = {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin" : '*',
+      "Access-Control-Allow-Origin": '*',
       Authorization: `Bearer ${authToken?.authtoken}`,
       Accept: "application/json",
     };
@@ -57,14 +57,31 @@ export class AuthService implements OnInit {
       }
     );
   }
-  postChat(link){
+  postChat(link) {
     let authToken = JSON.parse(localStorage.getItem("authUser"))
     let headerT = {
       Authorization: `Bearer ${authToken?.authtoken}`,
       Accept: "application/json",
     };
     return this.http.post(
-      environment.api.chatURL + link,{},
+      environment.api.chatURL + link, {},
+      {
+        headers: headerT,
+      }
+    );
+  }
+  postRequest(link, payload, params) {
+    let authToken = JSON.parse(localStorage.getItem("authUser"))
+    // let headerT = {
+    //   Authorization: `Bearer ${authToken?.authtoken}`,
+    //   Accept: "application/json",
+    // };
+    let headerT = {
+      Accept: 'application/json',
+      'Content-Type': 'application/text',
+    };
+    return this.http.post(
+      environment.api.quickBook + link, payload,
       {
         headers: headerT,
       }
