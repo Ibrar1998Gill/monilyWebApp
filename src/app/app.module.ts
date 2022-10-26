@@ -9,7 +9,7 @@ import { SharedModule } from "./shared/shared.module";
 import { AppRoutingModule } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
-
+import { NgSelectModule } from '@ng-select/ng-select';
 // for HttpClient import:
 import { LoadingBarHttpClientModule } from '@ngx-loading-bar/http-client';
 // for Router import:
@@ -29,6 +29,8 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 // import { PushNotificationModule } from 'ng-push-notification';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -64,7 +66,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     // for Router use:
     LoadingBarRouterModule,
     // for Core use:
-    LoadingBarModule
+    LoadingBarModule,
+    NgSelectModule,
+    SweetAlert2Module
   ],
   providers: [AuthService, AdminGuard, SecureInnerPagesGuard, CookieService],
   bootstrap: [AppComponent]

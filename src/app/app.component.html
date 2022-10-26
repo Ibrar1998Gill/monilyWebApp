@@ -2,3 +2,28 @@
 <app-loader></app-loader>
 <app-tap-to-top></app-tap-to-top>
 <router-outlet></router-outlet>
+<!-- company select modal -->
+<!-- Button trigger modal -->
+<button type="button" id="companyModal" data-bs-toggle="modal" hidden data-bs-target="#staticBackdrop"></button>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Select your company</h5>
+      </div>
+      <div class="modal-body">
+        <ng-select [(ngModel)]="companySelected" placeholder="Select Company">
+          <ng-option *ngFor="let company of companies" [value]="company.company_id">{{company.company}}</ng-option>
+       </ng-select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" *ngIf="!companyFound" (click)="logout()">Logout</button>
+        <button type="button" data-bs-dismiss="modal" hidden id="closeModal"></button>
+        <button type="button" class="btn btn-primary" [disabled]="companySelected == null" (click)="select()">Select</button>
+      </div>
+    </div>
+  </div>
+</div>

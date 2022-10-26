@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 @import "./assets/scss/app.scss";
-
+.modal-backdrop.show {
+    opacity: 0.95 !important;
+}
 .router-wrapper  {
     position:  relative;
     overflow:  hidden;

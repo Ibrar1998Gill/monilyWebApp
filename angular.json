@@ -97,7 +97,9 @@
               "node_modules/font-awesome/scss/font-awesome.scss",
               "src/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js"
+            ],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -143,7 +145,8 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "monily:build:production"
+              "browserTarget": "monily:build:production",
+              "proxyConfig": "./proxy.conf.json"
             }
           }
         },

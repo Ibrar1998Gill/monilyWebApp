@@ -1,6 +1,7 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UniversalService } from 'src/app/shared/services/universal.service';
 import { AuthService } from '../../shared/services/firebase/auth.service';
 
 @Component({
@@ -39,9 +40,11 @@ export class LoginComponent implements OnInit {
         userId: res?.user?.id,
         name: res?.user?.name,
         email: res?.user?.email,
-        qbconfig: res?.user?.qb_config
+        qbconfig: res?.qb_config
       }
       localStorage.setItem('authUser', JSON.stringify(this.loginData))
+      UniversalService.companyModal.next(true)
+      UniversalService.login.next(true)
       this.ngZone.run(() => {
         this.router.navigate(['/dashboard']);
       })
