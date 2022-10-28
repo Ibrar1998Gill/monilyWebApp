@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalService } from 'src/app/shared/services/local.service';
 import { AuthService } from '../../../../services/firebase/auth.service';
 
 @Component({
@@ -8,13 +9,13 @@ import { AuthService } from '../../../../services/firebase/auth.service';
 })
 export class MyAccountComponent implements OnInit {
 
-  constructor(public authService: AuthService) { }
+  constructor(public authService: AuthService, private localService: LocalService) { }
   user:any;
   ngOnInit() {
     this.getData()
   }
   getData(){
-    this.user = JSON.parse(localStorage.getItem('authUser'))
+    this.user = this.localService.getJsonValue('authUser')
   }
   logout() {
     this.authService.SignOut();

@@ -6,6 +6,7 @@ import * as firebase from 'firebase/app';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { UniversalService } from '../universal.service';
+import { LocalService } from '../local.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -19,11 +20,13 @@ export class AuthService implements OnInit {
     public router: Router,
     public ngZone: NgZone,
     public toster: ToastrService,
-    private cookieService: CookieService) {
+    private cookieService: CookieService,
+    private localService: LocalService) {
   }
-
+  
+  public authToken = this.localService.getJsonValue('authUser')
   ngOnInit(): void { }
-
+  
   // sign in function
   SignIn(email, password) {
     return this.http.post(`https://monilyapp.yourhealthgrades.com/api/quickbooks/login?email=${email}&password=${password}`, {}, {});
@@ -34,13 +37,12 @@ export class AuthService implements OnInit {
   SignOut() {
     UniversalService.companyModal.next(false)
     setTimeout(() => {
-      localStorage.clear();
+      this.localService.clearToken();
       this.cookieService.deleteAll('user', '/auth/login');
       this.router.navigate(['/auth/login']);
     }, 1000);
   }
   getChat(link, token) {
-    let authToken = JSON.parse(localStorage.getItem("authUser"))
     let header = {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": '*',
@@ -50,7 +52,7 @@ export class AuthService implements OnInit {
     let headerT = {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": '*',
-      Authorization: `Bearer ${authToken?.authtoken}`,
+      Authorization: `Bearer ${this.authToken?.authtoken}`,
       Accept: "application/json",
     };
     return this.http.get(
@@ -61,9 +63,8 @@ export class AuthService implements OnInit {
     );
   }
   postChat(link) {
-    let authToken = JSON.parse(localStorage.getItem("authUser"))
     let headerT = {
-      Authorization: `Bearer ${authToken?.authtoken}`,
+      Authorization: `Bearer ${this.authToken?.authtoken}`,
       Accept: "application/json",
     };
     return this.http.post(
@@ -76,12 +77,12 @@ export class AuthService implements OnInit {
   postQuickbooks(link, payload, params) {
     // quickbooks.api.intuit.com/v3/company/4620816365014867780/invoice?minorversion=63
     const minorversion = '14';
-    let authToken = JSON.parse(localStorage.getItem("authUser"))
     let headerT = {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin" : '*',
-      Accept: "application/text",
-      Authorization: `Bearer ${authToken?.qbconfig[0].access_token}`
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Access-Control-Allow-Origin': '*',
+      'Accept': 'application/json',
+      UserAgent:"QBOV3-OAuth2-Postman-Collection",
+      Authorization: `Bearer ${this.authToken?.qbconfig[0].access_token}`
     };
     return this.http.post(
       environment.api.quickbooksURL + link + "?minorversion=" + minorversion, payload,
@@ -90,5 +91,4 @@ export class AuthService implements OnInit {
       }
     );
   }
-
 }

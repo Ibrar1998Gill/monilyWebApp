@@ -3,7 +3,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UniversalService } from 'src/app/shared/services/universal.service';
 import { AuthService } from '../../shared/services/firebase/auth.service';
-
+import { LocalService } from '../../shared/services/local.service'
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -15,7 +15,8 @@ export class LoginComponent implements OnInit {
   public loginForm: FormGroup;
   public errorMessage: any;
   public showLoader: boolean = false;
-  constructor(public authService: AuthService, private fb: FormBuilder, private ngZone: NgZone, private router: Router) {
+  constructor(public authService: AuthService, private fb: FormBuilder, private ngZone: NgZone, private router: Router,
+    private localService: LocalService) {
     this.loginForm = this.fb.group({
       email: [null, [Validators.required, Validators.email]],
       password: [null, Validators.required]
@@ -33,7 +34,7 @@ export class LoginComponent implements OnInit {
     this.showLoader = true;
     this.authService.SignIn(this.loginForm.value['email'], this.loginForm.value['password']).subscribe((res: any) => {
       console.log('====================================');
-      console.log(res.user);
+      console.log(res);
       console.log('====================================');
       this.loginData = {
         authtoken: res?.user?.authtoken,
@@ -42,7 +43,8 @@ export class LoginComponent implements OnInit {
         email: res?.user?.email,
         qbconfig: res?.qb_config
       }
-      localStorage.setItem('authUser', JSON.stringify(this.loginData))
+      this.localService.setJsonValue('authUser', this.loginData);
+      // localStorage.setItem('authUser', JSON.stringify(this.loginData))
       UniversalService.companyModal.next(true)
       UniversalService.login.next(true)
       this.ngZone.run(() => {

@@ -11,7 +11,7 @@ export const content: Routes = [
     loadChildren: () => import('../../components/apps/expenses/expenses.module').then(m => m.expensesModule)
   },
   {
-    path: 'financial-status',
+    path: 'financial-statement',
     loadChildren: () => import('../../components/apps/financial/financial.module').then(m => m.financialModule)
   },
   {

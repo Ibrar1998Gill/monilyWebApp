@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import { AuthService } from 'src/app/shared/services/firebase/auth.service';
 import { ChatUsers } from '../../../shared/model/chat.model';
 import { debounce } from 'lodash';
+import { LocalService } from 'src/app/shared/services/local.service';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -32,7 +33,7 @@ export class chatComponent implements OnInit {
   public editMsg: boolean = false
   public editId: number;
 
-  constructor(private http: AuthService, private toaster: ToastrService) {
+  constructor(private http: AuthService, private toaster: ToastrService, private localService: LocalService) {
     this.searchTerm = debounce(this.searchTerm, 1000)
    }
   socket = io('https://monily-mobile-app.herokuapp.com');
@@ -190,7 +191,7 @@ export class chatComponent implements OnInit {
     } catch (err) { }
   }
   getRecentUser() {
-    this.userDetails = JSON.parse(localStorage.getItem("authUser"))
+    this.userDetails = this.localService.getJsonValue('authUser')
     this.http.getChat(`getChatList?user_id=${this.userDetails?.userId}`, true).subscribe((res: any) => {
       this.messageLists=[]
       res?.data?.map(v => {

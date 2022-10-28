@@ -8,6 +8,7 @@ import { io } from 'socket.io-client';
 import { UniversalService } from './shared/services/universal.service'
 import * as $ from 'jquery'
 import { AuthService } from './shared/services/firebase/auth.service';
+import { LocalService } from './shared/services/local.service';
 declare var require
 const Swal = require('sweetalert2')
 @Component({
@@ -31,6 +32,7 @@ export class AppComponent {
     private loader: LoadingBarService, translate: TranslateService,
     private pushNotification: PushNotificationService,
     private cd: ChangeDetectorRef,
+    private localService: LocalService,
     private authService: AuthService) {
     if (isPlatformBrowser(this.platformId)) {
       translate.setDefaultLang('en');
@@ -39,7 +41,7 @@ export class AppComponent {
   }
   ngOnInit() {
     this.observe()
-    if(localStorage.getItem('company')== null){
+    if(this.localService.getJsonValue('company')== null){
       this.getRecentUser()
     }
     this.socket.on('message', (messageInfo) => {
@@ -53,7 +55,7 @@ export class AppComponent {
     });
   }
   getRecentUser() {
-    this.userDetails = JSON.parse(localStorage.getItem("authUser"))
+    this.userDetails = this.localService.getJsonValue('authUser')
     if (this.userDetails) {
       UniversalService.companyModal.next(true)
       if (this.userDetails.hasOwnProperty('qbconfig')) {
@@ -118,7 +120,7 @@ export class AppComponent {
     this.authService.SignOut();
   }
   select(){
-    localStorage.setItem('company', JSON.stringify(this.companySelected))
+    this.localService.setJsonValue('company', this.companySelected);
     UniversalService.companyModal.next(false)
     UniversalService.login.next(false)
   }

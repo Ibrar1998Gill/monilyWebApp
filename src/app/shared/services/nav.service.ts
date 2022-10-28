@@ -95,12 +95,6 @@ export class NavService implements OnDestroy {
       type: "link",
     },
     {
-      path: "financial-status",
-      title: "Financial Status",
-      icon: "bar-chart",
-      type: "link",
-    },
-    {
       path: "accounts-payable",
       title: "Accounts Payable",
       icon: "dollar-sign",
@@ -110,6 +104,12 @@ export class NavService implements OnDestroy {
       path: "accounts-recievable",
       title: "Accounts Recievable",
       icon: "dollar-sign",
+      type: "link",
+    },
+    {
+      path: "financial-statement",
+      title: "Financial Statement",
+      icon: "bar-chart",
       type: "link",
     },
     {

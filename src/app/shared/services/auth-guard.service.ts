@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
+import { LocalService } from './local.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuardService {
 
-  constructor() { }
+  constructor(private localService: LocalService) { }
   getToken() {
-    return !!localStorage.getItem("authUser");
+    return !!this.localService.getJsonValue('authUser')
   }
   isLoggedIn(): boolean {
     let loggedIn: boolean = false;
