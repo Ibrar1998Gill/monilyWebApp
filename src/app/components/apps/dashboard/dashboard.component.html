@@ -54,7 +54,7 @@
                 </div>
                 <div class="col-sm-6">
                   <span>$</span>
-                  <span class="mb-0 counter">25000</span>
+                  <span class="mb-0 counter">{{yearlyDataRevenue == null ? 0 : yearlyDataRevenue}}</span>
                 </div>
               </div>
               <div class="row mt-3 mb-3">
@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-sm-6">
                   <span>$</span>
-                  <span class="mb-0 counter">25000</span>
+                  <span class="mb-0 counter">{{quaterlyDataRevenue == null ? 0 : quaterlyDataRevenue}}</span>
                 </div>
               </div>
               <div class="row mt-3 mb-3">
@@ -72,7 +72,7 @@
                 </div>
                 <div class="col-sm-6">
                   <span>$</span>
-                  <span class="mb-0 counter">25000</span>
+                  <span class="mb-0 counter">{{monthlyDataRevenue == null ? 0 : monthlyDataRevenue}}</span>
                 </div>
               </div>
               <i class="icon-bg" data-feather="dollar-sign"></i>
@@ -95,7 +95,7 @@
                 </div>
                 <div class="col-sm-6">
                   <span>$</span>
-                  <span class="mb-0 counter">25000</span>
+                  <span class="mb-0 counter">{{yearlyDataPayments == null ? 0 : yearlyDataPayments}}</span>
                 </div>
               </div>
               <div class="row mt-3 mb-3">
@@ -104,7 +104,7 @@
                 </div>
                 <div class="col-sm-6">
                   <span>$</span>
-                  <span class="mb-0 counter">25000</span>
+                  <span class="mb-0 counter">{{quaterlyDataPayments == null ? 0 : quaterlyDataPayments}}</span>
                 </div>
               </div>
               <div class="row mt-3 mb-3">
@@ -113,7 +113,7 @@
                 </div>
                 <div class="col-sm-6">
                   <span>$</span>
-                  <span class="mb-0 counter">25000</span>
+                  <span class="mb-0 counter">{{monthlyDataPayments == null ? 0 : monthlyDataPayments}}</span>
                 </div>
               </div>
               <i class="icon-bg" data-feather="dollar-sign"></i>

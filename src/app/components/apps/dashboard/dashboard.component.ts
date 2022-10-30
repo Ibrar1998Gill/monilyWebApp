@@ -6,7 +6,9 @@ import { LocalService } from 'src/app/shared/services/local.service';
 import * as data from '../../../../dummyDatas/expenses'
 import * as profitdata from '../../../../dummyDatas/profitandloss'
 import * as revenue from '../../../../dummyDatas/revenue'
+import * as paymentData from '../../../../dummyDatas/payment'
 import { HelperService } from '../../../shared/services/helper.service'
+import * as moment from 'moment';
 // import * as top10ExpensesFunc from '../../../../helpers/helper'
 @Component({
   selector: 'app-dashboard',
@@ -23,6 +25,12 @@ export class dashboardComponent implements OnInit {
   totalExpenses: number;
   profitAndLoss: number;
   expensesBar: number;
+  monthlyDataRevenue: any
+  yearlyDataRevenue: any
+  quaterlyDataRevenue: any
+  monthlyDataPayments: any
+  yearlyDataPayments: any
+  quaterlyDataPayments: any
   pieArray: any = [['Task', 'expenses']]
   pieChart3: any = {
     chartType: 'PieChart',
@@ -107,6 +115,8 @@ export class dashboardComponent implements OnInit {
           ]
         }
       };
+      this.revenueGenerate()
+      this.paymentGenerate()
     }
     else return;
   }
@@ -138,5 +148,50 @@ export class dashboardComponent implements OnInit {
     //         console.log(err,"error hai");
     //         console.log('====================================');
     //       }
+  }
+  revenueGenerate() {
+    let invoice = revenue.default.Invoice;
+    let mutableData = [];
+    invoice.map(inv => {
+      let txnDate = moment(inv.TxnDate).format('MM/DD/YYYY');
+      let dueDate = this.helperService.calculateDays(inv.DueDate);
+      mutableData.push({
+        Date: txnDate,
+        num: inv.DocNumber,
+        Customer: inv.CustomerRef.name,
+        Amount: inv.Balance,
+        TotalAmt: inv.TotalAmt,
+        Status: dueDate,
+        id: inv.Id,
+      });
+    });
+    this.monthlyDataRevenue = this.helperService.getCurrentMonthExpenses(mutableData);
+    this.yearlyDataRevenue = this.helperService.getYearlyExpenses(mutableData);
+    const mutableQuarterly = this.helperService.getQuarterlyExpenses(mutableData);
+    this.quaterlyDataRevenue = parseFloat(mutableQuarterly[Object.keys(mutableQuarterly).pop()]).toFixed(2);
+  }
+  paymentGenerate() {
+    let mutableData = [];
+    let bills = paymentData.default.Bill;
+    bills.map(bill => {
+      let txnDate = new Date(bill.TxnDate).toLocaleString();
+      txnDate = txnDate.substring(0, txnDate.indexOf(','));
+      txnDate = this.helperService.formattedDate(bill.TxnDate);
+      const vendorName = bill.VendorRef.name;
+      const pastDue = this.helperService.calculateDays(bill.DueDate);
+      mutableData.push({
+        Date: txnDate,
+        Customer: vendorName,
+        Status: this.helperService.calculateDays(bill.DueDate),
+        pastDue,
+        Amount: bill.Balance,
+        TotalAmt: bill.TotalAmt,
+        id: bill.Id,
+      });
+    });
+    this.monthlyDataPayments = this.helperService.getCurrentMonthExpenses(mutableData);
+    this.yearlyDataPayments = this.helperService.getYearlyExpenses(mutableData);
+    const mutableQuarterly = this.helperService.getQuarterlyExpenses(mutableData);
+    this.quaterlyDataPayments = parseFloat(mutableQuarterly[Object.keys(mutableQuarterly).pop()]).toFixed(2);
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -6,24 +7,24 @@ import { Injectable } from '@angular/core';
 export class HelperService {
 
   constructor() { }
-// yearly quaterly monthly sepration
+  // yearly quaterly monthly sepration
   getYearlyExpenses = expenses => {
-  const yearlyExpenses = {};
-  expenses.map(expense => {
-    const currentYear = new Date().getFullYear();
-    const year = new Date(expense.Date).getFullYear();
-    if (year === currentYear) {
-      if (yearlyExpenses[year]) {
+    const yearlyExpenses = {};
+    expenses.map(expense => {
+      const currentYear = new Date().getFullYear();
+      const year = new Date(expense.Date).getFullYear();
+      if (year === currentYear) {
+        if (yearlyExpenses[year]) {
           yearlyExpenses[year] += parseFloat(expense.Amount);
         } else {
           yearlyExpenses[year] = parseFloat(expense.Amount);
         }
       }
     });
-    if(yearlyExpenses == null){
+    if (yearlyExpenses == null) {
       return 0
     }
-    else{
+    else {
       return parseFloat(yearlyExpenses[new Date().getFullYear()]).toFixed(2);
     }
   };
@@ -78,7 +79,7 @@ export class HelperService {
         }
       }
     });
-    if(currentMonthExpenses == null){
+    if (currentMonthExpenses == null) {
       return 0
     }
     else return currentMonthExpenses[new Date().getMonth() - 1]
@@ -92,5 +93,17 @@ export class HelperService {
         return bAmt - aAmt;
       })
       .slice(0, 10);
+  };
+  // calculate days
+  calculateDays = oldDate => {
+    const time = <any>new Date() - <any>new Date(oldDate);
+    return Math.floor(time / (1000 * 3600 * 24));
+  };
+  formattedDate = date => {
+    const dateMomentObject = moment(date, 'YYYY/MM/DD'); // 1st argument - string, 2nd argument - format
+    const day = dateMomentObject.format('DD');
+    const month = dateMomentObject.format('MM');
+    const year = dateMomentObject.format('YYYY');
+    return `${month}/${day}/${year}`;
   };
 }
