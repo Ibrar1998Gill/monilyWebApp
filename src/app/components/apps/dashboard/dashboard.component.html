@@ -9,7 +9,7 @@
               <h3 class="m-0">Profit And Loss</h3>
               <span class="d-flex align-items-center">
                 <app-feather-icons class="margin1 feather-10" [icon]="'dollar-sign'"></app-feather-icons>
-                <span class="mb-0 counter">250124</span>
+                <span class="mb-0 counter">{{profitAndLoss + expensesBar}}</span>
               </span>
               <i class="icon-bg" data-feather="dollar-sign"></i>
               <div id="basic-bar" class="mt-3">
@@ -29,7 +29,7 @@
               <h3 class="m-0">Expenses</h3>
               <span class="d-flex align-items-center">
                 <app-feather-icons class="margin1" [icon]="'dollar-sign'"></app-feather-icons>
-                <span class="mb-0 counter">253340</span>
+                <span class="mb-0 counter">{{totalExpenses}}</span>
               </span>
               <i class="icon-bg" data-feather="dollar-sign"></i>
               <div class="mt-3">
