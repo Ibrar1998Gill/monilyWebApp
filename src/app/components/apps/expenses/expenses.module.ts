@@ -7,7 +7,8 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { SharedModule } from '../../../shared/shared.module';
 import { expensesComponent } from './expenses.component'
 import { expensesRoutingModule } from './expenses-routing.module'
-import {NgApexchartsModule } from 'ng-apexcharts'
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { Ng2GoogleChartsModule } from 'ng2-google-charts';
 @NgModule({
   declarations: [expensesComponent],
   imports: [
@@ -19,7 +20,8 @@ import {NgApexchartsModule } from 'ng-apexcharts'
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
-    NgApexchartsModule
+    Ng2GoogleChartsModule,
+    NgxDatatableModule
   ],
 })
 export class expensesModule { }

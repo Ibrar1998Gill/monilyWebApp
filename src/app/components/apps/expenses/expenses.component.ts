@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HelperService } from 'src/app/shared/services/helper.service';
 import { LocalService } from 'src/app/shared/services/local.service';
 import * as data from '../../../../dummyDatas/expenses'
-
+import * as moment from 'moment';
+import { companyDB } from '../../../shared/data/tables/company';
 @Component({
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
@@ -10,7 +11,18 @@ import * as data from '../../../../dummyDatas/expenses'
 })
 
 export class expensesComponent implements OnInit {
+  secondary_color = localStorage.getItem('secondary_color') || '#f73164';
+  primary_color = localStorage.getItem('primary_color') || '#5330ab';
   companyid: any;
+  public company = [];
+  
+  loadingIndicator: boolean = true;
+  reorderable: boolean = true;
+  columns = [
+    { prop: 'name' },
+    { name: 'Gender' },
+    { name: 'Company' }
+  ];
   mutableData: any = [];
   mutablePieData: any = {};
   pieArray:any = [['Task', 'expenses']]
@@ -20,14 +32,34 @@ export class expensesComponent implements OnInit {
   currentMonthExpenses: any;
   quarterlyExpenses: any;
   yearlyExpenses: any;
-  constructor(private localService: LocalService, private helperService:HelperService){}
+  monthlyData:any;
+  yearlyData:any;
+  quaterlyData:any;
+  totalExpenses:number;
+  pieChart3: any = {
+    chartType: 'PieChart',
+    dataTable: this.pieArray,
+    options: {
+      width: '100%',
+      height: 300,
+      colors: ["#f8d62b", "#51bb25", "#a927f9", this.secondary_color, this.primary_color],
+      backgroundColor: '#FEF5ED'
+    },
+  };
+  constructor(private localService: LocalService, private helperService:HelperService){
+    this.company = companyDB.data;
+  }
   ngOnInit(): void {
     this.companyid = this.localService.getJsonValue('company');
     // this.observe()
     this.mutableData = []
+    this.revenueGenerate()
+  }
+  revenueGenerate() {
     if (this.companyid != null) {
       // this.getExpenses()
       let ExpenseDate = data.default.QueryResponse.Purchase;
+      let prices = []
       ExpenseDate.map(expense => {
         let memo = expense.PrivateNote;
         let txnDate = expense.TxnDate
@@ -50,7 +82,13 @@ export class expensesComponent implements OnInit {
       for (const key in this.mutablePieData) {
         let val = Math.round(this.mutablePieData[key])
         this.pieArray.push([key, val])
+        prices.push(val)
       }
+
+      var sum = prices.reduce(function (a, b) {
+        return a + b;
+      }, 0);
+      this.totalExpenses = sum
       let sortedDesc = this.mutableData.sort(function (a, b) {
         return <any>new Date(b.Date) - <any>new Date(a.Date);
       });

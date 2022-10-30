@@ -1,69 +1,88 @@
-<app-breadcrumb
-  [title]="'Expenses'"
-  [active_item]="'Expenses'"
-></app-breadcrumb>
+<app-breadcrumb [title]="'Expenses'" [active_item]="'Expenses'"></app-breadcrumb>
 <div class="container">
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-lg-12">
       <div class="card">
-        <div class="card-header">
-          <h5>Basic Table</h5><span>Use a class<code>table</code> to any table.</span>
-        </div>
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">First Name</th>
-                <th scope="col">Last Name</th>
-                <th scope="col">Username</th>
-                <th scope="col">Role</th>
-                <th scope="col">Country</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Alexander</td>
-                <td>Orton</td>
-                <td>@mdorton</td>
-                <td>Admin</td>
-                <td>USA</td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>John Deo</td>
-                <td>Deo</td>
-                <td>@johndeo</td>
-                <td>User</td>
-                <td>USA</td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td>Randy Orton</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-                <td>admin</td>
-                <td>UK</td>
-              </tr>
-              <tr>
-                <th scope="row">4</th>
-                <td>Randy Mark</td>
-                <td>Ottandy</td>
-                <td>@mdothe</td>
-                <td>user</td>
-                <td>AUS</td>
-              </tr>
-              <tr>
-                <th scope="row">5</th>
-                <td>Ram Jacob</td>
-                <td>Thornton</td>
-                <td>@twitter</td>
-                <td>admin</td>
-                <td>IND</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="card-body default-accordion">
+          <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
+            <ngb-panel title="Expenses">
+              <ng-template ngbPanelContent>
+                <div class="card o-hidden cstmCard">
+                  <div class="bg-primary b-r-4 card-body">
+                    <div class="media static-top-widget flex-column">
+                      <div class="media-body w-100">
+                        <div class="row mt-3 mb-3">
+                          <div class="col-sm-6">
+                            <span class="m-0">Yearly</span>
+                          </div>
+                          <div class="col-sm-6">
+                            <span>$</span>
+                            <span class="mb-0 counter">{{yearlyExpenses == null ? 0 : yearlyExpenses}}</span>
+                          </div>
+                        </div>
+                        <div class="row mt-3 mb-3">
+                          <div class="col-sm-6">
+                            <span class="m-0">Quaterly</span>
+                          </div>
+                          <div class="col-sm-6">
+                            <span>$</span>
+                            <span class="mb-0 counter">{{quarterlyExpenses == null ? 0 : quarterlyExpenses}}</span>
+                          </div>
+                        </div>
+                        <div class="row mt-3 mb-3">
+                          <div class="col-sm-6">
+                            <span class="m-0">Monthly</span>
+                          </div>
+                          <div class="col-sm-6">
+                            <span>$</span>
+                            <span class="mb-0 counter">{{currentMonthExpenses == null ? 0 :
+                              currentMonthExpenses}}</span>
+                          </div>
+                        </div>
+                        <i class="icon-bg" data-feather="dollar-sign"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel title="Expenses Chart">
+              <ng-template ngbPanelContent>
+                <div class="card o-hidden cstmCard">
+                  <div class="bg-primary b-r-4 card-body minHeight">
+                    <div class="media static-top-widget">
+                      <div class="media-body">
+                        <i class="icon-bg" data-feather="dollar-sign"></i>
+                        <div class="mt-3">
+                          <google-chart [data]="pieChart3"></google-chart>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel title="Expenses Table">
+              <ng-template ngbPanelContent>
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5>Basic Table</h5>
+                    </div>
+                    <div class="card-body custom-datatable noscroll">
+                      <ngx-datatable class="bootstrap" [rows]="company" [loadingIndicator]="loadingIndicator"
+                        [columns]="columns" [columnMode]="'force'" [headerHeight]="40" [summaryRow]="true"
+                        [summaryPosition]="'bottom'" [footerHeight]="40" [rowHeight]="'auto'"
+                        [reorderable]="reorderable">
+                      </ngx-datatable>
+                      <ngb-pagination [collectionSize]="company" [(page)]="page" aria-label="Default pagination">
+                      </ngb-pagination>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </ngb-panel>
+          </ngb-accordion>
         </div>
       </div>
     </div>

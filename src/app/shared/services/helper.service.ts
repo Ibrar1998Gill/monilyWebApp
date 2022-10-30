@@ -67,10 +67,10 @@ export class HelperService {
   getCurrentMonthExpenses = expenses => {
     const currentMonthExpenses = {};
     expenses.map(expense => {
-      var dateMomentObject = expense.Date // 1st argument - string, 2nd argument - format
+      var dateMomentObject = expense.Date
       var dateObject = new Date(dateMomentObject)
       const month = dateObject.getMonth();
-      const currentMonth = new Date().getMonth();
+      const currentMonth = new Date().getMonth() + 1;
       if (month === currentMonth) {
         if (currentMonthExpenses[month]) {
           currentMonthExpenses[month] += parseFloat(expense.Amount);
