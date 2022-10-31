@@ -7570,6 +7570,13 @@ ngx-owl-carousel-o@^3.0.1:
   resolved "https://registry.yarnpkg.com/ngx-owl-carousel-o/-/ngx-owl-carousel-o-3.1.1.tgz#563523c1314489a59bd7dc67b77683273a712c71"
   integrity sha512-u1w6UHcziWJsyfG1ShbCPzfWEbbotrW+/T6WHkr8G4wdL8qvF1EeWrlNjiE9uRHAAj+Tg30YIclXKJjCf1+w6w==
 
+ngx-pagination@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/ngx-pagination/-/ngx-pagination-6.0.2.tgz#8a633a254c093ff0b058f94192447d6c788b6d0b"
+  integrity sha512-7N4FA244ls7h/977EqvcDXuyB/U5rPJI+FD0Zj9orrXb+kX2SOX0WP+yQw50Gm/Dy9aPOE91FkgoYzGyRSPY0A==
+  dependencies:
+    tslib "^2.3.0"
+
 ngx-perfect-scrollbar@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/ngx-perfect-scrollbar/-/ngx-perfect-scrollbar-9.0.0.tgz#361c75010d2a560dd8aaadb799bdf04db5a1824b"

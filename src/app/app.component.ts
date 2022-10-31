@@ -123,5 +123,6 @@ export class AppComponent {
     this.localService.setJsonValue('company', this.companySelected);
     UniversalService.companyModal.next(false)
     UniversalService.login.next(false)
+    UniversalService.companySelected.next(true)
   }
 }

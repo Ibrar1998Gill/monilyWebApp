@@ -7,5 +7,6 @@ import { Subject } from 'rxjs';
 export class UniversalService {
   public static login:Subject <any> = new Subject <any>();
   public static companyModal:Subject <any> = new Subject <any>();
+  public static companySelected:Subject <any> = new Subject <any>();
   constructor() { }
 }

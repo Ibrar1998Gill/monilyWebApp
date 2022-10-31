@@ -46,3 +46,10 @@
     align-items: center;
     font-size: 20px;
 }
+.ngx-pagination{
+    margin-top: 2rem;
+}
+.ngx-pagination .current {
+    background: var(--theme-deafult) !important;
+    border-radius: 100px;
+}

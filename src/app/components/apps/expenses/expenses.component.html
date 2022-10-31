@@ -1,11 +1,18 @@
-<app-breadcrumb [title]="'Expenses'" [active_item]="'Expenses'"></app-breadcrumb>
+<app-breadcrumb
+  [title]="'Expenses'"
+  [active_item]="'Expenses'"
+></app-breadcrumb>
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
       <div class="card">
         <div class="card-body default-accordion">
-          <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
-            <ngb-panel title="Expenses">
+          <ngb-accordion
+            #acc="ngbAccordion"
+            [closeOthers]="true"
+            activeIds="static-1"
+          >
+            <ngb-panel title="Expenses" id="static-1">
               <ng-template ngbPanelContent>
                 <div class="card o-hidden cstmCard">
                   <div class="bg-primary b-r-4 card-body">
@@ -17,7 +24,9 @@
                           </div>
                           <div class="col-sm-6">
                             <span>$</span>
-                            <span class="mb-0 counter">{{yearlyExpenses == null ? 0 : yearlyExpenses}}</span>
+                            <span class="mb-0 counter">{{
+                              yearlyExpenses == null ? 0 : yearlyExpenses
+                            }}</span>
                           </div>
                         </div>
                         <div class="row mt-3 mb-3">
@@ -26,7 +35,9 @@
                           </div>
                           <div class="col-sm-6">
                             <span>$</span>
-                            <span class="mb-0 counter">{{quarterlyExpenses == null ? 0 : quarterlyExpenses}}</span>
+                            <span class="mb-0 counter">{{
+                              quarterlyExpenses == null ? 0 : quarterlyExpenses
+                            }}</span>
                           </div>
                         </div>
                         <div class="row mt-3 mb-3">
@@ -35,8 +46,11 @@
                           </div>
                           <div class="col-sm-6">
                             <span>$</span>
-                            <span class="mb-0 counter">{{currentMonthExpenses == null ? 0 :
-                              currentMonthExpenses}}</span>
+                            <span class="mb-0 counter">{{
+                              currentMonthExpenses == null
+                                ? 0
+                                : currentMonthExpenses
+                            }}</span>
                           </div>
                         </div>
                         <i class="icon-bg" data-feather="dollar-sign"></i>
@@ -46,7 +60,7 @@
                 </div>
               </ng-template>
             </ngb-panel>
-            <ngb-panel title="Expenses Chart">
+            <ngb-panel title="Biggest Expense Heads" id="static-2">
               <ng-template ngbPanelContent>
                 <div class="card o-hidden cstmCard">
                   <div class="bg-primary b-r-4 card-body minHeight">
@@ -62,22 +76,90 @@
                 </div>
               </ng-template>
             </ngb-panel>
-            <ngb-panel title="Expenses Table">
+            <ngb-panel title="Top 10 Transactions" id="static-3">
               <ng-template ngbPanelContent>
                 <div class="col-sm-12">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5>Basic Table</h5>
-                    </div>
-                    <div class="card-body custom-datatable noscroll">
-                      <ngx-datatable class="bootstrap" [rows]="company" [loadingIndicator]="loadingIndicator"
-                        [columns]="columns" [columnMode]="'force'" [headerHeight]="40" [summaryRow]="true"
-                        [summaryPosition]="'bottom'" [footerHeight]="40" [rowHeight]="'auto'"
-                        [reorderable]="reorderable">
-                      </ngx-datatable>
-                      <ngb-pagination [collectionSize]="company" [(page)]="page" aria-label="Default pagination">
-                      </ngb-pagination>
-                    </div>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Payee</th>
+                          <th scope="col">Category</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="
+                            let transaction of top10Expenses
+                              | paginate
+                                : {
+                                    itemsPerPage: 5,
+                                    currentPage: page,
+                                    totalItems: total
+                                  }
+                          "
+                        >
+                          <th scope="row">{{ transaction.id }}</th>
+                          <td>
+                            {{ transaction.Payee ? transaction.Payee : "N/A" }}
+                          </td>
+                          <td>{{ transaction.Category }}</td>
+                          <td>{{ transaction.Amount | currency: "USD" }}</td>
+                          <td>{{ transaction.Date }}</td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <pagination-controls
+                      (pageChange)="page = $event"
+                    ></pagination-controls>
+                  </div>
+                </div>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel title="Recent Transactions" id="static-4">
+              <ng-template ngbPanelContent>
+                <div class="col-sm-12">
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Payee</th>
+                          <th scope="col">Category</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="
+                            let transaction of RecentTranSort
+                              | paginate
+                                : {
+                                    itemsPerPage: 5,
+                                    currentPage: page,
+                                    totalItems: total
+                                  }
+                          "
+                        >
+                          <th scope="row">{{ transaction.id }}</th>
+                          <td>
+                            {{ transaction.Payee ? transaction.Payee : "N/A" }}
+                          </td>
+                          <td>{{ transaction.Category }}</td>
+                          <td>{{ transaction.Amount | currency: "USD" }}</td>
+                          <td>{{ transaction.Date }}</td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <pagination-controls
+                      (pageChange)="page = $event"
+                    ></pagination-controls>
                   </div>
                 </div>
               </ng-template>
