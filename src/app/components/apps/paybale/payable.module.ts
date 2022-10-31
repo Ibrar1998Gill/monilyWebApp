@@ -8,6 +8,8 @@ import { SharedModule } from '../../../shared/shared.module';
 import {NgApexchartsModule } from 'ng-apexcharts'
 import { payableRoutingModule } from './payable-routing.module';
 import { payableComponent } from './payable.component';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 @NgModule({
   declarations: [payableComponent],
   imports: [
@@ -19,7 +21,9 @@ import { payableComponent } from './payable.component';
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    NgxDatatableModule,
+    NgxPaginationModule
   ],
 })
 export class payableModule { }

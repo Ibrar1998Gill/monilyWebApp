@@ -10,6 +10,7 @@ import { expensesRoutingModule } from './expenses-routing.module'
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { Ng2GoogleChartsModule } from 'ng2-google-charts';
 import { NgxPaginationModule } from 'ngx-pagination'
+import { NgApexchartsModule } from 'ng-apexcharts';
 @NgModule({
   declarations: [expensesComponent],
   imports: [
@@ -23,7 +24,8 @@ import { NgxPaginationModule } from 'ngx-pagination'
     SharedModule,
     Ng2GoogleChartsModule,
     NgxDatatableModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    NgApexchartsModule
   ],
 })
 export class expensesModule { }

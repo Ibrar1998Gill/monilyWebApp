@@ -23,9 +23,9 @@
                             <span class="m-0">Yearly</span>
                           </div>
                           <div class="col-sm-6">
-                            <span>$</span>
+                            
                             <span class="mb-0 counter">{{
-                              yearlyExpenses == null ? 0 : yearlyExpenses
+                              yearlyExpenses == null ? (0 | currency:'USD') : yearlyExpenses | currency:'USD'
                             }}</span>
                           </div>
                         </div>
@@ -34,9 +34,9 @@
                             <span class="m-0">Quaterly</span>
                           </div>
                           <div class="col-sm-6">
-                            <span>$</span>
+                            
                             <span class="mb-0 counter">{{
-                              quarterlyExpenses == null ? 0 : quarterlyExpenses
+                              quarterlyExpenses == null ? (0 | currency:'USD') : quarterlyExpenses | currency:'USD'
                             }}</span>
                           </div>
                         </div>
@@ -45,11 +45,11 @@
                             <span class="m-0">Monthly</span>
                           </div>
                           <div class="col-sm-6">
-                            <span>$</span>
+                            
                             <span class="mb-0 counter">{{
                               currentMonthExpenses == null
-                                ? 0
-                                : currentMonthExpenses
+                                ? (0 | currency:'USD')
+                                : currentMonthExpenses | currency:'USD'
                             }}</span>
                           </div>
                         </div>

@@ -5,7 +5,20 @@ import * as moment from 'moment';
   providedIn: 'root'
 })
 export class HelperService {
-
+  monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
   constructor() { }
   // yearly quaterly monthly sepration
   getYearlyExpenses = expenses => {
@@ -83,6 +96,51 @@ export class HelperService {
       return 0
     }
     else return currentMonthExpenses[new Date().getMonth() - 1]
+  };
+  getMonthlyExpenses = (
+    expenses,
+    frontColor = '#006DFF',
+    gradientColor = '#009FFF',
+  ) => {
+    let monthlyExpensesPaid = {},
+      monthlyExpensesUnpaid = {};
+    expenses.map(expense => {
+      const date = new Date(expense.Date);
+      const month = date.getMonth();
+  
+      if (monthlyExpensesPaid[month]) {
+        monthlyExpensesPaid[month] +=
+          parseFloat(expense.TotalAmt) - parseFloat(expense.Amount);
+      } else if (!monthlyExpensesPaid[month])
+        monthlyExpensesPaid[month] =
+          parseFloat(expense.TotalAmt) - parseFloat(expense.Amount);
+      if (monthlyExpensesUnpaid[month]) {
+        monthlyExpensesUnpaid[month] += parseFloat(expense.Amount);
+      } else monthlyExpensesUnpaid[month] = parseFloat(expense.Amount);
+    });
+    // initialising the empty months with 0
+    for (let i = 0; i < new Date().getMonth(); i++) {
+      if (!monthlyExpensesPaid[i]) monthlyExpensesPaid[i] = 0;
+      if (!monthlyExpensesUnpaid[i]) monthlyExpensesUnpaid[i] = 0;
+    }
+    // yahan se krna hai
+    let chartData = [];
+    Object.keys(monthlyExpensesPaid).map(month => {
+      chartData.push({
+        value: monthlyExpensesPaid[month],
+        frontColor: "yellow",
+        gradientColor: "yellow",
+        label: this.monthNames[month],
+        spacing: 2,
+        labelWidth: 30,
+      });
+      chartData.push({
+        value: monthlyExpensesUnpaid[month],
+        frontColor: "orange",
+        gradientColor: "orange",
+      });
+    });
+    return chartData;
   };
   // top 10
   top10ExpensesFunc = expenses => {

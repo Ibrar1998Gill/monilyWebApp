@@ -3,7 +3,6 @@ import { HelperService } from "src/app/shared/services/helper.service";
 import { LocalService } from "src/app/shared/services/local.service";
 import * as data from "../../../../dummyDatas/expenses";
 import * as moment from "moment";
-import { companyDB } from "../../../shared/data/tables/company";
 @Component({
   selector: "app-expenses",
   templateUrl: "./expenses.component.html",
@@ -13,93 +12,6 @@ export class expensesComponent implements OnInit {
   secondary_color = localStorage.getItem("secondary_color") || "#f73164";
   primary_color = localStorage.getItem("primary_color") || "#5330ab";
   companyid: any;
-  users: any = [
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-    {
-      id: 0,
-      name: "ahmed",
-      email: "ahmedakhter1289@gmail;.com",
-      phone_number: "123123123",
-    },
-
-  ];
   page: number = 1;
   totalPage = [];
   mutableData: any = [];
