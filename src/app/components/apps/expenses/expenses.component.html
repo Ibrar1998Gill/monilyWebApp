@@ -106,10 +106,9 @@
                           <td>
                             {{ transaction.Payee ? transaction.Payee : "N/A" }}
                           </td>
-                          <td>{{ transaction.Category }}</td>
+                          <td>{{ transaction.Category ? transaction.Category : "N/A" }}</td>
                           <td>{{ transaction.Amount | currency: "USD" }}</td>
-                          <td>{{ transaction.Date }}</td>
-                          <td></td>
+                          <td>{{ transaction.Date ? transaction.Date : "N/A" }}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -150,10 +149,9 @@
                           <td>
                             {{ transaction.Payee ? transaction.Payee : "N/A" }}
                           </td>
-                          <td>{{ transaction.Category }}</td>
+                          <td>{{ transaction.Category ? transaction.Category : "N/A" }}</td>
                           <td>{{ transaction.Amount | currency: "USD" }}</td>
-                          <td>{{ transaction.Date }}</td>
-                          <td></td>
+                          <td>{{ transaction.Date ? transaction.Date : "N/A" }}</td>
                         </tr>
                       </tbody>
                     </table>
