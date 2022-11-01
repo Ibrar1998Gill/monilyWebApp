@@ -14,7 +14,107 @@
           >
             <ngb-panel title="Profit And Loss" id="static-1">
               <ng-template ngbPanelContent>
-                <h1>hello</h1> 
+                <div class="row">
+                  <div class="col-sm-12 mb-3">
+                    <ngb-accordion
+                      #acc="ngbAccordion"
+                      [closeOthers]="true"
+                      activeIds="expense-1"
+                    >
+                      <ngb-panel title="Income" id="expense-1" *ngIf="(salesHead && salesValue)">
+                        <ng-template ngbPanelContent>
+                          <div class="row">
+                            <div
+                              class="col-sm-12 d-flex justify-content-between align-items-center"
+                            >
+                              <p>{{ salesHead ? salesHead : "Sales" }}</p>
+                              <p>
+                                {{
+                                  salesValue
+                                    ? (salesValue | currency: "USD")
+                                    : "N/A"
+                                }}
+                              </p>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </ngb-panel>
+                      <ngb-panel title="Expenses" id="expense-2">
+                        <ng-template ngbPanelContent>
+                          <div class="row">
+                            <div
+                              class="col-sm-12 d-flex justify-content-between align-items-center"
+                              *ngFor="let expense of expenses"
+                            >
+                              <p>{{ expense.expenseHead ? expense.expenseHead : "N/A" }}</p>
+                              <p>
+                                {{
+                                  expense.expenseValue
+                                    ? (expense.expenseValue | currency: "USD")
+                                    : "N/A"
+                                }}
+                              </p>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </ngb-panel>
+                      <ngb-panel title="Summary" id="expense-3">
+                        <ng-template ngbPanelContent>
+                          <div class="row">
+                            <div
+                              class="col-sm-12 d-flex justify-content-between align-items-center"
+                            >
+                              <p>{{ totalIncomeHead ? totalIncomeHead : "Total Income" }}</p>
+                              <p>
+                                {{
+                                  totalIncomeValue
+                                    ? (totalIncomeValue | currency: "USD")
+                                    : "N/A"
+                                }}
+                              </p>
+                            </div>
+                            <div
+                              class="col-sm-12 d-flex justify-content-between align-items-center"
+                            >
+                              <p>{{ totalExpensesHead ? totalExpensesHead : "Total Expenses" }}</p>
+                              <p>
+                                {{
+                                  totalExpensesValue
+                                    ? (totalExpensesValue | currency: "USD")
+                                    : "N/A"
+                                }}
+                              </p>
+                            </div>
+                            <div
+                              class="col-sm-12 d-flex justify-content-between align-items-center"
+                            >
+                              <p>{{ totalNetOperHead ? totalNetOperHead : "Total Net Operating" }}</p>
+                              <p>
+                                {{
+                                  totalNetOperValue
+                                    ? (totalNetOperValue | currency: "USD")
+                                    : "N/A"
+                                }}
+                              </p>
+                            </div>
+                            <div
+                              class="col-sm-12 d-flex justify-content-between align-items-center"
+                            >
+                              <p>{{ totalNetIncHead ? totalNetIncHead : "Total Net Incoming" }}</p>
+                              <p>
+                                {{
+                                  totalNetIncValue
+                                    ? (totalNetIncValue | currency: "USD")
+                                    : "N/A"
+                                }}
+                              </p>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </ngb-panel>
+                    </ngb-accordion>
+                  </div>
+                </div>
               </ng-template>
             </ngb-panel>
           </ngb-accordion>
