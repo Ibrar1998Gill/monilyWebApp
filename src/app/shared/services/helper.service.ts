@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
+import { AuthService } from './firebase/auth.service';
+import { LocalService } from './local.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,9 @@ export class HelperService {
     'Nov',
     'Dec',
   ]
-  constructor() { }
+  constructor(private httpService: AuthService, private localService:LocalService) {
+   }
+  public authToken = this.localService.getJsonValue('authUser')
   // yearly quaterly monthly sepration
   getYearlyExpenses = expenses => {
     const yearlyExpenses = {};
@@ -157,6 +161,7 @@ export class HelperService {
     const time = <any>new Date() - <any>new Date(oldDate);
     return Math.floor(time / (1000 * 3600 * 24));
   };
+  // format date
   formattedDate = date => {
     const dateMomentObject = moment(date, 'YYYY/MM/DD'); // 1st argument - string, 2nd argument - format
     const day = dateMomentObject.format('DD');
@@ -164,4 +169,29 @@ export class HelperService {
     const year = dateMomentObject.format('YYYY');
     return `${month}/${day}/${year}`;
   };
+  // upload image
+  uploadImage = (event, remarks) =>{
+    const file:File = event.target.files[0];
+
+        if (file) {
+
+            // this.fileName = file.name;
+
+            const formData = new FormData();
+            formData.append('user_id', this.authToken.userId);
+            formData.append("file", file);
+            this.httpService.uploadImage('uploadFile', formData).subscribe(res=>{
+              console.log('====================================');
+              console.log(res);
+              console.log('====================================');
+            }),err=>{
+              console.log('====================================');
+              console.log(err);
+              console.log('====================================');
+            }
+            // const upload$ = this.http.post("/api/thumbnail-upload", formData);
+
+            // upload$.subscribe();
+        }
+  }
 }

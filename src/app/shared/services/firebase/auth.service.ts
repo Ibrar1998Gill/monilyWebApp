@@ -74,6 +74,18 @@ export class AuthService implements OnInit {
       }
     );
   }
+  uploadImage(link, payload) {
+    let headerT = {
+      Authorization: `Bearer ${this.authToken?.authtoken}`,
+      Accept: "application/json",
+    };
+    return this.http.post(
+      environment.api.chatURL + link, payload,
+      {
+        headers: headerT,
+      }
+    );
+  }
   postQuickbooks(link, payload, params) {
     // quickbooks.api.intuit.com/v3/company/4620816365014867780/invoice?minorversion=63
     const minorversion = '14';
