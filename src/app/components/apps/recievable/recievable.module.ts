@@ -1,3 +1,5 @@
+import { NgxPaginationModule } from 'ngx-pagination';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -19,7 +21,9 @@ import {NgApexchartsModule } from 'ng-apexcharts'
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    NgxDatatableModule,
+    NgxPaginationModule
   ],
 })
 export class recievableModule { }

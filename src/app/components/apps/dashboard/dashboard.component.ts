@@ -55,7 +55,7 @@ export class dashboardComponent implements OnInit {
   bar: any = {
     series: [
       {
-        name: "basic",
+        name: "USD",
         data: [this.profitAndLoss, this.expensesBar],
       },
     ],
@@ -70,7 +70,7 @@ export class dashboardComponent implements OnInit {
       },
     },
     dataLabels: {
-      enabled: false,
+      enabled: true,
     },
     xaxis: {
       categories: ["Income", "Expenses"],

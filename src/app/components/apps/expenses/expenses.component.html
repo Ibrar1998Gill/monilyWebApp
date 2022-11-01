@@ -97,7 +97,7 @@
                               | paginate
                                 : {
                                     itemsPerPage: 5,
-                                    currentPage: page,
+                                    currentPage: top10Page,
                                     totalItems: total
                                   }
                           "
@@ -113,7 +113,7 @@
                       </tbody>
                     </table>
                     <pagination-controls
-                      (pageChange)="page = $event"
+                      (pageChange)="top10Page = $event"
                     ></pagination-controls>
                   </div>
                 </div>
@@ -140,7 +140,7 @@
                               | paginate
                                 : {
                                     itemsPerPage: 5,
-                                    currentPage: page,
+                                    currentPage: recentPage,
                                     totalItems: total
                                   }
                           "
@@ -156,7 +156,7 @@
                       </tbody>
                     </table>
                     <pagination-controls
-                      (pageChange)="page = $event"
+                      (pageChange)="recentPage = $event"
                     ></pagination-controls>
                   </div>
                 </div>

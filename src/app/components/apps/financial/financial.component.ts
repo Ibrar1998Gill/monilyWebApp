@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import * as financial from "../../../../dummyDatas/financial";
+
 @Component({
   selector: 'app-financial',
   templateUrl: './financial.component.html',
@@ -7,5 +9,6 @@ import { Component, OnInit } from '@angular/core';
 
 export class financialComponent implements OnInit {
   ngOnInit(): void {
+    console.log(financial);
   }
 }
