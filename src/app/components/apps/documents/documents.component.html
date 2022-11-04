@@ -4,61 +4,90 @@
     <div class="col-sm-12">
       <div class="file-content">
         <div class="card">
-          <div class="card-header">
-            <div class="media">
+          <div class="card-header dateHeader">
+            <!-- <div class="media">
               <div class="media-body text-right">
-                <!-- <form class="d-inline-flex" action="#" method="POST" enctype="multipart/form-data" name="myForm"> -->
-                  <div style="height: 0px;width: 0px; overflow:hidden;">
-                    <input id="upfile" type="file" value="upload" (change)="onFileSelected($event)" >
-                  </div>
-                <!-- </form> -->
-                <label for="upfile">
-                  <div class="btn btn-outline-primary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" class="feather feather-upload">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                      <polyline points="17 8 12 3 7 8"></polyline>
-                      <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>Upload </div>
-                </label>
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-upload">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>Upload </button>
               </div>
-            </div>
+            </div> -->
+            <h4 class="mb-3 mt-3">All Files</h4>
+            <form class="custom-datepicker custom-datepicker-dropdown">
+              <label class="dateLabel">From</label>
+              <div class="form-group mb-0">
+                <div class="input-group">
+                  <input class="form-control" placeholder="YYYY-MM-DD" [(ngModel)]="startDate" ngbDatepicker #f="ngbDatepicker">
+                  <div class="input-group-append position-relative">
+                    <button class="calendarbtn" (click)="f.toggle()" type="button"><i
+                        class="fa fa-calendar"></i></button>
+                  </div>
+                </div>
+              </div>
+              <label class="dateLabel">To</label>
+              <div class="form-group mb-0">
+                <div class="input-group">
+                  <input class="form-control" placeholder="YYYY-MM-DD" [(ngModel)]="endDate" ngbDatepicker #d="ngbDatepicker">
+                  <div class="input-group-append position-relative">
+                    <button class="calendarbtn" (click)="d.toggle()" type="button"><i
+                      class="fa fa-calendar"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <button class="btn btn-primary" (click)="searchDate()">Search</button>
+            </form>
           </div>
           <div class="card-body file-manager">
-            <h4 class="mb-3">All Files</h4>
-            <ul class="files">
-              <li class="file-box">
-                <div class="file-top"> <i class="fa fa-file-image-o txt-primary"></i><i
-                    class="fa fa-ellipsis-v f-14 ellips"></i></div>
-                    <div class="file-bottom">
-                      <h6>Logo.png </h6>
-                    </div>
-              </li>
-              <li class="file-box">
-                <div class="file-top"> <i class="fa fa-file-image-o txt-primary"></i><i
-                    class="fa fa-ellipsis-v f-14 ellips"></i></div>
-                    <div class="file-bottom">
-                      <h6>Document.png </h6>
-                    </div>
-              </li>
-              <li class="file-box">
-                <div class="file-top"> <i class="fa fa-file-text-o txt-info"></i><i
-                    class="fa fa-ellipsis-v f-14 ellips"></i></div>
+            <div class="row files">
+              <div class="col-sm-3 file-box mt-3 mb-3" *ngFor="let item of filesData;">
+                <a class="file-top" href="{{item?.file_url}}" target="_blank"> <i class="fa txt-primary"
+                    [ngClass]="(item?.extension == 'png' || item?.extension == 'jpg' || item?.extension == 'jpeg' || item?.extension == 'svg') ? 'fa-file-image-o' : 'fa-file-text-o'"></i></a>
                 <div class="file-bottom">
-                  <h6>requirements.txt </h6>
+                  <h6>{{item?.original_filename}}</h6>
                 </div>
-              </li>
-              <li class="file-box">
-                <div class="file-top"> <i class="fa fa-file-text-o txt-info"></i><i
-                    class="fa fa-ellipsis-v f-14 ellips"></i></div>
-                <div class="file-bottom">
-                  <h6>requirements.txt </h6>
-                </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Upload documents</h5>
+      </div>
+      <div class="modal-body d-flex justify-content-around align-items-center">
+        <label for="upfile" class="fileUp">
+          <i class="fa fa-upload fa-3x"></i>
+        </label>
+        <div style="height: 0px;width: 0px; overflow:hidden;">
+          <input id="upfile" type="file" value="upload" (change)="onFileSelected($event)">
+        </div>
+        <form class="theme-form" [formGroup]="commentForm">
+          <div class="form-group">
+            <label class="col-form-label">Comment</label>
+            <input class="form-control" type="text" required="" placeholder="Comment..." formControlName="comment">
+            <div *ngIf="commentForm.controls.comment.touched && commentForm.controls.email.errors?.required"
+              class="text text-danger mt-1">
+              Comments is required
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Upload</button>
+      </div>
+    </div>
+  </div>
+</div> -->
