@@ -5,24 +5,13 @@
       <div class="file-content">
         <div class="card">
           <div class="card-header dateHeader">
-            <!-- <div class="media">
-              <div class="media-body text-right">
-                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><svg
-                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-upload">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>Upload </button>
-              </div>
-            </div> -->
             <h4 class="mb-3 mt-3">All Files</h4>
             <form class="custom-datepicker custom-datepicker-dropdown">
               <label class="dateLabel">From</label>
               <div class="form-group mb-0">
                 <div class="input-group">
-                  <input class="form-control" placeholder="YYYY-MM-DD" [(ngModel)]="startDate" ngbDatepicker #f="ngbDatepicker">
+                  <input class="form-control zIndex0" readonly="true" placeholder="YYYY-MM-DD" [(ngModel)]="startDate" ngbDatepicker
+                    #f="ngbDatepicker">
                   <div class="input-group-append position-relative">
                     <button class="calendarbtn" (click)="f.toggle()" type="button"><i
                         class="fa fa-calendar"></i></button>
@@ -32,24 +21,48 @@
               <label class="dateLabel">To</label>
               <div class="form-group mb-0">
                 <div class="input-group">
-                  <input class="form-control" placeholder="YYYY-MM-DD" [(ngModel)]="endDate" ngbDatepicker #d="ngbDatepicker">
+                  <input class="form-control zIndex0" readonly="true" [value]="currentDate" placeholder="YYYY-MM-DD" [(ngModel)]="endDate" ngbDatepicker
+                    #d="ngbDatepicker">
                   <div class="input-group-append position-relative">
                     <button class="calendarbtn" (click)="d.toggle()" type="button"><i
-                      class="fa fa-calendar"></i></button>
-                    </div>
+                        class="fa fa-calendar"></i></button>
                   </div>
                 </div>
-                <button class="btn btn-primary" (click)="searchDate()">Search</button>
+              </div>
+              <button class="btn btn-primary" (click)="searchDate()" [disabled]="startDate == null || endDate == null">Search</button>
             </form>
           </div>
           <div class="card-body file-manager">
-            <div class="row files">
-              <div class="col-sm-3 file-box mt-3 mb-3" *ngFor="let item of filesData;">
-                <a class="file-top" href="{{item?.file_url}}" target="_blank"> <i class="fa txt-primary"
-                    [ngClass]="(item?.extension == 'png' || item?.extension == 'jpg' || item?.extension == 'jpeg' || item?.extension == 'svg') ? 'fa-file-image-o' : 'fa-file-text-o'"></i></a>
-                <div class="file-bottom">
-                  <h6>{{item?.original_filename}}</h6>
+            <div class="card-header dateHeader">
+              <div class="row w-100">
+                <div class="col-sm-6 d-flex justify-content-start">
+                  <ng-select [(ngModel)]="selectSortDropDown" placeholder="Sort by ..." (change)="selectSort()">
+                    <ng-option *ngFor="let time of sortDate" [value]="time.value">{{time.value}}</ng-option>
+                  </ng-select>
                 </div>
+                <div class="col-sm-6 d-flex justify-content-end align-items-center">
+                  <form [formGroup]="searchbynameForm">
+                    <div class="d-flex justify-content-end align-items-center">
+                      <input class="form-control" type="text" required="" placeholder="Search by name..."
+                        formControlName="searchByName">
+                    </div>
+                  </form>
+                  <button type="button" class="btn btn-primary" (click)="searchByName()">Search</button>
+                </div>
+              </div>
+            </div>
+            <div class="row files">
+              <div class="col-sm-3 mt-3 mb-3" *ngFor="let item of filesData;">
+                <div class="file-box w-100 h-100">
+                  <a class="file-top" href="{{item?.file_url}}" target="_blank"> <i class="fa txt-primary"
+                      [ngClass]="(item?.extension == 'png' || item?.extension == 'jpg' || item?.extension == 'jpeg' || item?.extension == 'svg') ? 'fa-file-image-o' : 'fa-file-text-o'"></i></a>
+                  <div class="file-bottom">
+                    <h6>{{item?.original_filename}}</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-12" *ngIf="filesData.length < 1">
+                <p class="text-center mt-5 mb-3" style="font-size: 20px; color:#000;">No Data Found</p>
               </div>
             </div>
           </div>

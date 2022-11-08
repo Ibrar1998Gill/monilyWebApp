@@ -14,20 +14,31 @@ import * as moment from 'moment';
 export class documentsComponent implements OnInit {
   fileName = '';
   public commentForm: FormGroup;
+  public searchbynameForm: FormGroup;
   public filesData: any = []
-  startDate: NgbDateStruct;
-  endDate: NgbDateStruct;
+  startDate: any;
+  endDate: any;
   date: { year: number, month: number };
+  selectSortDropDown;
+  currentDate;
+  // searchByName:string;
+  sortDate: any = [
+    { value: "Sort by latest" },
+    { value: "Sort by earlier" },
+  ];
   constructor(private helperService: HelperService, private httpService: AuthService, private localService: LocalService,
     private fb: FormBuilder) {
-    this.commentForm = this.fb.group({
-      comment: [null, [Validators.required]]
+    this.searchbynameForm = this.fb.group({
+      searchByName: [null, [Validators.required]]
     });
   }
   public authToken = this.localService.getJsonValue('authUser')
 
   ngOnInit(): void {
     this.getImages()
+    this.selectSortDropDown = this.sortDate[0].value
+    this.startDate = null
+    this.endDate = null
   }
   onFileSelected(event) {
     this.helperService.uploadImage(event, "reven")
@@ -35,15 +46,6 @@ export class documentsComponent implements OnInit {
   getImages() {
     this.httpService.getChat(`getFiles?user_id=${this.authToken.userId}`, true).subscribe((res: any) => {
       this.filesData = this.sortData(res.data.data)
-      // this.filesData = res.data.data;
-      console.log('====================================');
-      console.log(this.filesData, res.data.data);
-      console.log('====================================');
-      this.filesData.map((e: any) => {
-        console.log('====================================');
-        console.log(moment(e.created_at).format(("YYYY-MM-DD")));
-        console.log('====================================');
-      })
     }), err => {
       console.log('====================================');
       console.log(err);
@@ -55,20 +57,54 @@ export class documentsComponent implements OnInit {
       return <any>new Date(b.created_at) - <any>new Date(a.created_at);
     });
   }
+  selectSort() {
+    if (this.selectSortDropDown == "Sort by latest") {
+      return this.filesData.sort((a, b) => {
+        return <any>new Date(b.created_at) - <any>new Date(a.created_at);
+      });
+    }
+    else {
+      return this.filesData.sort((a, b) => {
+        return <any>new Date(a.created_at) - <any>new Date(b.created_at);
+      });
+    }
+  }
   searchDate() {
-    console.log(this.startDate, this.endDate)
     let start: any = moment(this.startDate).format('YYYY-MM-DD')
     let end: any = moment(this.endDate).format('YYYY-MM-DD')
-    const result = this.filesData.filter(d => {
-      var time = moment(d.created_at).format('YYYY-MM-DD');
+    this.httpService.getChat(`getFiles?user_id=${this.authToken.userId}`, true).subscribe((res: any) => {
+      this.filesData =[]
+      res.data.data.map(d=>{
+        var time = moment(d.created_at).format('YYYY-MM-DD');
+        if (start < time && time < end) {
+          this.filesData.push(d)
+        }
+      })
+    }), err => {
       console.log('====================================');
-      console.log(start,time,end);
+      console.log(err);
       console.log('====================================');
-      return (start < time && time < end);
-    });
-    console.log(result);
-    // console.log('====================================');
-    // console.log(this.filesData);
-    // console.log('====================================');
+    }
+  }
+  searchByName() {
+    this.httpService.getChat(`getFiles?user_id=${this.authToken.userId}`, true).subscribe((res: any) => {
+      if (this.searchbynameForm.controls['searchByName'].value == '') {
+        this.filesData = this.sortData(res.data.data)
+      }
+      else {
+        res.data.data.map(e => {
+          if (
+            e.original_filename == this.searchbynameForm.controls['searchByName'].value
+          ) {
+            this.filesData = []
+            this.filesData.push(e)
+          }
+        });
+      }
+    }), err => {
+      console.log('====================================');
+      console.log(err);
+      console.log('====================================');
+    }
   }
 }

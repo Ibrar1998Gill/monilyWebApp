@@ -13,7 +13,11 @@
 }
 
 .row.files {
-    justify-content: space-around;
+    // .col-sm-3{
+    //     margin-left: auto;
+    //     margin-right: auto;
+    // }
+    // justify-content: space-around;
 }
 
 .calendarbtn {
@@ -53,4 +57,13 @@
 
 .btn.btn-primary {
     margin-left: 10px;
+}
+ng-select{
+    min-width: 200px;
+}
+.zIndex0{
+    z-index: 0;
+}
+.calendarbtn{
+    z-index: 10;
 }
