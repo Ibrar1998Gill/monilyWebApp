@@ -76,9 +76,13 @@ export class dashboardComponent implements OnInit {
       categories: ["Income", "Expenses"],
     },
   };
+  redrawChart() {
+    let ccComponent = this.pieChart3.component;
+    //force a redraw
+    ccComponent.draw();
+  }
   ngOnInit(): void {
     this.observe();
-    console.log(this.localService.getJsonValue("company"));
     if(this.localService.getJsonValue("company") != null){
       this.companyid = this.localService.getJsonValue("company");
     }
@@ -87,7 +91,6 @@ export class dashboardComponent implements OnInit {
       this.dashboardCharts();
       this.revenueGenerate();
       this.paymentGenerate();
-      console.log(this.profitAndLoss);
     } else return;
   }
 
@@ -104,92 +107,100 @@ export class dashboardComponent implements OnInit {
     });
   }
   getExpenses() {
-    // this.http.postQuickbooks(`/${this.companyid}/query`,
-    //       'select * from purchase startposition 1',{}).subscribe(res=>{
-    //         console.log('====================================');
-    //         console.log(res, "res hai");
-    //         console.log('====================================');
-    //       }),err=>{
-    //         console.log('====================================');
-    //         console.log(err,"error hai");
-    //         console.log('====================================');
-    //       }
+    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from purchase startposition 1`, true).subscribe(res=>{
+            console.log('====================================');
+            console.log(res, "res hai");
+            console.log('====================================');
+          }),err=>{
+            console.log('====================================');
+            console.log(err,"error hai");
+            console.log('====================================');
+          }
   }
   revenueGenerate() {
     let invoice = revenue.default.Invoice;
+    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from invoice startposition 1`, true).subscribe((res: any) => {
     let mutableData = [];
-    invoice.map((inv) => {
-      let txnDate = moment(inv.TxnDate).format("MM/DD/YYYY");
-      let dueDate = this.helperService.calculateDays(inv.DueDate);
-      mutableData.push({
-        Date: txnDate,
-        num: inv.DocNumber,
-        Customer: inv.CustomerRef.name,
-        Amount: inv.Balance,
-        TotalAmt: inv.TotalAmt,
-        Status: dueDate,
-        id: inv.Id,
+      res.data.QueryResponse.Invoice.map((inv) => {
+        let txnDate = moment(inv.TxnDate).format("MM/DD/YYYY");
+        let dueDate = this.helperService.calculateDays(inv.DueDate);
+        mutableData.push({
+          Date: txnDate,
+          num: inv.DocNumber,
+          Customer: inv.CustomerRef.name,
+          Amount: inv.Balance,
+          TotalAmt: inv.TotalAmt,
+          Status: dueDate,
+          id: inv.Id,
+        });
       });
-    });
-    this.monthlyDataRevenue =
-      this.helperService.getCurrentMonthExpenses(mutableData);
-    this.yearlyDataRevenue = this.helperService.getYearlyExpenses(mutableData);
-    const mutableQuarterly =
-      this.helperService.getQuarterlyExpenses(mutableData);
-    this.quaterlyDataRevenue = parseFloat(
-      mutableQuarterly[Object.keys(mutableQuarterly).pop()]
-    ).toFixed(2);
+      this.monthlyDataRevenue =
+        this.helperService.getCurrentMonthExpenses(mutableData);
+      this.yearlyDataRevenue = this.helperService.getYearlyExpenses(mutableData);
+      const mutableQuarterly =
+        this.helperService.getQuarterlyExpenses(mutableData);
+      this.quaterlyDataRevenue = parseFloat(
+        mutableQuarterly[Object.keys(mutableQuarterly).pop()]
+      ).toFixed(2);
+    })
   }
   paymentGenerate() {
-    let mutableData = [];
-    let bills = paymentData.default.Bill;
-    bills.map((bill) => {
-      let txnDate = new Date(bill.TxnDate).toLocaleString();
-      txnDate = txnDate.substring(0, txnDate.indexOf(","));
-      txnDate = this.helperService.formattedDate(bill.TxnDate);
-      const vendorName = bill.VendorRef.name;
-      const pastDue = this.helperService.calculateDays(bill.DueDate);
-      mutableData.push({
-        Date: txnDate,
-        Customer: vendorName,
-        Status: this.helperService.calculateDays(bill.DueDate),
-        pastDue,
-        Amount: bill.Balance,
-        TotalAmt: bill.TotalAmt,
-        id: bill.Id,
+    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`, true).subscribe((res: any) => {
+      let mutableData = [];
+      res.data.QueryResponse.Bill.map((bill) => {
+        let txnDate = new Date(bill.TxnDate).toLocaleString();
+        txnDate = txnDate.substring(0, txnDate.indexOf(","));
+        txnDate = this.helperService.formattedDate(bill.TxnDate);
+        const vendorName = bill.VendorRef.name;
+        const pastDue = this.helperService.calculateDays(bill.DueDate);
+        mutableData.push({
+          Date: txnDate,
+          Customer: vendorName,
+          Status: this.helperService.calculateDays(bill.DueDate),
+          pastDue,
+          Amount: bill.Balance,
+          TotalAmt: bill.TotalAmt,
+          id: bill.Id,
+        });
       });
-    });
-    this.monthlyDataPayments =
-      this.helperService.getCurrentMonthExpenses(mutableData);
-    this.yearlyDataPayments = this.helperService.getYearlyExpenses(mutableData);
-    const mutableQuarterly =
-      this.helperService.getQuarterlyExpenses(mutableData);
-    this.quaterlyDataPayments = parseFloat(
-      mutableQuarterly[Object.keys(mutableQuarterly).pop()]
-    ).toFixed(2);
+      this.monthlyDataPayments =
+        this.helperService.getCurrentMonthExpenses(mutableData);
+      this.yearlyDataPayments = this.helperService.getYearlyExpenses(mutableData);
+      const mutableQuarterly =
+        this.helperService.getQuarterlyExpenses(mutableData);
+      this.quaterlyDataPayments = parseFloat(
+        mutableQuarterly[Object.keys(mutableQuarterly).pop()]
+      ).toFixed(2);
+    })
   }
   dashboardCharts() {
-    let ExpenseDate = data.default.QueryResponse.Purchase;
-    let prices = [];
-    ExpenseDate.map((expense) => {
-      let category =
-        expense.Line[0].AccountBasedExpenseLineDetail.AccountRef.name;
-      if (this.mutablePieData[category]) {
-        this.mutablePieData[category] += parseFloat(expense.TotalAmt);
-      } else {
-        this.mutablePieData[category] = parseFloat(expense.TotalAmt);
-      }
-    });
-    for (const key in this.mutablePieData) {
-      let val = Math.round(this.mutablePieData[key]);
-      this.pieArray.push([key, val]);
-      prices.push(val);
-    }
-
-    var sum = prices.reduce(function (a, b) {
-      return a + b;
-    }, 0);
-    this.totalExpenses = sum;
+    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from purchase startposition 1`, true).subscribe((res: any) => {
+      let ExpenseDate = []
+        res?.data?.QueryResponse?.Purchase.map(expense => {
+          ExpenseDate.push(expense)
+        })
+        let prices = [];
+        ExpenseDate.map((expense) => {
+          let category =
+            expense.Line[0].AccountBasedExpenseLineDetail.AccountRef.name;
+          if (this.mutablePieData[category]) {
+            this.mutablePieData[category] += parseFloat(expense.TotalAmt);
+          } else {
+            this.mutablePieData[category] = parseFloat(expense.TotalAmt);
+          }
+        });
+        for (const key in this.mutablePieData) {
+          let val = Math.round(this.mutablePieData[key]);
+          this.pieArray.push([key, val]);
+          prices.push(val);
+        }
+    
+        var sum = prices.reduce(function (a, b) {
+          return a + b;
+        }, 0);
+        this.totalExpenses = sum;
+      this.redrawChart()
+    })
     profitdata.default.Rows.Row.map((v) => {
       if (v.hasOwnProperty("group")) {
         if (v.group == "Income") {

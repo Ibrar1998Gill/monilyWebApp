@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import * as financial from "../../../../dummyDatas/financial";
 import * as balancesheet from "../../../../dummyDatas/balancesheet";
+import { AuthService } from 'src/app/shared/services/firebase/auth.service';
+import { LocalService } from 'src/app/shared/services/local.service';
 
 @Component({
   selector: 'app-financial',
@@ -10,6 +12,7 @@ import * as balancesheet from "../../../../dummyDatas/balancesheet";
 })
 
 export class financialComponent implements OnInit {
+  companyid: any;
   totalIncomeHead: string;
   totalIncomeValue: number;
   totalExpensesHead: string;
@@ -43,11 +46,15 @@ export class financialComponent implements OnInit {
   totalEquityValue: number;
   totalLiabilitiesandEquityHead: string;
   totalLiabilitiesandEquityValue: number;
+  constructor(private http:AuthService, private localService:LocalService){}
   ngOnInit(): void {
-    console.log(balancesheet.default.Rows.Row);
+    this.companyid = this.localService.getJsonValue("company");
     this.getFinancial()
   }
   getFinancial() {
+    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from purchase startposition 1`, true).subscribe((res: any) => {
+      console.log(res);
+    })
     financial.default.Rows.Row.map(e => {
       if (e.hasOwnProperty('group')) {
         if (e.group == "Income") {

@@ -16,7 +16,7 @@
       </div>
       <div class="modal-body">
         <ng-select [(ngModel)]="companySelected" placeholder="Select Company">
-          <ng-option *ngFor="let company of companies" [value]="company.company_id">{{company.company}}</ng-option>
+          <ng-option *ngFor="let company of companies" [value]="company">{{company.company}}</ng-option>
        </ng-select>
       </div>
       <div class="modal-footer">

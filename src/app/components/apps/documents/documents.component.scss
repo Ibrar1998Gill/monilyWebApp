@@ -55,15 +55,42 @@
     margin-left: 10px;
 }
 
+.dateLabelFile {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+
+    label {
+        font-size: 10px;
+        color: grey;
+        font-weight: 900;
+    }
+}
+
 .btn.btn-primary {
     margin-left: 10px;
 }
-ng-select{
+
+ng-select {
     min-width: 200px;
 }
-.zIndex0{
+
+.zIndex0 {
     z-index: 0;
 }
-.calendarbtn{
+
+.calendarbtn {
     z-index: 10;
+}
+
+.file-bottom {
+    h6 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 150px;
+        cursor: pointer;
+    }
+    min-height: 50px;
+    cursor: pointer;
 }

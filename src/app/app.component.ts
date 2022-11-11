@@ -45,9 +45,6 @@ export class AppComponent {
       this.getRecentUser()
     }
     this.socket.on('message', (messageInfo) => {
-      console.log('====================================');
-      console.log(messageInfo, "hello app message");
-      console.log('====================================');
       var msg = JSON.parse(messageInfo)
       if (msg?.to_id == this.userDetails?.userId) {
         this.showPush(msg)
@@ -73,7 +70,6 @@ export class AppComponent {
     }
   }
   showPush(messageInfo) {
-    console.log('called');
     this.pushNotification.show(
       `${messageInfo?.message}`,
       {

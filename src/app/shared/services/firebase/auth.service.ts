@@ -23,16 +23,26 @@ export class AuthService implements OnInit {
     private cookieService: CookieService,
     private localService: LocalService) {
   }
-  
+
   public authToken = this.localService.getJsonValue('authUser')
   ngOnInit(): void { }
-  
-  // sign in function
-  SignIn(email, password) {
-    return this.http.post(`https://monilyapp.yourhealthgrades.com/api/quickbooks/login?email=${email}&password=${password}`, {}, {});
-    //     this.toster.error('You have enter Wrong Email or Password.');
-  }
 
+  // sign in function
+  // SignIn(email, password) {
+  //   return this.http.post(`https://monilyapp.yourhealthgrades.com/api/quickbooks/login?email=${email}&password=${password}`, {}, {});
+  //   //     this.toster.error('You have enter Wrong Email or Password.');
+  // }
+  SignIn(email, password) {
+    let headerT = {
+      "Access-Control-Allow-Origin": '*',
+      Accept: "application/json",
+    };
+    return this.http.post(`https://monilyapp.yourhealthgrades.com/api/quickbooks/login?email=${email}&password=${password}`, {},
+      {
+        headers: headerT,
+      }
+    );
+  }
   // Sign out
   SignOut() {
     UniversalService.companyModal.next(false)
@@ -47,7 +57,6 @@ export class AuthService implements OnInit {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": '*',
       Accept: "application/json",
-
     };
     let headerT = {
       "Content-Type": "application/json",
@@ -86,20 +95,22 @@ export class AuthService implements OnInit {
       }
     );
   }
-  postQuickbooks(link, payload, params) {
-    // quickbooks.api.intuit.com/v3/company/4620816365014867780/invoice?minorversion=63
-    const minorversion = '14';
-    let headerT = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Access-Control-Allow-Origin': '*',
-      'Accept': 'application/json',
-      UserAgent:"QBOV3-OAuth2-Postman-Collection",
-      Authorization: `Bearer ${this.authToken?.qbconfig[0].access_token}`
+  getMonilyData(link, token) {
+    let header = {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": '*',
+      Accept: "application/json"
     };
-    return this.http.post(
-      environment.api.quickbooksURL + link + "?minorversion=" + minorversion, payload,
+    let headerT = {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": '*',
+      Authorization: `Bearer ${this.authToken?.authtoken}`,
+      Accept: "application/json",
+    };
+    return this.http.get(
+      environment.api.monilyURL + link,
       {
-        headers: headerT,
+        headers: !token ? header : headerT,
       }
     );
   }

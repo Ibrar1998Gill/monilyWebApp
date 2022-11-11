@@ -3,6 +3,7 @@ import { HelperService } from "src/app/shared/services/helper.service";
 import { LocalService } from "src/app/shared/services/local.service";
 import * as data from "../../../../dummyDatas/expenses";
 import * as moment from "moment";
+import { AuthService } from "src/app/shared/services/firebase/auth.service";
 @Component({
   selector: "app-expenses",
   templateUrl: "./expenses.component.html",
@@ -45,22 +46,25 @@ export class expensesComponent implements OnInit {
   };
   constructor(
     private localService: LocalService,
-    private helperService: HelperService
+    private helperService: HelperService,
+    private http: AuthService
   ) {
   }
   ngOnInit(): void {
     this.companyid = this.localService.getJsonValue("company");
-    // this.observe()
     this.mutableData = [];
     if (this.companyid != null) {
       this.revenueGenerate();
     }
     else return
+    this.getExpenses()
   }
-  revenueGenerate() {
-    
-      // this.getExpenses()
-      let ExpenseDate = data.default.QueryResponse.Purchase;
+  getExpenses() {
+    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from purchase startposition 1`, true).subscribe((res: any) => {
+      let ExpenseDate = []
+      res?.data?.QueryResponse?.Purchase.map(expense => {
+        ExpenseDate.push(expense)
+      })
       let prices = [];
       ExpenseDate.map((expense) => {
         let memo = expense.PrivateNote;
@@ -96,7 +100,6 @@ export class expensesComponent implements OnInit {
         return <any>new Date(b.Date) - <any>new Date(a.Date);
       });
       this.RecentTranSort = sortedDesc.slice(0, 10);
-      // setRecentTranSort(sortedDesc.slice(0, 10));
       this.top10Expenses = this.helperService.top10ExpensesFunc(
         this.mutableData
       );
@@ -114,6 +117,15 @@ export class expensesComponent implements OnInit {
       );
       this.RecentTransaction = this.mutableData.slice(0, 10);
       console.log(this.RecentTranSort, this.top10Expenses);
-      
+    }), err => {
+      console.log('====================================');
+      console.log(err, "error hai");
+      console.log('====================================');
+    }
+  }
+  revenueGenerate() {
+
+    // this.getExpenses()
+
   }
 }

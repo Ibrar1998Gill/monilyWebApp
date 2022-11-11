@@ -21,6 +21,9 @@ export class documentsComponent implements OnInit {
   date: { year: number, month: number };
   selectSortDropDown;
   currentDate;
+  Reset: boolean = false;
+  fileNames:any=[]
+  selectedName:string
   // searchByName:string;
   sortDate: any = [
     { value: "Sort by latest" },
@@ -46,6 +49,11 @@ export class documentsComponent implements OnInit {
   getImages() {
     this.httpService.getChat(`getFiles?user_id=${this.authToken.userId}`, true).subscribe((res: any) => {
       this.filesData = this.sortData(res.data.data)
+      this.fileNames=[]
+      this.filesData?.map(e=>{
+        this.fileNames.push(e.original_filename)
+      })
+      this.Reset = false
     }), err => {
       console.log('====================================');
       console.log(err);
@@ -73,8 +81,8 @@ export class documentsComponent implements OnInit {
     let start: any = moment(this.startDate).format('YYYY-MM-DD')
     let end: any = moment(this.endDate).format('YYYY-MM-DD')
     this.httpService.getChat(`getFiles?user_id=${this.authToken.userId}`, true).subscribe((res: any) => {
-      this.filesData =[]
-      res.data.data.map(d=>{
+      this.filesData = []
+      res.data.data.map(d => {
         var time = moment(d.created_at).format('YYYY-MM-DD');
         if (start < time && time < end) {
           this.filesData.push(d)
@@ -92,15 +100,17 @@ export class documentsComponent implements OnInit {
         this.filesData = this.sortData(res.data.data)
       }
       else {
+        this.filesData = []
         res.data.data.map(e => {
           if (
-            e.original_filename == this.searchbynameForm.controls['searchByName'].value
-          ) {
-            this.filesData = []
-            this.filesData.push(e)
-          }
-        });
-      }
+            e.original_filename.toLowerCase().includes(this.selectedName.toLowerCase())
+            // e.original_filename.toLowerCase() == this.searchbynameForm.controls['searchByName'].value.toLowerCase()
+            ) {
+              this.filesData.push(e)
+            }
+          });
+          this.Reset = true
+        }
     }), err => {
       console.log('====================================');
       console.log(err);
