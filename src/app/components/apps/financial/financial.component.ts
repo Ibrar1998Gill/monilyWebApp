@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-import * as financial from "../../../../dummyDatas/financial";
-import * as balancesheet from "../../../../dummyDatas/balancesheet";
 import { AuthService } from 'src/app/shared/services/firebase/auth.service';
 import { LocalService } from 'src/app/shared/services/local.service';
 import { ToastrService } from 'ngx-toastr';

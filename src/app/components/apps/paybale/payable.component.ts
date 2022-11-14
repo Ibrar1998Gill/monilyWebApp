@@ -3,7 +3,6 @@ import { ToastrService } from "ngx-toastr";
 import { AuthService } from "src/app/shared/services/firebase/auth.service";
 import { HelperService } from "src/app/shared/services/helper.service";
 import { LocalService } from "src/app/shared/services/local.service";
-import * as paymentData from "../../../../dummyDatas/payment";
 
 @Component({
   selector: "app-payable",

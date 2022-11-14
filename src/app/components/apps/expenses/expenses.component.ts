@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { HelperService } from "src/app/shared/services/helper.service";
 import { LocalService } from "src/app/shared/services/local.service";
-import * as data from "../../../../dummyDatas/expenses";
 import * as moment from "moment";
 import { AuthService } from "src/app/shared/services/firebase/auth.service";
 import { ToastrService } from "ngx-toastr";
