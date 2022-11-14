@@ -3,10 +3,6 @@ import { UniversalService } from "src/app/shared/services/universal.service";
 import * as $ from "jquery";
 import { AuthService } from "src/app/shared/services/firebase/auth.service";
 import { LocalService } from "src/app/shared/services/local.service";
-import * as data from "../../../../dummyDatas/expenses";
-import * as profitdata from "../../../../dummyDatas/profitandloss";
-import * as revenue from "../../../../dummyDatas/revenue";
-import * as paymentData from "../../../../dummyDatas/payment";
 import { HelperService } from "../../../shared/services/helper.service";
 import * as moment from "moment";
 import { ToastrService } from "ngx-toastr";
@@ -145,13 +141,19 @@ export class dashboardComponent implements OnInit {
       this.toasterService.error("No data found, please try again after few minutes")
     }
     }, err => {
+      if(err.hasOwnProperty('error')){
+        if(err?.error?.hasOwnProperty('errors')){
+          for (const key in err?.error?.errors) {
+            this.toasterService.error(err?.error?.errors[key])
+          }
+        }
+      }
       console.log('====================================');
       console.log(err, "error hai");
       console.log('====================================');
     })
   }
   revenueGenerate() {
-    let invoice = revenue.default.Invoice;
     this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from invoice startposition 1`, true).subscribe((res: any) => {
       let mutableData = [];
       if (res?.data != null) {
@@ -181,6 +183,13 @@ export class dashboardComponent implements OnInit {
         this.toasterService.error("No data found, please try again after few minutes")
       }
     }, err => {
+      if(err.hasOwnProperty('error')){
+        if(err?.error?.hasOwnProperty('errors')){
+          for (const key in err?.error?.errors) {
+            this.toasterService.error(err?.error?.errors[key])
+          }
+        }
+      }
       console.log(err);
     })
   }
@@ -217,6 +226,13 @@ export class dashboardComponent implements OnInit {
         this.toasterService.error("No data found, please try again after few minutes")
       }
     }, err => {
+      if(err.hasOwnProperty('error')){
+        if(err?.error?.hasOwnProperty('errors')){
+          for (const key in err?.error?.errors) {
+            this.toasterService.error(err?.error?.errors[key])
+          }
+        }
+      }
       console.log(err);
     })
   }
@@ -253,6 +269,13 @@ export class dashboardComponent implements OnInit {
         this.toasterService.error("No data found, please try again after few minutes")
       }
     }, err => {
+      if(err.hasOwnProperty('error')){
+        if(err?.error?.hasOwnProperty('errors')){
+          for (const key in err?.error?.errors) {
+            this.toasterService.error(err?.error?.errors[key])
+          }
+        }
+      }
       console.log(err);
     })
   }
