@@ -4,6 +4,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import * as revenue from "../../../../dummyDatas/revenue";
 import * as moment from "moment";
 import { AuthService } from 'src/app/shared/services/firebase/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-recievable',
@@ -121,7 +122,9 @@ export class recievableComponent implements OnInit {
   constructor(
     private helperService: HelperService,
     private localService: LocalService,
-    private http:AuthService
+    private http:AuthService,
+    private toasterService:ToastrService
+
   ) {}
   ngOnInit(): void {
     this.timeSelected = this.times[0].value;
@@ -173,81 +176,88 @@ export class recievableComponent implements OnInit {
     let last6Months = new Date();
     last6Months.setMonth(today.getMonth() - 6); // data 6 months from now
     this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from invoice startposition 1`, true).subscribe((res: any) => {
-      res.data.QueryResponse.Invoice.map(inv => {
-        let txnDate = moment(inv.TxnDate).format('MM/DD/YYYY');
-        // txnDate = txnDate.substring(0, txnDate.indexOf(','));
-        let date = txnDate;
-        if (new Date(date) >= last30Days && new Date(date) <= today) {
-          mutable30DaysSum += inv.Balance;
-          mutable30DaysOverDueSum +=
-            new Date(inv.DueDate) < new Date() ? inv.Balance : 0;
-          mutable30DaysNotDueSum +=
+      if(res?.data != null){
+        res.data.QueryResponse.Invoice.map(inv => {
+          let txnDate = moment(inv.TxnDate).format('MM/DD/YYYY');
+          // txnDate = txnDate.substring(0, txnDate.indexOf(','));
+          let date = txnDate;
+          if (new Date(date) >= last30Days && new Date(date) <= today) {
+            mutable30DaysSum += inv.Balance;
+            mutable30DaysOverDueSum +=
+              new Date(inv.DueDate) < new Date() ? inv.Balance : 0;
+            mutable30DaysNotDueSum +=
+              new Date(inv.DueDate) > new Date() ? inv.Balance : 0;
+          }
+          if (new Date(date) >= last6Months && new Date(date) <= today) {
+            mutable6MonthsSum += inv.Balance;
+            mutable6MonthsOverDueSum +=
+              new Date(inv.DueDate) < new Date() ? inv.Balance : 0;
+            mutable6MonthsNotDueSum +=
+              new Date(inv.DueDate) > new Date() ? inv.Balance : 0;
+          }
+          mutableSum += inv.Balance;
+    
+          mutableNotDueSum +=
             new Date(inv.DueDate) > new Date() ? inv.Balance : 0;
-        }
-        if (new Date(date) >= last6Months && new Date(date) <= today) {
-          mutable6MonthsSum += inv.Balance;
-          mutable6MonthsOverDueSum +=
+          mutableOverDueSum +=
             new Date(inv.DueDate) < new Date() ? inv.Balance : 0;
-          mutable6MonthsNotDueSum +=
-            new Date(inv.DueDate) > new Date() ? inv.Balance : 0;
-        }
-        mutableSum += inv.Balance;
-  
-        mutableNotDueSum +=
-          new Date(inv.DueDate) > new Date() ? inv.Balance : 0;
-        mutableOverDueSum +=
-          new Date(inv.DueDate) < new Date() ? inv.Balance : 0;
-  
-        let dueDate = this.helperService.calculateDays(inv.DueDate);
-        mutableData.push({
-          Date: txnDate,
-          num: inv.DocNumber,
-          Customer: inv.CustomerRef.name,
-          Amount: inv.Balance,
-          TotalAmt: inv.TotalAmt,
-          Status: dueDate,
-          id: inv.Id,
-        });
-      });
-      this.dueData = mutableData.filter((item) => {
-        return item.Amount != 0;
-      });
-      this.paidData = mutableData.filter((item) => {
-        return item.Amount == 0;
-      });
-      this.barData = this.helperService.getMonthlyExpenses(mutableData);
-      this.MTD = this.helperService.getCurrentMonthExpenses(mutableData);
-      this.YTD = this.helperService.getYearlyExpenses(mutableData);
-      const mutableQuarterly =
-        this.helperService.getQuarterlyExpenses(mutableData);
-      this.quarter = parseFloat(
-        mutableQuarterly[Object.keys(mutableQuarterly).pop()]
-      ).toFixed(2);
-      this.totalSum = mutableSum;
-      this.last30DaysSum = mutable30DaysSum;
-      this.last6MonthsSum = mutable6MonthsSum;
-      this.notDueSum = mutableNotDueSum;
-      this.last30DaysNotDue = mutable30DaysNotDueSum;
-      this.last6MonthsNotDue = mutable6MonthsNotDueSum;
-      this.overDueSum = mutableOverDueSum;
-      this.last30DaysOverDue = mutable30DaysOverDueSum;
-      this.last6MonthsOverDue = mutable6MonthsOverDueSum;
-      this.formattedData = mutableData;
-      let arr = [];    
-      this.barData.map((e) => {
-        if (e.hasOwnProperty("label")) {
-          this.verticalBar.xaxis.categories.map((i) => {
-            if (e.label == i) {
-              arr.push(e.value);
-            }
+    
+          let dueDate = this.helperService.calculateDays(inv.DueDate);
+          mutableData.push({
+            Date: txnDate,
+            num: inv.DocNumber,
+            Customer: inv.CustomerRef.name,
+            Amount: inv.Balance,
+            TotalAmt: inv.TotalAmt,
+            Status: dueDate,
+            id: inv.Id,
           });
-        }
-      });
-      arr.map((v) => {
-        this.verticalBar.series[0].data.push(v);
-      });
-      console.log(this.dueData, this.paidData);
-      this.selectTime()
+        });
+        this.dueData = mutableData.filter((item) => {
+          return item.Amount != 0;
+        });
+        this.paidData = mutableData.filter((item) => {
+          return item.Amount == 0;
+        });
+        this.barData = this.helperService.getMonthlyExpenses(mutableData);
+        this.MTD = this.helperService.getCurrentMonthExpenses(mutableData);
+        this.YTD = this.helperService.getYearlyExpenses(mutableData);
+        const mutableQuarterly =
+          this.helperService.getQuarterlyExpenses(mutableData);
+        this.quarter = parseFloat(
+          mutableQuarterly[Object.keys(mutableQuarterly).pop()]
+        ).toFixed(2);
+        this.totalSum = mutableSum;
+        this.last30DaysSum = mutable30DaysSum;
+        this.last6MonthsSum = mutable6MonthsSum;
+        this.notDueSum = mutableNotDueSum;
+        this.last30DaysNotDue = mutable30DaysNotDueSum;
+        this.last6MonthsNotDue = mutable6MonthsNotDueSum;
+        this.overDueSum = mutableOverDueSum;
+        this.last30DaysOverDue = mutable30DaysOverDueSum;
+        this.last6MonthsOverDue = mutable6MonthsOverDueSum;
+        this.formattedData = mutableData;
+        let arr = [];    
+        this.barData.map((e) => {
+          if (e.hasOwnProperty("label")) {
+            this.verticalBar.xaxis.categories.map((i) => {
+              if (e.label == i) {
+                arr.push(e.value);
+              }
+            });
+          }
+        });
+        arr.map((v) => {
+          this.verticalBar.series[0].data.push(v);
+        });
+        console.log(this.dueData, this.paidData);
+        this.selectTime()
+      }
+      else{
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    },err=>{
+      console.log(err);
     })
     
   }

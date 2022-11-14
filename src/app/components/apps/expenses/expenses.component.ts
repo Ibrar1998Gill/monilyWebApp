@@ -4,6 +4,7 @@ import { LocalService } from "src/app/shared/services/local.service";
 import * as data from "../../../../dummyDatas/expenses";
 import * as moment from "moment";
 import { AuthService } from "src/app/shared/services/firebase/auth.service";
+import { ToastrService } from "ngx-toastr";
 @Component({
   selector: "app-expenses",
   templateUrl: "./expenses.component.html",
@@ -47,7 +48,8 @@ export class expensesComponent implements OnInit {
   constructor(
     private localService: LocalService,
     private helperService: HelperService,
-    private http: AuthService
+    private http: AuthService,
+    private toasterService:ToastrService
   ) {
   }
   ngOnInit(): void {
@@ -62,66 +64,71 @@ export class expensesComponent implements OnInit {
   getExpenses() {
     this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from purchase startposition 1`, true).subscribe((res: any) => {
       let ExpenseDate = []
-      res?.data?.QueryResponse?.Purchase.map(expense => {
-        ExpenseDate.push(expense)
-      })
-      let prices = [];
-      ExpenseDate.map((expense) => {
-        let memo = expense.PrivateNote;
-        let txnDate = expense.TxnDate;
-        let payee = expense.EntityRef ? expense.EntityRef.name : "";
-        let category =
-          expense.Line[0].AccountBasedExpenseLineDetail.AccountRef.name;
-        this.mutableData.push({
-          Date: txnDate,
-          Payee: payee,
-          Category: category,
-          Memo: memo,
-          Amount: expense.TotalAmt,
-          id: expense.Id,
+      if(res?.data != null){
+        res?.data?.QueryResponse?.Purchase.map(expense => {
+          ExpenseDate.push(expense)
+        })
+        let prices = [];
+        ExpenseDate.map((expense) => {
+          let memo = expense.PrivateNote;
+          let txnDate = expense.TxnDate;
+          let payee = expense.EntityRef ? expense.EntityRef.name : "";
+          let category =
+            expense.Line[0].AccountBasedExpenseLineDetail.AccountRef.name;
+          this.mutableData.push({
+            Date: txnDate,
+            Payee: payee,
+            Category: category,
+            Memo: memo,
+            Amount: expense.TotalAmt,
+            id: expense.Id,
+          });
+          if (this.mutablePieData[category]) {
+            this.mutablePieData[category] += parseFloat(expense.TotalAmt);
+          } else {
+            this.mutablePieData[category] = parseFloat(expense.TotalAmt);
+          }
         });
-        if (this.mutablePieData[category]) {
-          this.mutablePieData[category] += parseFloat(expense.TotalAmt);
-        } else {
-          this.mutablePieData[category] = parseFloat(expense.TotalAmt);
+        for (const key in this.mutablePieData) {
+          let val = Math.round(this.mutablePieData[key]);
+          this.pieArray.push([key, val]);
+          prices.push(val);
         }
-      });
-      for (const key in this.mutablePieData) {
-        let val = Math.round(this.mutablePieData[key]);
-        this.pieArray.push([key, val]);
-        prices.push(val);
+  
+        var sum = prices.reduce(function (a, b) {
+          return a + b;
+        }, 0);
+        this.totalExpenses = sum;
+        let sortedDesc = this.mutableData.sort(function (a, b) {
+          return <any>new Date(b.Date) - <any>new Date(a.Date);
+        });
+        this.RecentTranSort = sortedDesc.slice(0, 10);
+        this.top10Expenses = this.helperService.top10ExpensesFunc(
+          this.mutableData
+        );
+        this.yearlyExpenses = this.helperService.getYearlyExpenses(
+          this.mutableData
+        );
+        const mutableQuarterly = this.helperService.getQuarterlyExpenses(
+          this.mutableData
+        );
+        this.quarterlyExpenses = parseFloat(
+          mutableQuarterly[Object.keys(mutableQuarterly).pop()]
+        ).toFixed(2);
+        this.currentMonthExpenses = this.helperService.getCurrentMonthExpenses(
+          this.mutableData
+        );
+        this.RecentTransaction = this.mutableData.slice(0, 10);
+        console.log(this.RecentTranSort, this.top10Expenses);
       }
-
-      var sum = prices.reduce(function (a, b) {
-        return a + b;
-      }, 0);
-      this.totalExpenses = sum;
-      let sortedDesc = this.mutableData.sort(function (a, b) {
-        return <any>new Date(b.Date) - <any>new Date(a.Date);
-      });
-      this.RecentTranSort = sortedDesc.slice(0, 10);
-      this.top10Expenses = this.helperService.top10ExpensesFunc(
-        this.mutableData
-      );
-      this.yearlyExpenses = this.helperService.getYearlyExpenses(
-        this.mutableData
-      );
-      const mutableQuarterly = this.helperService.getQuarterlyExpenses(
-        this.mutableData
-      );
-      this.quarterlyExpenses = parseFloat(
-        mutableQuarterly[Object.keys(mutableQuarterly).pop()]
-      ).toFixed(2);
-      this.currentMonthExpenses = this.helperService.getCurrentMonthExpenses(
-        this.mutableData
-      );
-      this.RecentTransaction = this.mutableData.slice(0, 10);
-      console.log(this.RecentTranSort, this.top10Expenses);
-    }), err => {
+      else{
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }, err => {
       console.log('====================================');
       console.log(err, "error hai");
       console.log('====================================');
-    }
+    })
   }
   revenueGenerate() {
 
