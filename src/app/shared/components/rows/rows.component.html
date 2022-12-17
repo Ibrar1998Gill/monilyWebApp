@@ -1,0 +1,39 @@
+<div class="container-fluid">
+  <div class="page-title">
+    <div class="row">
+      <div class="col-12">
+        <ngb-accordion #acc="ngbAccordion" [closeOthers]="true" activeIds="0">
+          <ngb-panel title="{{data?.Header ? data?.Header?.ColData[0]?.value : 'Summary'}}" id="{{index}}">
+            <ng-template ngbPanelContent *ngIf="data?.Rows?.Row">
+              <div class="row" >
+                <div class="col-sm-12" *ngFor="let item of data?.Rows?.Row; let i = index;">
+                  <!-- <ng-template *ngIf="item; else rows"> -->
+                    <div class="d-flex justify-content-between align-items-center" *ngIf="item?.ColData; else rows">
+                      <p>{{i}}. {{item?.ColData[0]?.value}}</p>
+                      <p>{{item?.ColData[1]?.value ? (item?.ColData[1]?.value | currency : 'USD') : null}}</p>
+                    </div>
+                  <!-- </ng-template> -->
+                  <ng-template #rows>
+                    <app-rows [data]="item" [index]="i"></app-rows>
+                  </ng-template> 
+                  <ng-template *ngIf="item?.Summary">
+                    <p>{{item?.Summary?.ColData[0]?.value}}</p>
+                      <p>{{item?.Summary?.ColData[1]?.value ? (item?.Summary?.ColData[1]?.value | currency : 'USD') : null}}</p>
+                  </ng-template>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent *ngIf="data?.Summary">
+              <div class="row" >
+                <div class="col-sm-12 d-flex justify-content-between align-items-center" >
+                  <p class="fontWeight">{{data?.Summary?.ColData[0]?.value}}</p>
+                    <p class="fontWeight">{{data?.Summary?.ColData[1]?.value ? (data?.Summary?.ColData[1]?.value | currency :'USD') : null}}</p>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-panel>
+        </ngb-accordion>
+      </div>
+    </div>
+  </div>
+</div>

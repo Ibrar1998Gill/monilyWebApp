@@ -33,7 +33,7 @@ import { ShowOptionsDirective } from './directives/show-options.directive';
 import { ChatService } from './services/chat.service';
 import { LayoutService } from './services/layout.service';
 import { NavService } from './services/nav.service';
-
+import {RowsComponent} from './components/rows/rows.component'
 @NgModule({
   declarations: [
     HeaderComponent,
@@ -56,7 +56,8 @@ import { NavService } from './services/nav.service';
     BookmarkComponent,
     CartComponent,
     MessageBoxComponent,
-    MyAccountComponent
+    MyAccountComponent,
+    RowsComponent
   ],
   imports: [
     CommonModule,
@@ -83,7 +84,8 @@ import { NavService } from './services/nav.service';
     TapToTopComponent,
     DisableKeyPressDirective,
     OnlyAlphabetsDirective,
-    OnlyNumbersDirective
+    OnlyNumbersDirective,
+    RowsComponent
   ],
 })
 export class SharedModule { }

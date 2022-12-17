@@ -11,23 +11,23 @@ import { LocalService } from 'src/app/shared/services/local.service';
 export class MessageBoxComponent implements OnInit {
 
   public openMessageBox: boolean = false;
-  socket = io('https://monily-mobile-app.herokuapp.com');
+  // socket = io('https://monily-mobile-app.herokuapp.com');
   constructor(private http: AuthService, private localService: LocalService) { }
   messageLists:any=[];
   userDetails:any;
   ngOnInit() {
     this.getRecentUser()
-    this.socket.on('message', (messageInfo) => {
-      console.log('====================================');
-      console.log(messageInfo,"hello app message");
-      console.log('====================================');
-      var msg = JSON.parse(messageInfo)
-      if(this.userDetails != null){
-        if(msg?.to_id == this.userDetails?.userId || msg?.from_id == this.userDetails?.userId){
-          this.getChat()
-        }
-      }
-    });
+    // this.socket.on('message', (messageInfo) => {
+    //   console.log('====================================');
+    //   console.log(messageInfo,"hello app message");
+    //   console.log('====================================');
+    //   var msg = JSON.parse(messageInfo)
+    //   if(this.userDetails != null){
+    //     if(msg?.to_id == this.userDetails?.userId || msg?.from_id == this.userDetails?.userId){
+    //       this.getChat()
+    //     }
+    //   }
+    // });
   }
 
   toggleMessageBox() {

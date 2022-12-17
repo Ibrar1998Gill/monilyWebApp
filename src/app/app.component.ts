@@ -17,7 +17,7 @@ const Swal = require('sweetalert2')
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  socket = io('https://monily-mobile-app.herokuapp.com');
+  // socket = io('https://monily-mobile-app.herokuapp.com');
   companies: any = [];
   companySelected:any = null;
   // For Progressbar
@@ -40,16 +40,17 @@ export class AppComponent {
     }
   }
   ngOnInit() {
+    this.companySelected = null
     this.observe()
     if(this.localService.getJsonValue('company')== null){
       this.getRecentUser()
     }
-    this.socket.on('message', (messageInfo) => {
-      var msg = JSON.parse(messageInfo)
-      if (msg?.to_id == this.userDetails?.userId) {
-        this.showPush(msg)
-      }
-    });
+    // this.socket.on('message', (messageInfo) => {
+    //   var msg = JSON.parse(messageInfo)
+    //   if (msg?.to_id == this.userDetails?.userId) {
+    //     this.showPush(msg)
+    //   }
+    // });
   }
   getRecentUser() {
     this.userDetails = this.localService.getJsonValue('authUser')
@@ -57,6 +58,7 @@ export class AppComponent {
       UniversalService.companyModal.next(true)
       if (this.userDetails.hasOwnProperty('qbconfig')) {
         this.companyFound = true;
+        this.companies = []
         this.userDetails.qbconfig.map((v: any) => {
           this.companies.push(v)
         })

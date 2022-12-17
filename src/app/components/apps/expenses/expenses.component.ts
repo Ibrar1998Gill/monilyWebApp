@@ -28,6 +28,9 @@ export class expensesComponent implements OnInit {
   yearlyData: any;
   quaterlyData: any;
   totalExpenses: number;
+  lastyear: any = moment().format('YYYY')
+  startDate: any = moment(new Date(this.lastyear, 0, 1)).format('YYYY-MM-DD')
+  endDate: any = moment().format('YYYY-MM-DD')
   pieChart3: any = {
     chartType: "PieChart",
     dataTable: this.pieArray,
@@ -61,64 +64,16 @@ export class expensesComponent implements OnInit {
     this.getExpenses()
   }
   getExpenses() {
-    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from purchase startposition 1`, true).subscribe((res: any) => {
-      let ExpenseDate = []
+    // by columns
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Quarter&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+      // let ExpenseDate = []
       if(res?.data != null){
-        res?.data?.QueryResponse?.Purchase.map(expense => {
-          ExpenseDate.push(expense)
-        })
-        let prices = [];
-        ExpenseDate.map((expense) => {
-          let memo = expense.PrivateNote;
-          let txnDate = expense.TxnDate;
-          let payee = expense.EntityRef ? expense.EntityRef.name : "";
-          let category =
-            expense.Line[0].AccountBasedExpenseLineDetail.AccountRef.name;
-          this.mutableData.push({
-            Date: txnDate,
-            Payee: payee,
-            Category: category,
-            Memo: memo,
-            Amount: expense.TotalAmt,
-            id: expense.Id,
-          });
-          if (this.mutablePieData[category]) {
-            this.mutablePieData[category] += parseFloat(expense.TotalAmt);
-          } else {
-            this.mutablePieData[category] = parseFloat(expense.TotalAmt);
-          }
-        });
-        for (const key in this.mutablePieData) {
-          let val = Math.round(this.mutablePieData[key]);
-          this.pieArray.push([key, val]);
-          prices.push(val);
+      res?.data?.Rows?.Row ? res?.data?.Rows?.Row?.map(e => {
+        if (e?.group == 'Expenses') {          
+          this.yearlyExpenses = e?.Summary?.ColData[e?.Summary?.ColData.length - 1]?.value
+          this.quarterlyExpenses = e?.Summary?.ColData[e?.Summary?.ColData.length - 2]?.value
         }
-  
-        var sum = prices.reduce(function (a, b) {
-          return a + b;
-        }, 0);
-        this.totalExpenses = sum;
-        let sortedDesc = this.mutableData.sort(function (a, b) {
-          return <any>new Date(b.Date) - <any>new Date(a.Date);
-        });
-        this.RecentTranSort = sortedDesc.slice(0, 10);
-        this.top10Expenses = this.helperService.top10ExpensesFunc(
-          this.mutableData
-        );
-        this.yearlyExpenses = this.helperService.getYearlyExpenses(
-          this.mutableData
-        );
-        const mutableQuarterly = this.helperService.getQuarterlyExpenses(
-          this.mutableData
-        );
-        this.quarterlyExpenses = parseFloat(
-          mutableQuarterly[Object.keys(mutableQuarterly).pop()]
-        ).toFixed(2);
-        this.currentMonthExpenses = this.helperService.getCurrentMonthExpenses(
-          this.mutableData
-        );
-        this.RecentTransaction = this.mutableData.slice(0, 10);
-        console.log(this.RecentTranSort, this.top10Expenses);
+      }) : null
       }
       else{
         this.toasterService.error("No data found, please try again after few minutes")
@@ -128,10 +83,71 @@ export class expensesComponent implements OnInit {
       console.log(err, "error hai");
       console.log('====================================');
     })
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Month&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+      if(res?.data != null){
+      console.log(res?.data,"hello");
+      
+      res?.data?.Rows?.Row ? res?.data?.Rows?.Row?.map(e => {
+        if (e?.group == 'Expenses') {
+          console.log(e);
+          this.currentMonthExpenses = e?.Summary?.ColData[e?.Summary?.ColData.length - 2]?.value
+        }
+      }) : null
+      }
+      else{
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }, err => {
+      console.log('====================================');
+      console.log(err, "error hai");
+      console.log('====================================');
+    })
+    // annual data
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+      if (res?.data != null) {
+        res.data.Rows.Row.map((v) => {
+          if (v.hasOwnProperty("group")) {
+            if (v.group == "Expenses") {
+              this.rowsPush(v)
+            }
+          }
+        });
+        this.redrawChart()
+      }
+      else {
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }, err => {
+      if (err.hasOwnProperty('error')) {
+        if (err?.error?.hasOwnProperty('errors')) {
+          for (const key in err?.error?.errors) {
+            this.toasterService.error(err?.error?.errors[key])
+          }
+        }
+      }
+      console.log('====================================');
+      console.log(err, "error hai");
+      console.log('====================================');
+    })
   }
   revenueGenerate() {
 
     // this.getExpenses()
 
+  }
+  redrawChart() {
+    let ccComponent = this.pieChart3.component;
+    //force a redraw
+    ccComponent.draw();
+  }
+  rowsPush(v){
+    if (v?.hasOwnProperty('Rows')) {
+      v?.Rows?.Row?.map((e, i) => {
+        if (e?.hasOwnProperty('ColData')) {
+          return this.pieArray.push([e?.ColData[0]?.value, Math.round(e?.ColData[1]?.value)]);
+        }
+        else this.rowsPush(e)
+      })
+    }
   }
 }

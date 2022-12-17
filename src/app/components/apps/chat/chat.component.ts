@@ -36,7 +36,8 @@ export class chatComponent implements OnInit {
   constructor(private http: AuthService, private toaster: ToastrService, private localService: LocalService) {
     this.searchTerm = debounce(this.searchTerm, 1000)
    }
-  socket = io('https://monily-mobile-app.herokuapp.com');
+  socket = io();
+  // socket = io('https://monily-mobile-app.herokuapp.com');
   results$: Observable<any>
   ngOnInit() {
     this.getRecentUser()

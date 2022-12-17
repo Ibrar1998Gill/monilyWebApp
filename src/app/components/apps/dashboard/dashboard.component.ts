@@ -25,7 +25,7 @@ export class dashboardComponent implements OnInit {
   primary_color = localStorage.getItem("primary_color") || "#5330ab";
   companyid: any;
   mutablePieData: any = {};
-  totalExpenses: number;
+  totalExpenses: number = 0;
   profitAndLoss: number = 0;
   expensesBar: number = 0;
   monthlyDataRevenue: any;
@@ -78,6 +78,9 @@ export class dashboardComponent implements OnInit {
       categories: ["Income", "Expenses"],
     },
   };
+  lastyear: any = moment().format('YYYY')
+  startDate: any = moment(new Date(this.lastyear, 0, 1)).format('YYYY-MM-DD')
+  endDate: any = moment().format('YYYY-MM-DD')
   redrawChart() {
     let ccComponent = this.pieChart3.component;
     //force a redraw
@@ -90,7 +93,7 @@ export class dashboardComponent implements OnInit {
     }
     if (this.companyid != null) {
       this.getExpenses();
-      this.dashboardCharts();
+      // this.dashboardCharts();
       this.revenueGenerate();
       this.paymentGenerate();
     } else return;
@@ -109,40 +112,50 @@ export class dashboardComponent implements OnInit {
     });
   }
   getExpenses() {
-    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}`, true).subscribe((res:any) => {
-      console.log('====================================');
-      console.log(res, "res hai");
-      console.log('====================================');
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
-      res.data.Rows.Row.map((v) => {
-        if (v.hasOwnProperty("group")) {
-          if (v.group == "Income") {
-            if (v?.hasOwnProperty("Summary")) {
-              this.profitAndLoss = Math.round(v.Summary.ColData[1].value);
+        res.data.Rows.Row.map((v) => {
+          if (v.hasOwnProperty("group")) {
+            if (v.group == "Income") {
+              if (v?.hasOwnProperty("Summary")) {
+                this.profitAndLoss = Math.round(v.Summary.ColData[1].value);
+              }
             }
           }
-        }
-        if (v.hasOwnProperty("group")) {
-          if (v.group == "Expenses") {
-            if (v?.hasOwnProperty("Summary")) {
-              this.expensesBar = Math.round(v.Summary.ColData[1].value);
+          if (v.hasOwnProperty("group")) {
+            if (v.group == "Expenses") {
+              if (v?.hasOwnProperty("Summary")) {
+                this.expensesBar = Math.round(v.Summary.ColData[1].value);
+              }
+              if (v?.hasOwnProperty('Rows')) {
+                v?.Rows?.Row?.map((e, i) => {
+                  if (e?.hasOwnProperty('ColData')) {
+                    console.log(e?.ColData[0]?.value, "vvv");
+                    this.pieArray.push([e?.ColData[0]?.value, Math.round(e?.ColData[1]?.value)]);
+                  }
+                  else return
+                })
+              }
             }
           }
-        }
-      });
-      this.chart?.updateSeries([
-        {
-          name: "USD",
-          data: [this.profitAndLoss, this.expensesBar],
-        },
-      ]);
-    }
-    else{
-      this.toasterService.error("No data found, please try again after few minutes")
-    }
+        });
+        this.redrawChart()
+        this.totalExpenses = this.expensesBar;
+        console.log(this.pieArray, "hellopier");
+
+        this.chart?.updateSeries([
+          {
+            name: "USD",
+            data: [this.profitAndLoss, this.expensesBar],
+          },
+        ]);
+      }
+      else {
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
     }, err => {
-      if(err.hasOwnProperty('error')){
-        if(err?.error?.hasOwnProperty('errors')){
+      if (err.hasOwnProperty('error')) {
+        if (err?.error?.hasOwnProperty('errors')) {
           for (const key in err?.error?.errors) {
             this.toasterService.error(err?.error?.errors[key])
           }
@@ -183,8 +196,8 @@ export class dashboardComponent implements OnInit {
         this.toasterService.error("No data found, please try again after few minutes")
       }
     }, err => {
-      if(err.hasOwnProperty('error')){
-        if(err?.error?.hasOwnProperty('errors')){
+      if (err.hasOwnProperty('error')) {
+        if (err?.error?.hasOwnProperty('errors')) {
           for (const key in err?.error?.errors) {
             this.toasterService.error(err?.error?.errors[key])
           }
@@ -226,8 +239,8 @@ export class dashboardComponent implements OnInit {
         this.toasterService.error("No data found, please try again after few minutes")
       }
     }, err => {
-      if(err.hasOwnProperty('error')){
-        if(err?.error?.hasOwnProperty('errors')){
+      if (err.hasOwnProperty('error')) {
+        if (err?.error?.hasOwnProperty('errors')) {
           for (const key in err?.error?.errors) {
             this.toasterService.error(err?.error?.errors[key])
           }
@@ -262,15 +275,15 @@ export class dashboardComponent implements OnInit {
         var sum = prices.reduce(function (a, b) {
           return a + b;
         }, 0);
-        this.totalExpenses = sum;
+        this.totalExpenses = this.expensesBar;
         this.redrawChart()
       }
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
     }, err => {
-      if(err.hasOwnProperty('error')){
-        if(err?.error?.hasOwnProperty('errors')){
+      if (err.hasOwnProperty('error')) {
+        if (err?.error?.hasOwnProperty('errors')) {
           for (const key in err?.error?.errors) {
             this.toasterService.error(err?.error?.errors[key])
           }

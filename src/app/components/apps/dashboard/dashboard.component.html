@@ -6,7 +6,9 @@
         <div class="bg-primary b-r-4 card-body minHeight">
           <div class="media static-top-widget">
             <div class="media-body">
-              <h3 class="m-0">Profit And Loss</h3>
+              <div class="d-flex flex-wrap align-items-baseline">
+                <h3 class="m-0">Profit And Loss / </h3> <span>Annually</span>
+              </div>
               <span class="d-flex align-items-center">
                 <!-- <app-feather-icons class="margin1 feather-10" [icon]="'dollar-sign'"></app-feather-icons> -->
                 <span class="mb-0 counter">{{profitAndLoss + expensesBar | currency:'USD'}}</span>
@@ -26,7 +28,9 @@
         <div class="bg-primary b-r-4 card-body minHeight">
           <div class="media static-top-widget">
             <div class="media-body">
-              <h3 class="m-0">Expenses</h3>
+              <div class="d-flex flex-wrap align-items-baseline">
+                <h3 class="m-0">Expenses / </h3> <span>Annually</span>
+              </div>
               <span class="d-flex align-items-center">
                 <!-- <app-feather-icons class="margin1" [icon]="'dollar-sign'"></app-feather-icons> -->
                 <span class="mb-0 counter">{{totalExpenses | currency:'USD'}}</span>
