@@ -127,31 +127,33 @@
                       <thead>
                         <tr>
                           <th scope="col">#</th>
-                          <th scope="col">Payee</th>
-                          <th scope="col">Category</th>
-                          <th scope="col">Amount</th>
                           <th scope="col">Date</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Memo/Description</th>
+                          <th scope="col">Account</th>
+                          <th scope="col">Amount</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr
                           *ngFor="
-                            let transaction of RecentTranSort
+                            let recentTransaction of recentTransactions
                               | paginate
                                 : {
-                                    itemsPerPage: 5,
+                                    itemsPerPage: 10,
                                     currentPage: recentPage,
                                     totalItems: total
-                                  }
+                                  };let i = index
                           "
                         >
-                          <th scope="row">{{ transaction.id }}</th>
+                          <th scope="row">{{ i }}</th>
                           <td>
-                            {{ transaction.Payee ? transaction.Payee : "N/A" }}
+                            <label class="descriptionCol">{{ recentTransaction[0].value ? (recentTransaction[0].value | date: 'dd/MM/yyyy') : "N/A" }}</label>
                           </td>
-                          <td>{{ transaction.Category ? transaction.Category : "N/A" }}</td>
-                          <td>{{ transaction.Amount | currency: "USD" }}</td>
-                          <td>{{ transaction.Date ? transaction.Date : "N/A" }}</td>
+                          <td><label class="descriptionCol">{{ recentTransaction[4].value ? recentTransaction[4].value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol">{{ recentTransaction[6].value ? recentTransaction[6].value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol">{{ recentTransaction[7].value ? recentTransaction[7].value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol">{{ recentTransaction[9].value ? (recentTransaction[9].value | currency : "USD") : (0 | currency: "USD") }}</label></td>
                         </tr>
                       </tbody>
                     </table>

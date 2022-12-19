@@ -19,7 +19,6 @@ export class expensesComponent implements OnInit {
   mutablePieData: any = {};
   pieArray: any = [["Task", "expenses"]];
   RecentTranSort: any;
-  RecentTransaction: any;
   top10Expenses: any;
   currentMonthExpenses: any;
   quarterlyExpenses: any;
@@ -28,8 +27,10 @@ export class expensesComponent implements OnInit {
   yearlyData: any;
   quaterlyData: any;
   totalExpenses: number;
+  recentTransactions:any = []
   lastyear: any = moment().format('YYYY')
   startDate: any = moment(new Date(this.lastyear, 0, 1)).format('YYYY-MM-DD')
+  lastMonthStartDate: any = moment().subtract(1, "month").format('YYYY-MM-DD')
   endDate: any = moment().format('YYYY-MM-DD')
   pieChart3: any = {
     chartType: "PieChart",
@@ -57,11 +58,9 @@ export class expensesComponent implements OnInit {
   ngOnInit(): void {
     this.companyid = this.localService.getJsonValue("company");
     this.mutableData = [];
-    if (this.companyid != null) {
-      this.revenueGenerate();
-    }
-    else return
     this.getExpenses()
+    console.log(moment().subtract(1, "month").format('YYYY-MM-DD'));
+    
   }
   getExpenses() {
     // by columns
@@ -85,8 +84,6 @@ export class expensesComponent implements OnInit {
     })
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Month&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if(res?.data != null){
-      console.log(res?.data,"hello");
-      
       res?.data?.Rows?.Row ? res?.data?.Rows?.Row?.map(e => {
         if (e?.group == 'Expenses') {
           console.log(e);
@@ -125,15 +122,41 @@ export class expensesComponent implements OnInit {
           }
         }
       }
+      console.log(err, "error hai");
+    })
+    // recent transactions
+    this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&start_date=${this.lastMonthStartDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`,true).subscribe((res:any)=>{
+      if (res?.data != null) {
+        res?.data?.Rows?.Row.reverse()?.map(e=>{
+          if(e?.ColData[e?.ColData?.length - 1].value != '' && e?.ColData[e?.ColData?.length - 1].value.includes('-')){
+            this.recentTransactions.push(e?.ColData)
+          }
+          else{
+            return
+          }
+        })        
+      }
+      else {
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }),err=>{
+      console.log(err);
+    }
+    // top 10 transactions
+    this.http.getMonilyData(`report?entity=BalanceSheet&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+      if(res?.data != null){
+      console.log(res?.data,"blacnedata");
+      console.log(this.findRows(res?.data, 'BankAccounts'),'hellorow');
+      
+      }
+      else{
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }, err => {
       console.log('====================================');
       console.log(err, "error hai");
       console.log('====================================');
     })
-  }
-  revenueGenerate() {
-
-    // this.getExpenses()
-
   }
   redrawChart() {
     let ccComponent = this.pieChart3.component;
@@ -147,6 +170,17 @@ export class expensesComponent implements OnInit {
           return this.pieArray.push([e?.ColData[0]?.value, Math.round(e?.ColData[1]?.value)]);
         }
         else this.rowsPush(e)
+      })
+    }
+  }
+  findRows(v,val){
+    if (v?.hasOwnProperty('Rows')) {
+      v?.Rows?.Row?.map((e, i) => {
+        if (e?.hasOwnProperty('group')) {
+          if(e?.group == val)
+          return e
+        }
+        else this.findRows(e, val)
       })
     }
   }

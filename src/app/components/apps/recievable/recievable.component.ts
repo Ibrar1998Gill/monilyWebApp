@@ -158,6 +158,10 @@ export class recievableComponent implements OnInit {
     ]);
   }
   getpayments() {
+    this.http.getMonilyData(`report?entity=AgedReceivables&id=${this.companyid.id}`,true).subscribe(res=>{
+    }),err=>{
+      console.log(err);
+    }
     let mutableData = [];
     let mutableSum = 0;
     let mutable30DaysSum = 0;
@@ -249,7 +253,6 @@ export class recievableComponent implements OnInit {
         arr.map((v) => {
           this.verticalBar.series[0].data.push(v);
         });
-        console.log(this.dueData, this.paidData);
         this.selectTime()
       }
       else{

@@ -27,6 +27,11 @@ export class dashboardComponent implements OnInit {
   mutablePieData: any = {};
   totalExpenses: number = 0;
   profitAndLoss: number = 0;
+  otherIncome: number = 0;
+  otherExpenses: number = 0;
+  YearlyprofitAndLoss: number = 0;
+  MonthlyprofitAndLoss: number = 0;
+  QuaterlyprofitAndLoss: number = 0;
   expensesBar: number = 0;
   monthlyDataRevenue: any;
   yearlyDataRevenue: any;
@@ -55,7 +60,7 @@ export class dashboardComponent implements OnInit {
     series: [
       {
         name: "USD",
-        data: [this.profitAndLoss, this.expensesBar],
+        data: [this.profitAndLoss,this.otherIncome, this.expensesBar,this.otherIncome],
       },
     ],
     noData: {
@@ -73,9 +78,15 @@ export class dashboardComponent implements OnInit {
     },
     dataLabels: {
       enabled: true,
+      style: {
+        color:"black"
+      },
+      formatter: function(val, opt) {
+        return "$" + val?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    }
     },
     xaxis: {
-      categories: ["Income", "Expenses"],
+      categories: ["Income","Other Income", "Expenses", "Other Expenses"],
     },
   };
   lastyear: any = moment().format('YYYY')
@@ -97,6 +108,7 @@ export class dashboardComponent implements OnInit {
       this.revenueGenerate();
       this.paymentGenerate();
     } else return;
+    
   }
 
   // observing company selected or not
@@ -115,14 +127,24 @@ export class dashboardComponent implements OnInit {
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
         res.data.Rows.Row.map((v) => {
+          console.log(v,"hellov");
+          
           if (v.hasOwnProperty("group")) {
             if (v.group == "Income") {
               if (v?.hasOwnProperty("Summary")) {
                 this.profitAndLoss = Math.round(v.Summary.ColData[1].value);
               }
             }
-          }
-          if (v.hasOwnProperty("group")) {
+            if (v.group == "OtherIncome") {
+              if (v?.hasOwnProperty("Summary")) {
+                this.otherIncome = Math.round(v.Summary.ColData[1].value);
+              }
+            }
+            if (v.group == "OtherExpenses") {
+              if (v?.hasOwnProperty("Summary")) {
+                this.otherExpenses = Math.round(v.Summary.ColData[1].value);
+              }
+            }
             if (v.group == "Expenses") {
               if (v?.hasOwnProperty("Summary")) {
                 this.expensesBar = Math.round(v.Summary.ColData[1].value);
@@ -130,7 +152,6 @@ export class dashboardComponent implements OnInit {
               if (v?.hasOwnProperty('Rows')) {
                 v?.Rows?.Row?.map((e, i) => {
                   if (e?.hasOwnProperty('ColData')) {
-                    console.log(e?.ColData[0]?.value, "vvv");
                     this.pieArray.push([e?.ColData[0]?.value, Math.round(e?.ColData[1]?.value)]);
                   }
                   else return
@@ -139,16 +160,15 @@ export class dashboardComponent implements OnInit {
             }
           }
         });
-        this.redrawChart()
-        this.totalExpenses = this.expensesBar;
-        console.log(this.pieArray, "hellopier");
-
         this.chart?.updateSeries([
           {
             name: "USD",
-            data: [this.profitAndLoss, this.expensesBar],
+            data: [this.profitAndLoss,this.otherIncome, this.expensesBar,this.otherExpenses],
           },
         ]);
+        console.log(this.helperService.numberWithCommas(this.profitAndLoss),this.helperService.numberWithCommas(this.otherIncome), this.helperService.numberWithCommas(this.expensesBar),this.helperService.numberWithCommas(this.otherExpenses),"hellores");
+        this.redrawChart()
+        this.totalExpenses = this.expensesBar;
       }
       else {
         this.toasterService.error("No data found, please try again after few minutes")
@@ -164,7 +184,47 @@ export class dashboardComponent implements OnInit {
       console.log('====================================');
       console.log(err, "error hai");
       console.log('====================================');
-    })
+    }),err=>{
+      console.log(err);
+      
+    }
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Quarter&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`,true).subscribe((res:any)=>{
+      if (res?.data != null) {
+        res.data.Rows.Row.map((v) => {
+          if (v.hasOwnProperty("group")) {
+            if (v.group == "Income") {
+              if (v?.hasOwnProperty("Summary")) {
+                this.YearlyprofitAndLoss = Math.round(v?.Summary?.ColData[v?.Summary?.ColData?.length - 1]?.value);
+                this.QuaterlyprofitAndLoss = Math.round(v?.Summary?.ColData[v?.Summary?.ColData?.length - 2]?.value);
+              }
+            }
+          }
+        });
+      }
+      else {
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }),err=>{
+      console.log(err);
+    }
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Month&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`,true).subscribe((res:any)=>{
+      if (res?.data != null) {
+        res.data.Rows.Row.map((v) => {
+          if (v.hasOwnProperty("group")) {
+            if (v.group == "Income") {
+              if (v?.hasOwnProperty("Summary")) {
+                this.MonthlyprofitAndLoss = v?.Summary?.ColData[v?.Summary?.ColData?.length - 2]?.value;
+              }
+            }
+          }
+        });
+      }
+      else {
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }),err=>{
+      console.log(err);
+    }
   }
   revenueGenerate() {
     this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from invoice startposition 1`, true).subscribe((res: any) => {

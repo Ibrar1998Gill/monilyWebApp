@@ -57,9 +57,6 @@ export class chatComponent implements OnInit {
   }
 
   addEmoji(event, form) {
-    console.log('====================================');
-    console.log(event, form);
-    console.log('====================================');
     const text = `${event.emoji.native}`;
     // if(!form.value.message){
     this.chatText = form.value.message + text;
@@ -253,9 +250,6 @@ export class chatComponent implements OnInit {
      }
   };
   selectUser(event){
-    console.log('====================================');
-    console.log(event);
-    console.log('====================================');
     this.userChat(event)
   }
 }

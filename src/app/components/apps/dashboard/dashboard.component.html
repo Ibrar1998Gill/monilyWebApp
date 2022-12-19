@@ -48,8 +48,8 @@
       <div class="card o-hidden cstmCard">
         <div class="bg-primary b-r-4 card-body">
           <div class="media static-top-widget flex-column">
-            <div class="d-flex w-100">
-              <h3>Revenue</h3>
+            <div class="d-flex w-100 flex-wrap align-items-baseline">
+              <h3>Revenue / </h3> <span>Annually</span>
             </div>
             <div class="media-body w-100">
               <div class="row mt-3 mb-3">
@@ -58,7 +58,7 @@
                 </div>
                 <div class="col-sm-6">
                   
-                  <span class="mb-0 counter">{{yearlyDataRevenue == null ? (0 | currency:'USD') : yearlyDataRevenue | currency:'USD'}}</span>
+                  <span class="mb-0 counter">{{YearlyprofitAndLoss == null ? (0 | currency:'USD') : YearlyprofitAndLoss | currency:'USD'}}</span>
                 </div>
               </div>
               <div class="row mt-3 mb-3">
@@ -67,7 +67,7 @@
                 </div>
                 <div class="col-sm-6">
                   
-                  <span class="mb-0 counter">{{quaterlyDataRevenue == null ? (0 | currency:'USD') : quaterlyDataRevenue | currency:'USD'}}</span>
+                  <span class="mb-0 counter">{{QuaterlyprofitAndLoss == null ? (0 | currency:'USD') : QuaterlyprofitAndLoss | currency:'USD'}}</span>
                 </div>
               </div>
               <div class="row mt-3 mb-3">
@@ -76,7 +76,7 @@
                 </div>
                 <div class="col-sm-6">
                   
-                  <span class="mb-0 counter">{{monthlyDataRevenue == null ? (0 | currency:'USD') : monthlyDataRevenue | currency:'USD'}}</span>
+                  <span class="mb-0 counter">{{MonthlyprofitAndLoss == null ? (0 | currency:'USD') : MonthlyprofitAndLoss | currency:'USD'}}</span>
                 </div>
               </div>
               <i class="icon-bg" data-feather="dollar-sign"></i>
@@ -89,8 +89,8 @@
       <div class="card o-hidden cstmCard">
         <div class="bg-primary b-r-4 card-body">
           <div class="media static-top-widget flex-column">
-            <div class="d-flex w-100">
-              <h3>Payments</h3>
+            <div class="d-flex w-100 flex-wrap align-items-baseline">
+              <h3>Payments / </h3> <span>Annually</span>
             </div>
             <div class="media-body w-100">
               <div class="row mt-3 mb-3">

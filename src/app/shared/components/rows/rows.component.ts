@@ -14,8 +14,6 @@ export class RowsComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.index,"helotoe");
-    
     }
 
 }
