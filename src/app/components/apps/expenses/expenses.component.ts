@@ -28,6 +28,7 @@ export class expensesComponent implements OnInit {
   quaterlyData: any;
   totalExpenses: number;
   recentTransactions:any = []
+  top10Transactions:any = []
   lastyear: any = moment().format('YYYY')
   startDate: any = moment(new Date(this.lastyear, 0, 1)).format('YYYY-MM-DD')
   lastMonthStartDate: any = moment().subtract(1, "month").format('YYYY-MM-DD')
@@ -124,39 +125,8 @@ export class expensesComponent implements OnInit {
       }
       console.log(err, "error hai");
     })
-    // recent transactions
-    this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&start_date=${this.lastMonthStartDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`,true).subscribe((res:any)=>{
-      if (res?.data != null) {
-        res?.data?.Rows?.Row.reverse()?.map(e=>{
-          if(e?.ColData[e?.ColData?.length - 1].value != '' && e?.ColData[e?.ColData?.length - 1].value.includes('-')){
-            this.recentTransactions.push(e?.ColData)
-          }
-          else{
-            return
-          }
-        })        
-      }
-      else {
-        this.toasterService.error("No data found, please try again after few minutes")
-      }
-    }),err=>{
-      console.log(err);
-    }
-    // top 10 transactions
-    this.http.getMonilyData(`report?entity=BalanceSheet&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
-      if(res?.data != null){
-      console.log(res?.data,"blacnedata");
-      console.log(this.findRows(res?.data, 'BankAccounts'),'hellorow');
-      
-      }
-      else{
-        this.toasterService.error("No data found, please try again after few minutes")
-      }
-    }, err => {
-      console.log('====================================');
-      console.log(err, "error hai");
-      console.log('====================================');
-    })
+    
+    
   }
   redrawChart() {
     let ccComponent = this.pieChart3.component;
@@ -174,13 +144,21 @@ export class expensesComponent implements OnInit {
     }
   }
   findRows(v,val){
+    let func = []
     if (v?.hasOwnProperty('Rows')) {
       v?.Rows?.Row?.map((e, i) => {
         if (e?.hasOwnProperty('group')) {
-          if(e?.group == val)
-          return e
+          if(e?.group == val){
+            e?.Rows?.Row?.map(s=>{
+              this.top10Transactions.push(s?.ColData)
+            })
+            
+          }
+          else{
+            this.findRows(e, val)
+          }
         }
-        else this.findRows(e, val)
+        // else this.findRows(e, val)
       })
     }
   }

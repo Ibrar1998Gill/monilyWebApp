@@ -198,4 +198,11 @@ export class HelperService {
     if (!x) return x;
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
+  formatMMDDYY(inputDate) {
+    // var date = new Date(inputDate);
+    const dd = inputDate.substring(8, inputDate.length);
+    const mm = inputDate.substring(5, 7);
+    const yyyy = inputDate.substring(0, 4);
+    return `${mm}/${dd}/${yyyy}`;
+  }
 }

@@ -12,7 +12,7 @@
             [closeOthers]="true"
             activeIds="static-1"
           >
-            <ngb-panel title="Revenue" id="static-1">
+            <ngb-panel title="Payments" id="static-1">
               <ng-template ngbPanelContent>
                 <div class="card o-hidden cstmCard">
                   <div class="bg-primary b-r-4 card-body">
@@ -56,6 +56,96 @@
                         <i class="icon-bg" data-feather="dollar-sign"></i>
                       </div>
                     </div>
+                  </div>
+                </div>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel title="Recent Transactions" id="static-6">
+              <ng-template ngbPanelContent>
+                <div class="col-sm-12">
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Memo/Description</th>
+                          <th scope="col">Account</th>
+                          <th scope="col">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="
+                            let recentTransaction of recentTransactions
+                              | paginate
+                                : {
+                                    itemsPerPage: 10,
+                                    currentPage: recentPage,
+                                    totalItems: total
+                                  };let i = index
+                          "
+                        >
+                          <th scope="row">{{ i }}</th>
+                          <td>
+                            <label class="descriptionCol">{{ recentTransaction[0]?.value ? (recentTransaction[0]?.value | date: 'dd/MM/yyyy') : "N/A" }}</label>
+                          </td>
+                          <td><label class="descriptionCol">{{ recentTransaction[4]?.value ? recentTransaction[4]?.value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol">{{ recentTransaction[6]?.value ? recentTransaction[6]?.value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol">{{ recentTransaction[7]?.value ? recentTransaction[7]?.value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol">{{ recentTransaction[9]?.value ? (formatMinus(recentTransaction[9]?.value) | currency : "USD") : (0 | currency: "USD") }}</label></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <pagination-controls
+                      (pageChange)="recentPage = $event"
+                    ></pagination-controls>
+                  </div>
+                </div>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel title="Top 10 Transactions" id="static-7">
+              <ng-template ngbPanelContent>
+                <div class="col-sm-12">
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Memo/Description</th>
+                          <th scope="col">Account</th>
+                          <th scope="col">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="
+                            let top10Transaction of top10Transactions
+                              | paginate
+                                : {
+                                    itemsPerPage: 10,
+                                    currentPage: top10TransactionPage,
+                                    totalItems: total
+                                  };let i = index
+                          "
+                        >
+                          <th scope="row">{{ i }}</th>
+                          <td>
+                            <label class="descriptionCol">{{ top10Transaction[0]?.value ? (top10Transaction[0]?.value | date: 'dd/MM/yyyy') : "N/A" }}</label>
+                          </td>
+                          <td><label class="descriptionCol">{{ top10Transaction[4]?.value ? top10Transaction[4]?.value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol">{{ top10Transaction[6]?.value ? top10Transaction[6]?.value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol">{{ top10Transaction[7]?.value ? top10Transaction[7]?.value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol">{{ top10Transaction[9]?.value ? (formatMinus(top10Transaction[9]?.value) | currency : "USD") : (0 | currency: "USD") }}</label></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <pagination-controls
+                      (pageChange)="top10TransactionPage = $event"
+                    ></pagination-controls>
                   </div>
                 </div>
               </ng-template>

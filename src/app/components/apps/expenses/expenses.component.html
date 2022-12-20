@@ -76,7 +76,7 @@
                 </div>
               </ng-template>
             </ngb-panel>
-            <ngb-panel title="Top 10 Transactions" id="static-3">
+            <!-- <ngb-panel title="Top 10 Transactions" id="static-3">
               <ng-template ngbPanelContent>
                 <div class="col-sm-12">
                   <div class="table-responsive">
@@ -107,7 +107,7 @@
                             {{ transaction.Payee ? transaction.Payee : "N/A" }}
                           </td>
                           <td>{{ transaction.Category ? transaction.Category : "N/A" }}</td>
-                          <td>{{ transaction.Amount | currency: "USD" }}</td>
+                          <td>{{ transaction.TotalAmt | currency: "USD" }}</td>
                           <td>{{ transaction.Date ? transaction.Date : "N/A" }}</td>
                         </tr>
                       </tbody>
@@ -163,7 +163,7 @@
                   </div>
                 </div>
               </ng-template>
-            </ngb-panel>
+            </ngb-panel> -->
           </ngb-accordion>
         </div>
       </div>

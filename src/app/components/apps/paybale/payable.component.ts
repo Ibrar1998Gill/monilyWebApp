@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import * as moment from "moment";
 import { ToastrService } from "ngx-toastr";
 import { AuthService } from "src/app/shared/services/firebase/auth.service";
 import { HelperService } from "src/app/shared/services/helper.service";
@@ -12,6 +13,13 @@ import { LocalService } from "src/app/shared/services/local.service";
 export class payableComponent implements OnInit {
   @ViewChild("chart") chart;
   @ViewChild("Verticalchart") Verticalchart;
+  public recentTransactions = []
+  public top10Transactions = []
+
+  lastyear: any = moment().format('YYYY')
+  startDate: any = moment(new Date(this.lastyear, 0, 1)).format('YYYY-MM-DD')
+  lastMonthStartDate: any = moment().subtract(1, "month").format('YYYY-MM-DD')
+  endDate: any = moment().format('YYYY-MM-DD')
   secondary_color = localStorage.getItem("secondary_color") || "#f73164";
   primary_color = localStorage.getItem("primary_color") || "#5330ab";
   companyid;
@@ -94,7 +102,7 @@ export class payableComponent implements OnInit {
     },
     yaxis: {
       labels: {
-        formatter: function(value) {
+        formatter: function (value) {
           return '$' + value
         }
       }
@@ -119,9 +127,9 @@ export class payableComponent implements OnInit {
   constructor(
     private helperService: HelperService,
     private localService: LocalService,
-    private http:AuthService,
-    private toasterService:ToastrService
-  ) {}
+    private http: AuthService,
+    private toasterService: ToastrService
+  ) { }
   ngOnInit(): void {
     this.timeSelected = this.times[0].value;
     this.companyid = this.localService.getJsonValue("company");
@@ -172,7 +180,7 @@ export class payableComponent implements OnInit {
     let last6Months = new Date();
     last6Months.setMonth(today.getMonth() - 6);
     this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`, true).subscribe((res: any) => {
-      if(res?.data != null){
+      if (res?.data != null) {
         res.data.QueryResponse.Bill.map((bill) => {
           let txnDate = new Date(bill.TxnDate).toLocaleString();
           txnDate = txnDate.substring(0, txnDate.indexOf(","));
@@ -248,9 +256,47 @@ export class payableComponent implements OnInit {
         });
         this.selectTime()
       }
-      else{
+      else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
     })
+    // recent transactions
+    this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&start_date=${this.lastMonthStartDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+      if (res?.data != null) {
+        res?.data?.Rows?.Row.reverse()?.map(e => {
+          if (e?.ColData[e?.ColData?.length - 1].value != '' && e?.ColData[e?.ColData?.length - 1].value.includes('-')) {
+            this.recentTransactions.push(e?.ColData)
+          }
+          else {
+            return
+          }
+        })
+      }
+      else {
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }), err => {
+      console.log(err);
+    }
+    // top 10 transactions
+    this.http.getMonilyData(
+      `report?entity=TransactionList&id=${this.companyid.id}&transaction_type=bill`, true
+    ).subscribe((res: any) => {
+      let mutableData = [];
+      res.data.Rows.Row?.map(e => {
+        if (e?.ColData[e?.ColData?.length - 1].value != '' && e?.ColData[e?.ColData?.length - 1].value.includes('-')) {
+          this.top10Transactions?.push(e?.ColData)
+        }
+      })
+      const transactions = this.top10Transactions.sort(function (a, b) {
+        let start: any = b?.[b?.length - 1]?.value
+        let end: any = a?.[b?.length - 1]?.value
+        return end - start
+      });
+      this.top10Transactions = transactions.slice(0,10)
+    });
+  }
+  formatMinus(value){
+    return value.replace(/-/g, '');
   }
 }
