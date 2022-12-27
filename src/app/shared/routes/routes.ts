@@ -23,6 +23,14 @@ export const content: Routes = [
     loadChildren: () => import('../../components/apps/recievable/recievable.module').then(m => m.recievableModule)
   },
   {
+    path: 'accountants',
+    loadChildren: () => import('../../components/apps/accountants/accountants.module').then(m => m.AccountantsModule)
+  },
+  {
+    path: 'clients',
+    loadChildren: () => import('../../components/apps/clients/clients.module').then(m => m.clientModule)
+  },
+  {
     path: 'documents',
     loadChildren: () => import('../../components/apps/documents/documents.module').then(m => m.documentsModule)
   },

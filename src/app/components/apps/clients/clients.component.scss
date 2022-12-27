@@ -1,0 +1,21 @@
+.col-sm-12{
+    p{
+        &:first-child{
+            text-transform: uppercase;
+        }
+    }
+}
+.modal-body,.modal-header{
+    position: relative;
+    padding: 2rem;
+    i.fa-times{
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+}
+label{
+    span:first-child{
+        min-width: 200px;
+    }
+}

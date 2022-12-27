@@ -1,0 +1,12 @@
+.col-sm-12{
+    p{
+        &:first-child{
+            text-transform: uppercase;
+        }
+    }
+}
+.btn-primary{
+    a {
+        color: #fff;
+    }
+}

@@ -127,8 +127,6 @@ export class dashboardComponent implements OnInit {
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
         res.data.Rows.Row.map((v) => {
-          console.log(v,"hellov");
-          
           if (v.hasOwnProperty("group")) {
             if (v.group == "Income") {
               if (v?.hasOwnProperty("Summary")) {
@@ -152,13 +150,14 @@ export class dashboardComponent implements OnInit {
               if (v?.hasOwnProperty('Rows')) {
                 v?.Rows?.Row?.map((e, i) => {
                   if (e?.hasOwnProperty('ColData')) {
-                    this.pieArray.push([e?.ColData[0]?.value, Math.round(e?.ColData[1]?.value)]);
+                    this.pieArray.push([e?.ColData[0]?.value ? e?.ColData[0]?.value : null, Math.round(e?.ColData[1]?.value ? e?.ColData[1]?.value : 0)]);
                   }
                   else return
                 })
               }
             }
           }
+          
         });
         this.chart?.updateSeries([
           {
@@ -166,7 +165,6 @@ export class dashboardComponent implements OnInit {
             data: [this.profitAndLoss,this.otherIncome, this.expensesBar,this.otherExpenses],
           },
         ]);
-        console.log(this.helperService.numberWithCommas(this.profitAndLoss),this.helperService.numberWithCommas(this.otherIncome), this.helperService.numberWithCommas(this.expensesBar),this.helperService.numberWithCommas(this.otherExpenses),"hellores");
         this.redrawChart()
         this.totalExpenses = this.expensesBar;
       }

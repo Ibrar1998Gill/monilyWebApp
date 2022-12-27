@@ -64,7 +64,12 @@ export class recievableComponent implements OnInit {
     },
     dataLabels: {
       enabled: true,
-    },
+      style: {
+        color:"black"
+      },
+      formatter: function(val, opt) {
+        return "$" + val?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    }},
     xaxis: {
       labels: {
         formatter: function (value) {
@@ -93,7 +98,12 @@ export class recievableComponent implements OnInit {
     },
     dataLabels: {
       enabled: true,
-    },
+      style: {
+        color:"black"
+      },
+      formatter: function(val, opt) {
+        return "$" + val?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    }},
     yaxis: {
       labels: {
         formatter: function(value) {

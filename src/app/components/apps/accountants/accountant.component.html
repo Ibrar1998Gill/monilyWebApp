@@ -1,0 +1,56 @@
+<app-breadcrumb [title]="path.replace('-',' ')" [active_item]="path.replace('-',' ')"></app-breadcrumb>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <form class="theme-form">
+        <div class="form-group">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-6 mt-3">
+                <label class="col-form-label">Name</label>
+                <input class="form-control" type="text" required="" placeholder="Name">
+              </div>
+              <div class="col-lg-6 mt-3">
+                <label class="col-form-label">Number</label>
+                <input class="form-control" type="text" required="" placeholder="Number">
+              </div>
+              <div class="col-lg-6 mt-3">
+                <label class="col-form-label">Email</label>
+                <input class="form-control" type="text" required="" placeholder="Email">
+              </div>
+              <div class="col-lg-6 mt-3">
+                <label class="col-form-label">Role</label>
+                <ng-select placeholder="Select Role">
+                  <ng-option>Admin</ng-option>
+                  <ng-option>User</ng-option>
+                </ng-select>
+              </div>
+              <div class="col-lg-6 mt-3">
+                <label class="col-form-label">Clients</label>
+                <div class="d-flex w-100">
+                  <ng-select placeholder="Select Client" class="w-90" [multiple]="true">
+                    <ng-option>Azeem</ng-option>
+                    <ng-option>Fahim</ng-option>
+                    <ng-option>Fahad</ng-option>
+                  </ng-select>
+                  <a routerLink="/clients/add-client">
+                    <button class="btn btn-primary ml-3">
+                      <i class="fa fa-plus"></i>
+                    </button>
+                  </a>
+                </div>
+              </div>
+              <div class="col-lg-12 d-flex justify-content-end">
+                <button class="btn btn-primary mt-3 mb-3">
+                  <a routerLink="..">
+                    Save
+                  </a>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

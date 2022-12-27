@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { io } from 'socket.io-client';
 import { AuthService } from 'src/app/shared/services/firebase/auth.service';
 import { LocalService } from 'src/app/shared/services/local.service';
+import { UniversalService } from 'src/app/shared/services/universal.service';
 
 @Component({
   selector: 'app-message-box',
@@ -12,15 +13,13 @@ export class MessageBoxComponent implements OnInit {
 
   public openMessageBox: boolean = false;
   // socket = io('https://monily-mobile-app.herokuapp.com');
-  constructor(private http: AuthService, private localService: LocalService) { }
+  constructor(private http: AuthService, private localService: LocalService, private cd: ChangeDetectorRef) { }
   messageLists:any=[];
   userDetails:any;
   ngOnInit() {
+    this.observe()
     this.getRecentUser()
     // this.socket.on('message', (messageInfo) => {
-    //   console.log('====================================');
-    //   console.log(messageInfo,"hello app message");
-    //   console.log('====================================');
     //   var msg = JSON.parse(messageInfo)
     //   if(this.userDetails != null){
     //     if(msg?.to_id == this.userDetails?.userId || msg?.from_id == this.userDetails?.userId){
@@ -29,7 +28,17 @@ export class MessageBoxComponent implements OnInit {
     //   }
     // });
   }
-
+async observe() {
+    UniversalService.companyModal.subscribe((res: any) => {
+      if (!res) {
+        this.getRecentUser()
+      }
+      else {
+        return
+      }
+      this.cd.detectChanges();
+    })
+  }
   toggleMessageBox() {
     this.openMessageBox = !this.openMessageBox;
   }
@@ -42,10 +51,7 @@ export class MessageBoxComponent implements OnInit {
   }
   getChat(){
     this.messageLists = []
-    this.http.getChat(`getChatList?user_id=${this.userDetails?.userId}`,true).subscribe((res:any)=>{
-      console.log('====================================');
-      console.log(res);
-      console.log('====================================');
+    this.http.getChatWithToken(`getChatList?user_id=${this.userDetails?.userId}`,this.userDetails.authtoken).subscribe((res:any)=>{
       res?.data?.map(v=>{
         if(v.from_id == this.userDetails?.userId && v.to_id == this.userDetails?.userId){
           return
