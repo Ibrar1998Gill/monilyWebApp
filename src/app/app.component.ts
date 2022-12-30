@@ -2,7 +2,6 @@ import { Component, PLATFORM_ID, Inject, ChangeDetectorRef, ViewChild, ElementRe
 import { isPlatformBrowser } from '@angular/common';
 import { LoadingBarService } from '@ngx-loading-bar/core';
 import { map, delay, withLatestFrom } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
 import { PushNotificationService } from 'ng-push-notification';
 import { io } from 'socket.io-client';
 import { UniversalService } from './shared/services/universal.service'
@@ -29,15 +28,11 @@ export class AppComponent {
   userDetails: any;
   companyFound: boolean = false
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
-    private loader: LoadingBarService, translate: TranslateService,
+    private loader: LoadingBarService,
     private pushNotification: PushNotificationService,
     private cd: ChangeDetectorRef,
     private localService: LocalService,
     private authService: AuthService) {
-    if (isPlatformBrowser(this.platformId)) {
-      translate.setDefaultLang('en');
-      translate.addLangs(['en', 'de', 'es', 'fr', 'pt', 'cn', 'ae']);
-    }
   }
   ngOnInit() {
     this.companySelected = null
@@ -113,9 +108,18 @@ export class AppComponent {
       }, 500);
       this.cd.detectChanges();
     })
+    UniversalService.logout.subscribe((res: any) => {
+      if (res) {
+        this.companySelected = null
+      }
+      else {
+        return
+      }
+    })
   }
   logout() {
     this.authService.SignOut();
+    this.companySelected = null
   }
   select(){
     this.localService.setJsonValue('company', this.companySelected);

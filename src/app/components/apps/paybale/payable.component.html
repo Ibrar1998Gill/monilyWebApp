@@ -25,7 +25,7 @@
                           <div class="col-sm-6">
                             
                             <span class="mb-0 counter">{{
-                              YTD == null ? (0 | currency:'USD') : YTD | currency:'USD'
+                              YTD ? (YTD | currency:'USD') : 0 | currency:'USD'
                             }}</span>
                           </div>
                         </div>
@@ -36,7 +36,7 @@
                           <div class="col-sm-6">
                             
                             <span class="mb-0 counter">{{
-                              quarter == null ? (0 | currency:'USD') : quarter | currency:'USD'
+                              QTD ? (QTD | currency:'USD') : 0 | currency:'USD'
                             }}</span>
                           </div>
                         </div>
@@ -47,9 +47,9 @@
                           <div class="col-sm-6">
                             
                             <span class="mb-0 counter">{{
-                              MTD == null
-                                ? (0 | currency:'USD')
-                                : MTD | currency:'USD'
+                              MTD
+                                ? (MTD | currency:'USD')
+                                : 0 | currency:'USD'
                             }}</span>
                           </div>
                         </div>
@@ -60,97 +60,8 @@
                 </div>
               </ng-template>
             </ngb-panel>
-            <ngb-panel title="Recent Transactions" id="static-6">
-              <ng-template ngbPanelContent>
-                <div class="col-sm-12">
-                  <div class="table-responsive">
-                    <table class="table table-hover">
-                      <thead>
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Date</th>
-                          <th scope="col">Name</th>
-                          <th scope="col">Memo/Description</th>
-                          <th scope="col">Account</th>
-                          <th scope="col">Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          *ngFor="
-                            let recentTransaction of recentTransactions
-                              | paginate
-                                : {
-                                    itemsPerPage: 10,
-                                    currentPage: recentPage,
-                                    totalItems: total
-                                  };let i = index
-                          "
-                        >
-                          <th scope="row">{{ i }}</th>
-                          <td>
-                            <label class="descriptionCol">{{ recentTransaction[0]?.value ? (recentTransaction[0]?.value | date: 'dd/MM/yyyy') : "N/A" }}</label>
-                          </td>
-                          <td><label class="descriptionCol">{{ recentTransaction[4]?.value ? recentTransaction[4]?.value : "N/A" }}</label></td>
-                          <td><label class="descriptionCol">{{ recentTransaction[6]?.value ? recentTransaction[6]?.value : "N/A" }}</label></td>
-                          <td><label class="descriptionCol">{{ recentTransaction[7]?.value ? recentTransaction[7]?.value : "N/A" }}</label></td>
-                          <td><label class="descriptionCol">{{ recentTransaction[9]?.value ? (formatMinus(recentTransaction[9]?.value) | currency : "USD") : (0 | currency: "USD") }}</label></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <pagination-controls
-                      (pageChange)="recentPage = $event"
-                    ></pagination-controls>
-                  </div>
-                </div>
-              </ng-template>
-            </ngb-panel>
-            <ngb-panel title="Top 10 Transactions" id="static-7">
-              <ng-template ngbPanelContent>
-                <div class="col-sm-12">
-                  <div class="table-responsive">
-                    <table class="table table-hover">
-                      <thead>
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Date</th>
-                          <th scope="col">Name</th>
-                          <th scope="col">Memo/Description</th>
-                          <th scope="col">Account</th>
-                          <th scope="col">Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          *ngFor="
-                            let top10Transaction of top10Transactions
-                              | paginate
-                                : {
-                                    itemsPerPage: 10,
-                                    currentPage: top10TransactionPage,
-                                    totalItems: total
-                                  };let i = index
-                          "
-                        >
-                          <th scope="row">{{ i }}</th>
-                          <td>
-                            <label class="descriptionCol">{{ top10Transaction[0]?.value ? (top10Transaction[0]?.value | date: 'dd/MM/yyyy') : "N/A" }}</label>
-                          </td>
-                          <td><label class="descriptionCol">{{ top10Transaction[4]?.value ? top10Transaction[4]?.value : "N/A" }}</label></td>
-                          <td><label class="descriptionCol">{{ top10Transaction[6]?.value ? top10Transaction[6]?.value : "N/A" }}</label></td>
-                          <td><label class="descriptionCol">{{ top10Transaction[7]?.value ? top10Transaction[7]?.value : "N/A" }}</label></td>
-                          <td><label class="descriptionCol">{{ top10Transaction[9]?.value ? (formatMinus(top10Transaction[9]?.value) | currency : "USD") : (0 | currency: "USD") }}</label></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <pagination-controls
-                      (pageChange)="top10TransactionPage = $event"
-                    ></pagination-controls>
-                  </div>
-                </div>
-              </ng-template>
-            </ngb-panel>
-            <ngb-panel title="Dues" id="static-2">
+            
+            <!-- <ngb-panel title="Dues" id="static-2">
               <ng-template ngbPanelContent>
                 <div class="col-sm-12 d-flex justify-content-end">
                   <ng-select [(ngModel)]="timeSelected" placeholder="Select" (change)="selectTime()">
@@ -163,7 +74,6 @@
                       <div class="media static-top-widget">
                         <div class="media-body">
                           <span class="d-flex align-items-center">
-                            <!-- <app-feather-icons class="margin1 feather-10" [icon]="'dollar-sign'"></app-feather-icons> -->
                             <span class="mb-0 counter">{{profitAndLoss + expensesBar | currency:'USD'}}</span>
                           </span>
                           <i class="icon-bg" data-feather="dollar-sign"></i>
@@ -177,8 +87,54 @@
                   </div>
                 </div>
               </ng-template>
+            </ngb-panel> -->
+
+            <ngb-panel title="Payments Summary" id="static-4">
+              <ng-template ngbPanelContent>
+                <div class="col-sm-12">
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Memo/Description</th>
+                          <th scope="col">Account</th>
+                          <th scope="col">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="
+                            let due of dueData
+                              | paginate
+                                : {
+                                    itemsPerPage: 20,
+                                    currentPage: duePage,
+                                    totalItems: total
+                                  };let i = index
+                          "
+                        >
+                          <th scope="row">{{ i }}</th>
+                          <td>
+                            <label>{{ due?.ColData[0]?.value ? (due?.ColData[0]?.value | date: 'dd/MM/yyyy') : "N/A" }}</label>
+                          </td>
+                          <td><label class="descriptionCol" ngbTooltip={{due?.ColData[4]?.value}}>{{ due?.ColData[4]?.value ? due?.ColData[4]?.value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol" ngbTooltip={{due?.ColData[6]?.value}}>{{ due?.ColData[6]?.value ? due?.ColData[6]?.value : "N/A" }}</label></td>
+                          <td><label>{{ due?.ColData[7]?.value ? due?.ColData[7]?.value : "N/A" }}</label></td>
+                          <td><label>{{ due?.ColData[9]?.value ? (formatMinus(due?.ColData[9]?.value) | currency : "USD") : (0 | currency: "USD") }}</label></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <pagination-controls
+                      (pageChange)="duePage = $event"
+                    ></pagination-controls>
+                  </div>
+                </div>
+              </ng-template>
             </ngb-panel>
-            <ngb-panel title="AP Aging" id="static-3">
+            <!-- <ngb-panel title="AP Aging" id="static-3">
               <ng-template ngbPanelContent>
                 <div class="col-sm-12">
                   <div class="card o-hidden cstmCard">
@@ -186,8 +142,7 @@
                       <div class="media static-top-widget">
                         <div class="media-body">
                           <span class="d-flex align-items-center">
-                            <!-- <app-feather-icons class="margin1 feather-10" [icon]="'dollar-sign'"></app-feather-icons> -->
-                            <span class="mb-0 counter">{{profitAndLoss + expensesBar | currency:'USD'}}</span>
+                           <span class="mb-0 counter">{{profitAndLoss + expensesBar | currency:'USD'}}</span>
                           </span>
                           <i class="icon-bg" data-feather="dollar-sign"></i>
                           <div id="basic-bar" class="mt-3">
@@ -288,7 +243,7 @@
                   </div>
                 </div>
               </ng-template>
-            </ngb-panel>
+            </ngb-panel> -->
           </ngb-accordion>
         </div>
       </div>

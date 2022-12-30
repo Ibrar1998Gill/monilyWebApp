@@ -1,14 +1,10 @@
 <!-- Page Sidebar Start-->
 <div class="logo-wrapper">
   <a routerLink='/'>
-    <img class="img-fluid for-light w-50" src="assets/images/logo/logo.png" alt="">
-    <img class="img-fluid for-dark w-50" src="assets/images/logo/logo.png" alt="">
+    <img width="auto" height="auto" class="img-fluid for-light w-50" src="assets/images/logo/logo.png" alt="">
   </a>
   <div class="back-btn" (click)="sidebarToggle()">
     <i class="fa fa-angle-left"></i>
-  </div>
-  <div class="toggle-sidebar" (click)="sidebarToggle()">
-    <app-feather-icons [icon]="'grid'" class="status_toggle middle sidebar-toggle"></app-feather-icons>
   </div>
 </div>
 <div class="logo-icon-wrapper">
@@ -36,8 +32,8 @@
       <li [class]="menuItem.headTitle1 ? 'sidebar-main-title' : 'sidebar-list'" 
           *ngFor="let menuItem of menuItems" [ngClass]="{active: menuItem.active}">
         <div *ngIf="menuItem.headTitle1">
-          <h6 class="lan-1">{{menuItem.headTitle1 | translate}}</h6>
-          <p class="lan-2">{{menuItem.headTitle2 | translate}}</p>
+          <h6 class="lan-1">{{menuItem.headTitle1}}</h6>
+          <p class="lan-2">{{menuItem.headTitle2}}</p>
         </div>
 
         <label class="badge badge-{{menuItem.badgeType}}" *ngIf="menuItem.badgeType && menuItem.badgeValue">{{menuItem.badgeValue}}</label>
@@ -46,7 +42,7 @@
             [class.link-nav]="!menuItem.children"
             [ngClass]="{active: menuItem.active}"
             *ngIf="menuItem.type === 'sub'" (click)="toggletNavActive(menuItem)">
-          <app-feather-icons [icon]="menuItem.icon"></app-feather-icons><span>{{menuItem.title | translate}}</span>
+          <app-feather-icons [icon]="menuItem.icon"></app-feather-icons><span>{{menuItem.title}}</span>
           <div class="according-menu">
             <i class="fa fa-angle-{{menuItem.active ? 'down' : 'right'}} pull-right" *ngIf="menuItem.children"></i>
           </div>
@@ -56,7 +52,7 @@
           [class.link-nav]="!menuItem.children"
           [ngClass]="{active: menuItem.active}"
           *ngIf="menuItem.type === 'link'">
-          <app-feather-icons [icon]="menuItem.icon"></app-feather-icons><span>{{menuItem.title | translate}}</span>
+          <app-feather-icons [icon]="menuItem.icon"></app-feather-icons><span>{{menuItem.title}}</span>
           <div class="according-menu">
             <i class="fa fa-angle-{{menuItem.active ? 'down' : 'right'}} pull-right" *ngIf="menuItem.children"></i>
           </div>
@@ -66,7 +62,7 @@
           [class.link-nav]="!menuItem.children" 
           [ngClass]="{active: menuItem.active}"
           *ngIf="menuItem.type === 'extLink'">
-          <app-feather-icons [icon]="menuItem.icon"></app-feather-icons><span>{{menuItem.title | translate}}</span>
+          <app-feather-icons [icon]="menuItem.icon"></app-feather-icons><span>{{menuItem.title}}</span>
           <div class="according-menu">
             <i class="fa fa-angle-{{menuItem.active ? 'down' : 'right'}} pull-right" *ngIf="menuItem.children"></i>
           </div>
@@ -88,7 +84,7 @@
           <li *ngFor="let childrenItem of menuItem.children" [ngClass]="{active: childrenItem.active}">
             <!-- Sub -->
             <a class="submenu-title" href="javascript:void(0)" *ngIf="childrenItem.type === 'sub'" (click)="toggletNavActive(childrenItem)">
-              <span> {{childrenItem.title | translate}}</span>
+              <span> {{childrenItem.title}}</span>
               <div class="according-menu">
                 <i class="fa fa-angle-{{childrenItem.active ? 'down' : 'right'}} pull-right"
                   *ngIf="childrenItem.children"></i>
@@ -97,19 +93,19 @@
             <!-- Link -->
             <a class="submenu-title" [routerLink]="!childrenItem.type ? null : [childrenItem.path]" *ngIf="childrenItem.type === 'link'"
               routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-              <span>{{childrenItem.title | translate}}</span>
+              <span>{{childrenItem.title}}</span>
               <i class="fa fa-angle-down pull-right" *ngIf="childrenItem.children"></i>
             </a>
             <!-- External Link -->
             <a class="submenu-title" href="{{ !childrenItem.type ? null : childrenItem.path }}" *ngIf="childrenItem.type === 'extLink'"
               routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-              <span>{{childrenItem.title | translate}}</span>
+              <span>{{childrenItem.title}}</span>
               <i class="fa fa-angle-down pull-right" *ngIf="childrenItem.children"></i>
             </a>
             <!-- External Tab Link -->
             <a class="submenu-title" href="{{ !childrenItem.type ? null : childrenItem.path }}" target="_blank"
               *ngIf="childrenItem.type === 'extTabLink'">
-              <span>{{childrenItem.title | translate}}</span>
+              <span>{{childrenItem.title}}</span>
               <i class="fa fa-angle-down pull-right" *ngIf="childrenItem.children"></i>
             </a>
             <!-- 3rd Level Menu -->
@@ -122,18 +118,18 @@
                 <a [routerLink]="!childrenSubItem.type ? null : [childrenSubItem.path]"
                   *ngIf="childrenSubItem.type === 'link'" routerLinkActive="active"
                   [routerLinkActiveOptions]="{exact: true}">
-                  <span> {{childrenSubItem.title | translate}}</span>
+                  <span> {{childrenSubItem.title}}</span>
                 </a>
                 <!-- External Link -->
                 <a href="{{ !childrenSubItem.type ? null : childrenSubItem.path }}"
                   *ngIf="childrenSubItem.type === 'extLink'" routerLinkActive="active"
                   [routerLinkActiveOptions]="{exact: true}">
-                  <span>{{childrenSubItem.title | translate}}</span>
+                  <span>{{childrenSubItem.title}}</span>
                 </a>
                 <!-- External Tab Link -->
                 <a href="{{ !childrenSubItem.type ? null : childrenSubItem.path }}" target="_blank"
                   *ngIf="childrenSubItem.type === 'extTabLink'">
-                  <span>{{childrenSubItem.title | translate}}</span>
+                  <span>{{childrenSubItem.title}}</span>
                 </a>
               </li>
             </ul>

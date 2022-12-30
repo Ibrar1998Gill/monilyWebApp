@@ -105,8 +105,8 @@ export class dashboardComponent implements OnInit {
     if (this.companyid != null) {
       this.getExpenses();
       // this.dashboardCharts();
-      this.revenueGenerate();
-      this.paymentGenerate();
+      // this.revenueGenerate();
+      // this.paymentGenerate();
     } else return;
     
   }
@@ -117,9 +117,9 @@ export class dashboardComponent implements OnInit {
       if (res) {
         this.companyid = this.localService.getJsonValue("company");
         this.getExpenses();
-        this.dashboardCharts();
-        this.revenueGenerate();
-        this.paymentGenerate();
+        // this.dashboardCharts();
+        // this.revenueGenerate();
+        // this.paymentGenerate();
       } else return;
     });
   }
@@ -148,12 +148,7 @@ export class dashboardComponent implements OnInit {
                 this.expensesBar = Math.round(v.Summary.ColData[1].value);
               }
               if (v?.hasOwnProperty('Rows')) {
-                v?.Rows?.Row?.map((e, i) => {
-                  if (e?.hasOwnProperty('ColData')) {
-                    this.pieArray.push([e?.ColData[0]?.value ? e?.ColData[0]?.value : null, Math.round(e?.ColData[1]?.value ? e?.ColData[1]?.value : 0)]);
-                  }
-                  else return
-                })
+                this.loopAppendRows(v, this.pieArray)
               }
             }
           }
@@ -224,130 +219,137 @@ export class dashboardComponent implements OnInit {
       console.log(err);
     }
   }
-  revenueGenerate() {
-    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from invoice startposition 1`, true).subscribe((res: any) => {
-      let mutableData = [];
-      if (res?.data != null) {
-        res.data.QueryResponse.Invoice.map((inv) => {
-          let txnDate = moment(inv.TxnDate).format("MM/DD/YYYY");
-          let dueDate = this.helperService.calculateDays(inv.DueDate);
-          mutableData.push({
-            Date: txnDate,
-            num: inv.DocNumber,
-            Customer: inv.CustomerRef.name,
-            Amount: inv.Balance,
-            TotalAmt: inv.TotalAmt,
-            Status: dueDate,
-            id: inv.Id,
-          });
-        });
-        this.monthlyDataRevenue =
-          this.helperService.getCurrentMonthExpenses(mutableData);
-        this.yearlyDataRevenue = this.helperService.getYearlyExpenses(mutableData);
-        const mutableQuarterly =
-          this.helperService.getQuarterlyExpenses(mutableData);
-        this.quaterlyDataRevenue = parseFloat(
-          mutableQuarterly[Object.keys(mutableQuarterly).pop()]
-        ).toFixed(2);
+  loopAppendRows(v, array){
+    v?.Rows?.Row?.map((e) => {
+      if (e?.hasOwnProperty('ColData')) {
+        array.push([e?.ColData[0]?.value ? e?.ColData[0]?.value : null, Math.round(e?.ColData[1]?.value ? e?.ColData[1]?.value : 0)]);
       }
       else {
-        this.toasterService.error("No data found, please try again after few minutes")
-      }
-    }, err => {
-      if (err.hasOwnProperty('error')) {
-        if (err?.error?.hasOwnProperty('errors')) {
-          for (const key in err?.error?.errors) {
-            this.toasterService.error(err?.error?.errors[key])
-          }
-        }
-      }
-      console.log(err);
-    })
-  }
-  paymentGenerate() {
-    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`, true).subscribe((res: any) => {
-      let mutableData = [];
-      if (res?.data != null) {
-        res.data.QueryResponse.Bill.map((bill) => {
-          let txnDate = new Date(bill.TxnDate).toLocaleString();
-          txnDate = txnDate.substring(0, txnDate.indexOf(","));
-          txnDate = this.helperService.formattedDate(bill.TxnDate);
-          const vendorName = bill.VendorRef.name;
-          const pastDue = this.helperService.calculateDays(bill.DueDate);
-          mutableData.push({
-            Date: txnDate,
-            Customer: vendorName,
-            Status: this.helperService.calculateDays(bill.DueDate),
-            pastDue,
-            Amount: bill.Balance,
-            TotalAmt: bill.TotalAmt,
-            id: bill.Id,
-          });
-        });
-        this.monthlyDataPayments =
-          this.helperService.getCurrentMonthExpenses(mutableData);
-        this.yearlyDataPayments = this.helperService.getYearlyExpenses(mutableData);
-        const mutableQuarterly =
-          this.helperService.getQuarterlyExpenses(mutableData);
-        this.quaterlyDataPayments = parseFloat(
-          mutableQuarterly[Object.keys(mutableQuarterly).pop()]
-        ).toFixed(2);
-      }
-      else {
-        this.toasterService.error("No data found, please try again after few minutes")
-      }
-    }, err => {
-      if (err.hasOwnProperty('error')) {
-        if (err?.error?.hasOwnProperty('errors')) {
-          for (const key in err?.error?.errors) {
-            this.toasterService.error(err?.error?.errors[key])
-          }
-        }
-      }
-      console.log(err);
-    })
-  }
-  dashboardCharts() {
-    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from purchase startposition 1`, true).subscribe((res: any) => {
-      let ExpenseDate = []
-      if (res?.data != null) {
-        res?.data?.QueryResponse?.Purchase.map(expense => {
-          ExpenseDate.push(expense)
+        e?.Rows?.Row?.map((s) => {
+          this.loopAppendRows(s, array)
         })
-        let prices = [];
-        ExpenseDate.map((expense) => {
-          let category =
-            expense.Line[0].AccountBasedExpenseLineDetail.AccountRef.name;
-          if (this.mutablePieData[category]) {
-            this.mutablePieData[category] += parseFloat(expense.TotalAmt);
-          } else {
-            this.mutablePieData[category] = parseFloat(expense.TotalAmt);
-          }
-        });
-        for (const key in this.mutablePieData) {
-          let val = Math.round(this.mutablePieData[key]);
-          this.pieArray.push([key, val]);
-          prices.push(val);
-        }
-
-        var sum = prices.reduce(function (a, b) {
-          return a + b;
-        }, 0);
-        this.totalExpenses = this.expensesBar;
-        this.redrawChart()
       }
-      else {
-        this.toasterService.error("No data found, please try again after few minutes")
-      }
-    }, err => {
-      if (err.hasOwnProperty('error')) {
-        if (err?.error?.hasOwnProperty('errors')) {
-          for (const key in err?.error?.errors) {
-            this.toasterService.error(err?.error?.errors[key])
-          }
-        }
-      }
-      console.log(err);
     })
   }
+  // revenueGenerate() {
+  //   this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from invoice startposition 1`, true).subscribe((res: any) => {
+  //     let mutableData = [];
+  //     if (res?.data != null) {
+  //       res.data.QueryResponse.Invoice.map((inv) => {
+  //         let txnDate = moment(inv.TxnDate).format("MM/DD/YYYY");
+  //         let dueDate = this.helperService.calculateDays(inv.DueDate);
+  //         mutableData.push({
+  //           Date: txnDate,
+  //           num: inv.DocNumber,
+  //           Customer: inv.CustomerRef.name,
+  //           Amount: inv.Balance,
+  //           TotalAmt: inv.TotalAmt,
+  //           Status: dueDate,
+  //           id: inv.Id,
+  //         });
+  //       });
+  //       this.monthlyDataRevenue =
+  //         this.helperService.getCurrentMonthExpenses(mutableData);
+  //       this.yearlyDataRevenue = this.helperService.getYearlyExpenses(mutableData);
+  //       const mutableQuarterly =
+  //         this.helperService.getQuarterlyExpenses(mutableData);
+  //       this.quaterlyDataRevenue = parseFloat(
+  //         mutableQuarterly[Object.keys(mutableQuarterly).pop()]
+  //       ).toFixed(2);
+  //     }
+  //     else {
+  //       this.toasterService.error("No data found, please try again after few minutes")
+  //     }
+  //   }, err => {
+  //     if (err.hasOwnProperty('error')) {
+  //       if (err?.error?.hasOwnProperty('errors')) {
+  //         for (const key in err?.error?.errors) {
+  //           this.toasterService.error(err?.error?.errors[key])
+  //         }
+  //       }
+  //     }
+  //     console.log(err);
+  //   })
+  // }
+  // paymentGenerate() {
+  //   this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`, true).subscribe((res: any) => {
+  //     let mutableData = [];
+  //     if (res?.data != null) {
+  //       res.data.QueryResponse.Bill.map((bill) => {
+  //         let txnDate = new Date(bill.TxnDate).toLocaleString();
+  //         txnDate = txnDate.substring(0, txnDate.indexOf(","));
+  //         txnDate = this.helperService.formattedDate(bill.TxnDate);
+  //         const vendorName = bill.VendorRef.name;
+  //         const pastDue = this.helperService.calculateDays(bill.DueDate);
+  //         mutableData.push({
+  //           Date: txnDate,
+  //           Customer: vendorName,
+  //           Status: this.helperService.calculateDays(bill.DueDate),
+  //           pastDue,
+  //           Amount: bill.Balance,
+  //           TotalAmt: bill.TotalAmt,
+  //           id: bill.Id,
+  //         });
+  //       });
+  //       this.monthlyDataPayments =
+  //         this.helperService.getCurrentMonthExpenses(mutableData);
+  //       this.yearlyDataPayments = this.helperService.getYearlyExpenses(mutableData);
+  //       const mutableQuarterly =
+  //         this.helperService.getQuarterlyExpenses(mutableData);
+  //       this.quaterlyDataPayments = parseFloat(
+  //         mutableQuarterly[Object.keys(mutableQuarterly).pop()]
+  //       ).toFixed(2);
+  //     }
+  //     else {
+  //       this.toasterService.error("No data found, please try again after few minutes")
+  //     }
+  //   }, err => {
+  //     if (err.hasOwnProperty('error')) {
+  //       if (err?.error?.hasOwnProperty('errors')) {
+  //         for (const key in err?.error?.errors) {
+  //           this.toasterService.error(err?.error?.errors[key])
+  //         }
+  //       }
+  //     }
+  //     console.log(err);
+  //   })
+  // }
+  // dashboardCharts() {
+  //   this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from purchase startposition 1`, true).subscribe((res: any) => {
+  //     let ExpenseDate = []
+  //     if (res?.data != null) {
+  //       res?.data?.QueryResponse?.Purchase.map(expense => {
+  //         ExpenseDate.push(expense)
+  //       })
+  //       let prices = [];
+  //       ExpenseDate.map((expense) => {
+  //         let category =
+  //           expense.Line[0].AccountBasedExpenseLineDetail.AccountRef.name;
+  //         if (this.mutablePieData[category]) {
+  //           this.mutablePieData[category] += parseFloat(expense.TotalAmt);
+  //         } else {
+  //           this.mutablePieData[category] = parseFloat(expense.TotalAmt);
+  //         }
+  //       });
+
+  //       var sum = prices.reduce(function (a, b) {
+  //         return a + b;
+  //       }, 0);
+  //       this.totalExpenses = this.expensesBar;
+  //       this.redrawChart()
+  //     }
+  //     else {
+  //       this.toasterService.error("No data found, please try again after few minutes")
+  //     }
+  //   }, err => {
+  //     if (err.hasOwnProperty('error')) {
+  //       if (err?.error?.hasOwnProperty('errors')) {
+  //         for (const key in err?.error?.errors) {
+  //           this.toasterService.error(err?.error?.errors[key])
+  //         }
+  //       }
+  //     }
+  //     console.log(err);
+  //   })
+  // }
 }

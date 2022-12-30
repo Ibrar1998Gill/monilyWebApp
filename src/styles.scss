@@ -59,3 +59,9 @@
 .w-90{
     width: 90% !important;
 }
+.descriptionCol{
+    white-space: nowrap; 
+  width: 150px; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}

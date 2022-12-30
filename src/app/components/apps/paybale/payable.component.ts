@@ -25,9 +25,6 @@ export class payableComponent implements OnInit {
   companyid;
   bills;
   formattedData;
-  MTD;
-  YTD;
-  quarter;
   barData;
   totalSum;
   last30DaysSum;
@@ -38,7 +35,7 @@ export class payableComponent implements OnInit {
   overDueSum;
   dueDateHead;
   paidHead;
-  dueData;
+  dueData = [];
   paidData;
   last30DaysOverDue;
   last6MonthsOverDue;
@@ -46,6 +43,12 @@ export class payableComponent implements OnInit {
   currentNotDue;
   currentOverDue;
   timeSelected;
+  today:any = new Date();
+  quarter:any
+  MTD:any;
+  YTD:any;
+  QTD:any;
+  quarterMonth:any = Math.ceil(this.today.getMonth() / 3);
   times: any = [
     { value: "Last 12 months" },
     { value: "Last 6 months" },
@@ -163,140 +166,49 @@ export class payableComponent implements OnInit {
     ]);
   }
   getpayments() {
-    let mutableData = [];
-    let mutableSum = 0;
-    let mutable30DaysSum = 0;
-    let mutable6MonthsSum = 0;
-    let mutableOverDueSum = 0;
-    let mutable30DaysOverDueSum = 0;
-    let mutable6MonthsOverDueSum = 0;
-    let mutableNotDueSum = 0;
-    let mutable30DaysNotDueSum = 0;
-    let mutable6MonthsNotDueSum = 0;
-
-    const today = new Date();
-    let last30Days = new Date();
-    last30Days.setDate(today.getDate() - 30);
-    let last6Months = new Date();
-    last6Months.setMonth(today.getMonth() - 6);
-    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`, true).subscribe((res: any) => {
-      if (res?.data != null) {
-        res.data.QueryResponse.Bill.map((bill) => {
-          let txnDate = new Date(bill.TxnDate).toLocaleString();
-          txnDate = txnDate.substring(0, txnDate.indexOf(","));
-          txnDate = this.helperService.formattedDate(bill.TxnDate);
-          if (new Date(txnDate) >= last30Days && new Date(txnDate) <= today) {
-            mutable30DaysSum += bill.Balance;
-            mutable30DaysOverDueSum +=
-              new Date(bill.DueDate) < new Date() ? bill.Balance : 0;
-            mutable30DaysNotDueSum +=
-              new Date(bill.DueDate) > new Date() ? bill.Balance : 0;
+    this.dueData = []
+    let mtd = []
+    let qtd = []
+    let ytd = []
+    this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&transaction_type=bill&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`,true).subscribe((res:any)=>{
+      console.log(res,this.startDate, this.endDate,"resres");
+      res?.data?.Rows?.Row?.map(e=>{
+        var item = e?.ColData?.[9]?.value
+        var month = e?.ColData?.[0]?.value.split('-')[1]
+        var currentMonth = moment().format("MM")
+        if(e?.ColData[9]?.value < 0){
+          this.dueData.push(e)
+          ytd.push(this.formatMinus(item))
+          if(this.quarterMonth == 1 && (month >= 1 && month <= 3)){
+            qtd.push(this.formatMinus(item))
           }
-          if (new Date(txnDate) >= last6Months && new Date(txnDate) <= today) {
-            mutable6MonthsSum += bill.Balance;
-            mutable6MonthsOverDueSum +=
-              new Date(bill.DueDate) < new Date() ? bill.Balance : 0;
-            mutable6MonthsNotDueSum +=
-              new Date(bill.DueDate) > new Date() ? bill.Balance : 0;
+          if(this.quarterMonth == 2 && (month >= 4 && month <= 6)){
+            qtd.push(this.formatMinus(item))
           }
-          const vendorName = bill.VendorRef.name;
-          const dueDate = this.helperService.formattedDate(bill.DueDate);
-          const pastDue = this.helperService.calculateDays(bill.DueDate);
-          mutableSum += bill.Balance;
-          mutableNotDueSum +=
-            new Date(bill.DueDate) > new Date() ? bill.Balance : 0;
-          mutableOverDueSum +=
-            new Date(bill.DueDate) < new Date() ? bill.Balance : 0;
-          mutableData.push({
-            Date: txnDate,
-            Customer: vendorName,
-            Status: this.helperService.calculateDays(bill.DueDate),
-            pastDue,
-            Amount: bill.Balance,
-            TotalAmt: bill.TotalAmt,
-            id: bill.Id,
-          });
-        });
-        this.dueData = mutableData.filter((item) => {
-          return item.Amount != 0;
-        });
-        this.paidData = mutableData.filter((item) => {
-          return item.Amount == 0;
-        });
-        this.barData = this.helperService.getMonthlyExpenses(mutableData);
-        this.MTD = this.helperService.getCurrentMonthExpenses(mutableData);
-        this.YTD = this.helperService.getYearlyExpenses(mutableData);
-        const mutableQuarterly =
-          this.helperService.getQuarterlyExpenses(mutableData);
-        this.quarter = parseFloat(
-          mutableQuarterly[Object.keys(mutableQuarterly).pop()]
-        ).toFixed(2);
-        this.totalSum = mutableSum;
-        this.last30DaysSum = mutable30DaysSum;
-        this.last6MonthsSum = mutable6MonthsSum;
-        this.notDueSum = mutableNotDueSum;
-        this.last30DaysNotDue = mutable30DaysNotDueSum;
-        this.last6MonthsNotDue = mutable6MonthsNotDueSum;
-        this.overDueSum = mutableOverDueSum;
-        this.last30DaysOverDue = mutable30DaysOverDueSum;
-        this.last6MonthsOverDue = mutable6MonthsOverDueSum;
-        this.formattedData = mutableData;
-        let arr = [];
-        this.barData.map((e) => {
-          if (e.hasOwnProperty("label")) {
-            this.verticalBar.xaxis.categories.map((i) => {
-              if (e.label == i) {
-                arr.push(e.value);
-              }
-            });
+          if(this.quarterMonth == 3 && (month >= 7 && month <= 9)){
+            qtd.push(this.formatMinus(item))
           }
-        });
-        arr.map((v) => {
-          this.verticalBar.series[0].data.push(v);
-        });
-        this.selectTime()
-      }
-      else {
-        this.toasterService.error("No data found, please try again after few minutes")
-      }
-    })
-    // recent transactions
-    this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&start_date=${this.lastMonthStartDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
-      if (res?.data != null) {
-        res?.data?.Rows?.Row.reverse()?.map(e => {
-          if (e?.ColData[e?.ColData?.length - 1].value != '' && e?.ColData[e?.ColData?.length - 1].value.includes('-')) {
-            this.recentTransactions.push(e?.ColData)
+          if(this.quarterMonth == 4 && (month >= 10 && month <= 12)){
+            qtd.push(this.formatMinus(item))
           }
-          else {
-            return
+          if(month == currentMonth){
+            mtd.push(this.formatMinus(item))
           }
-        })
-      }
-      else {
-        this.toasterService.error("No data found, please try again after few minutes")
-      }
-    }), err => {
-      console.log(err);
-    }
-    // top 10 transactions
-    this.http.getMonilyData(
-      `report?entity=TransactionList&id=${this.companyid.id}&transaction_type=bill`, true
-    ).subscribe((res: any) => {
-      let mutableData = [];
-      res.data.Rows.Row?.map(e => {
-        if (e?.ColData[e?.ColData?.length - 1].value != '' && e?.ColData[e?.ColData?.length - 1].value.includes('-')) {
-          this.top10Transactions?.push(e?.ColData)
         }
       })
-      const transactions = this.top10Transactions.sort(function (a, b) {
-        let start: any = b?.[b?.length - 1]?.value
-        let end: any = a?.[b?.length - 1]?.value
-        return end - start
-      });
-      this.top10Transactions = transactions.slice(0,10)
-    });
+      if(mtd?.length > 0) {this.MTD = this.addItems(mtd)}
+      if(qtd?.length > 0) {this.QTD = this.addItems(qtd)}
+      if(ytd?.length > 0) {this.YTD = this.addItems(ytd)}
+    }),err=>{
+      console.log(err);
+    }
   }
   formatMinus(value){
-    return value.replace(/-/g, '');
+    return value?.replace(/-/g, '');
+  }
+  addItems(array){
+   return array?.reduce(function(prev, curr){
+      return (Number(prev) || 0) + (Number(curr) || 0);
+  });
   }
 }

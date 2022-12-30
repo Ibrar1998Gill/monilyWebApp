@@ -3,7 +3,6 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { io } from 'socket.io-client';
 import { AuthService } from 'src/app/shared/services/firebase/auth.service';
-import { ChatUsers } from '../../../shared/model/chat.model';
 import { debounce } from 'lodash';
 import { LocalService } from 'src/app/shared/services/local.service';
 @Component({
@@ -14,8 +13,8 @@ import { LocalService } from 'src/app/shared/services/local.service';
 export class chatComponent implements OnInit {
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
   public openTab: string = "call";
-  public users: ChatUsers[] = []
-  public searchUsers: ChatUsers[] = []
+  public users: [] = []
+  public searchUsers: [] = []
   public chatUser: any;
   public profile: any;
   public chatMessages: any;

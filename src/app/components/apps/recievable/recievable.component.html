@@ -12,7 +12,7 @@
             [closeOthers]="true"
             activeIds="static-1"
           >
-            <ngb-panel title="Payments" id="static-1">
+            <ngb-panel title="Revenue" id="static-1">
               <ng-template ngbPanelContent>
                 <div class="card o-hidden cstmCard">
                   <div class="bg-primary b-r-4 card-body">
@@ -23,10 +23,7 @@
                             <span class="m-0">Yearly</span>
                           </div>
                           <div class="col-sm-6">
-                            
-                            <span class="mb-0 counter">{{
-                              YTD == null ? (0 | currency:'USD') : YTD | currency:'USD'
-                            }}</span>
+                            <span class="mb-0 counter">{{YearlyprofitAndLoss ? (YearlyprofitAndLoss | currency :'USD') : (0 | currency :'USD')}}</span>
                           </div>
                         </div>
                         <div class="row mt-3 mb-3">
@@ -34,10 +31,7 @@
                             <span class="m-0">Quaterly</span>
                           </div>
                           <div class="col-sm-6">
-                            
-                            <span class="mb-0 counter">{{
-                              quarter == null ? (0 | currency:'USD') : quarter | currency:'USD'
-                            }}</span>
+                            <span class="mb-0 counter">{{QuaterlyprofitAndLoss ? (QuaterlyprofitAndLoss | currency :'USD') : (0 | currency :'USD')}}</span>
                           </div>
                         </div>
                         <div class="row mt-3 mb-3">
@@ -45,12 +39,7 @@
                             <span class="m-0">Monthly</span>
                           </div>
                           <div class="col-sm-6">
-                            
-                            <span class="mb-0 counter">{{
-                              MTD == null
-                                ? (0 | currency:'USD')
-                                : MTD | currency:'USD'
-                            }}</span>
+                            <span class="mb-0 counter">{{MonthlyprofitAndLoss ? (MonthlyprofitAndLoss | currency :'USD') : (0 | currency :'USD')}}</span>
                           </div>
                         </div>
                         <i class="icon-bg" data-feather="dollar-sign"></i>
@@ -60,7 +49,7 @@
                 </div>
               </ng-template>
             </ngb-panel>
-            <ngb-panel title="Dues" id="static-2">
+            <!-- <ngb-panel title="Dues" id="static-2">
               <ng-template ngbPanelContent>
                 <div class="col-sm-12 d-flex justify-content-end">
                   <ng-select [(ngModel)]="timeSelected" placeholder="Select" (change)="selectTime()">
@@ -73,7 +62,6 @@
                       <div class="media static-top-widget">
                         <div class="media-body">
                           <span class="d-flex align-items-center">
-                            <!-- <app-feather-icons class="margin1 feather-10" [icon]="'dollar-sign'"></app-feather-icons> -->
                             <span class="mb-0 counter">{{profitAndLoss + expensesBar | currency:'USD'}}</span>
                           </span>
                           <i class="icon-bg" data-feather="dollar-sign"></i>
@@ -96,7 +84,6 @@
                       <div class="media static-top-widget">
                         <div class="media-body">
                           <span class="d-flex align-items-center">
-                            <!-- <app-feather-icons class="margin1 feather-10" [icon]="'dollar-sign'"></app-feather-icons> -->
                             <span class="mb-0 counter">{{profitAndLoss + expensesBar | currency:'USD'}}</span>
                           </span>
                           <i class="icon-bg" data-feather="dollar-sign"></i>
@@ -198,7 +185,7 @@
                   </div>
                 </div>
               </ng-template>
-            </ngb-panel>
+            </ngb-panel> -->
           </ngb-accordion>
         </div>
       </div>

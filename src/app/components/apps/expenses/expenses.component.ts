@@ -106,7 +106,9 @@ export class expensesComponent implements OnInit {
         res.data.Rows.Row.map((v) => {
           if (v.hasOwnProperty("group")) {
             if (v.group == "Expenses") {
-              this.rowsPush(v)
+              if (v?.hasOwnProperty('Rows')) {
+                this.rowsPush(v, this.pieArray)
+              }
             }
           }
         });
@@ -125,6 +127,41 @@ export class expensesComponent implements OnInit {
       }
       console.log(err, "error hai");
     })
+    // recent transactions
+    this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&start_date=${this.lastMonthStartDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+      if (res?.data != null) {
+        res?.data?.Rows?.Row.reverse()?.map(e => {
+          if (e?.ColData[e?.ColData?.length - 1].value != '' && e?.ColData[e?.ColData?.length - 1].value < 0) {
+            this.recentTransactions.push(e?.ColData)
+          }
+          else {
+            return
+          }
+        })
+      }
+      else {
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }), err => {
+      console.log(err);
+    }
+    // top 10 transactions
+    this.http.getMonilyData(
+      `report?entity=TransactionList&id=${this.companyid.id}&transaction_type=bill`, true
+    ).subscribe((res: any) => {
+      let mutableData = [];
+      res.data.Rows.Row?.map(e => {
+        if (e?.ColData[e?.ColData?.length - 1].value != '' && e?.ColData[e?.ColData?.length - 1].value < 0) {
+          this.top10Transactions?.push(e?.ColData)
+        }
+      })
+      const transactions = this.top10Transactions.sort(function (a, b) {
+        let start: any = b?.[b?.length - 1]?.value
+        let end: any = a?.[b?.length - 1]?.value
+        return end - start
+      });
+      this.top10Transactions = transactions.slice(0,10)
+    });
     this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`,true).subscribe(res=>{
         console.log(res,'queryres');
     }),err=>{
@@ -138,15 +175,17 @@ export class expensesComponent implements OnInit {
     //force a redraw
     ccComponent.draw();
   }
-  rowsPush(v){
-    if (v?.hasOwnProperty('Rows')) {
+  rowsPush(v, array){
       v?.Rows?.Row?.map((e, i) => {
         if (e?.hasOwnProperty('ColData')) {
-          return this.pieArray.push([e?.ColData[0]?.value, Math.round(e?.ColData[1]?.value)]);
+          return array.push([e?.ColData[0]?.value, Math.round(e?.ColData[1]?.value)]);
         }
-        else this.rowsPush(e)
+        else {
+          e?.Rows?.Row?.map((s, i) => {
+            this.rowsPush(s,array)
+          })
+        }
       })
-    }
   }
   findRows(v,val){
     let func = []
@@ -157,7 +196,6 @@ export class expensesComponent implements OnInit {
             e?.Rows?.Row?.map(s=>{
               this.top10Transactions.push(s?.ColData)
             })
-            
           }
           else{
             this.findRows(e, val)
@@ -166,5 +204,8 @@ export class expensesComponent implements OnInit {
         // else this.findRows(e, val)
       })
     }
+  }
+  formatMinus(value){
+    return value.replace(/-/g, '');
   }
 }

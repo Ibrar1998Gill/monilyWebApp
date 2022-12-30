@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalService } from 'src/app/shared/services/local.service';
+import { UniversalService } from 'src/app/shared/services/universal.service';
 import { AuthService } from '../../../../services/firebase/auth.service';
 
 @Component({
@@ -19,5 +20,6 @@ export class MyAccountComponent implements OnInit {
   }
   logout() {
     this.authService.SignOut();
+    UniversalService.logout.next(true)
   }
 }
