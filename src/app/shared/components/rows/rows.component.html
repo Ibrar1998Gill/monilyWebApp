@@ -10,7 +10,7 @@
                   <!-- <ng-template *ngIf="item; else rows"> -->
                     <div class="d-flex justify-content-between align-items-center" *ngIf="item?.ColData; else rows">
                       <p>{{i}}. {{item?.ColData[0]?.value}}</p>
-                      <p>{{item?.ColData[1]?.value ? (item?.ColData[1]?.value | currency : 'USD') : null}}</p>
+                      <p>{{item?.ColData[1]?.value ? (item?.ColData[1]?.value | currency : 'USD') : (0 | currency : 'USD')}}</p>
                     </div>
                   <!-- </ng-template> -->
                   <ng-template #rows>
@@ -18,7 +18,7 @@
                   </ng-template> 
                   <ng-template *ngIf="item?.Summary">
                     <p>{{item?.Summary?.ColData[0]?.value}}</p>
-                      <p>{{item?.Summary?.ColData[1]?.value ? (item?.Summary?.ColData[1]?.value | currency : 'USD') : null}}</p>
+                      <p>{{item?.Summary?.ColData[1]?.value ? (item?.Summary?.ColData[1]?.value | currency : 'USD') : (0 | currency : 'USD')}}</p>
                   </ng-template>
                 </div>
               </div>
@@ -27,7 +27,7 @@
               <div class="row" >
                 <div class="col-sm-12 d-flex justify-content-between align-items-center" >
                   <p class="fontWeight">{{data?.Summary?.ColData[0]?.value}}</p>
-                    <p class="fontWeight">{{data?.Summary?.ColData[1]?.value ? (data?.Summary?.ColData[1]?.value | currency :'USD') : null}}</p>
+                    <p class="fontWeight">{{data?.Summary?.ColData[1]?.value ? (data?.Summary?.ColData[1]?.value | currency :'USD') : (0 | currency : 'USD')}}</p>
                 </div>
               </div>
             </ng-template>

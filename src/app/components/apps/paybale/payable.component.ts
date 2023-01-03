@@ -190,6 +190,7 @@ export class payableComponent implements OnInit {
           }
           if(this.quarterMonth == 4 && (month >= 10 && month <= 12)){
             qtd.push(this.formatMinus(item))
+            
           }
           if(month == currentMonth){
             mtd.push(this.formatMinus(item))

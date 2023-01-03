@@ -45,6 +45,20 @@ export class clientsComponent implements OnInit {
       email:'ahmed@arthurlawrence.net'
     }
   ]
+  public rights: Array<Object> = [
+    { item: 'dashboard' },
+    { item: 'expenses' },
+    { item: 'accounts payable' },
+    { item: 'accounts recievable' },
+    { item: 'financial statement' },
+    { item: 'accountants' },
+    { item: 'clients' },
+    { item: 'companies' },
+    { item: 'documents' },
+    { item: 'edit data' },
+    { item: 'add data' },
+    { item: 'role assign' }
+  ]
   constructor(private http: AuthService, private localService: LocalService, private toasterService: ToastrService) { }
   ngOnInit(): void {
     

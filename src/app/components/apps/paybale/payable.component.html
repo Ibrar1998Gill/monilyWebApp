@@ -125,10 +125,14 @@
                           <td><label>{{ due?.ColData[7]?.value ? due?.ColData[7]?.value : "N/A" }}</label></td>
                           <td><label>{{ due?.ColData[9]?.value ? (formatMinus(due?.ColData[9]?.value) | currency : "USD") : (0 | currency: "USD") }}</label></td>
                         </tr>
+                        <tr *ngIf="dueData?.length < 1">
+                          <label>No Data</label>
+                        </tr>
                       </tbody>
                     </table>
                     <pagination-controls
-                      (pageChange)="duePage = $event"
+                    *ngIf="dueData?.length > 0"
+                    (pageChange)="duePage = $event"
                     ></pagination-controls>
                   </div>
                 </div>

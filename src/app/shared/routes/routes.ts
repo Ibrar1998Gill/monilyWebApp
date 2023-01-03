@@ -31,6 +31,10 @@ export const content: Routes = [
     loadChildren: () => import('../../components/apps/clients/clients.module').then(m => m.clientModule)
   },
   {
+    path: 'companies',
+    loadChildren: () => import('../../components/apps/company/companies.module').then(m => m.companiesModule)
+  },
+  {
     path: 'documents',
     loadChildren: () => import('../../components/apps/documents/documents.module').then(m => m.documentsModule)
   },

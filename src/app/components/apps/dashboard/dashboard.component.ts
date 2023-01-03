@@ -33,12 +33,12 @@ export class dashboardComponent implements OnInit {
   MonthlyprofitAndLoss: number = 0;
   QuaterlyprofitAndLoss: number = 0;
   expensesBar: number = 0;
-  monthlyDataRevenue: any;
-  yearlyDataRevenue: any;
-  quaterlyDataRevenue: any;
-  monthlyDataPayments: any;
-  yearlyDataPayments: any;
-  quaterlyDataPayments: any;
+  monthlyDataRevenue: number = 0;
+  yearlyDataRevenue: number = 0;
+  quaterlyDataRevenue: number = 0;
+  monthlyDataPayments: number = 0;
+  yearlyDataPayments: number = 0;
+  quaterlyDataPayments: number = 0;
   pieArray: any = [["Task", "expenses"]];
   pieChart3: any = {
     chartType: "PieChart",
@@ -206,7 +206,7 @@ export class dashboardComponent implements OnInit {
           if (v.hasOwnProperty("group")) {
             if (v.group == "Income") {
               if (v?.hasOwnProperty("Summary")) {
-                this.MonthlyprofitAndLoss = v?.Summary?.ColData[v?.Summary?.ColData?.length - 2]?.value;
+                this.MonthlyprofitAndLoss = Math.round(v?.Summary?.ColData[v?.Summary?.ColData?.length - 2]?.value);
               }
             }
           }
