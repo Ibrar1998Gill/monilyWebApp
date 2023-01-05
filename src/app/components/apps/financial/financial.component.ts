@@ -33,7 +33,7 @@ export class financialComponent implements OnInit {
   getFinancial() {
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
-        res?.data?.Rows.Row.map(e=>{
+        res?.data?.Rows?.Row?.map(e=>{
         this.expenses.push(e)
         })
       }
@@ -45,7 +45,7 @@ export class financialComponent implements OnInit {
     })
     this.http.getMonilyData(`report?entity=BalanceSheet&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
-        res?.data?.Rows.Row.map(e=>{
+        res?.data?.Rows?.Row?.map(e=>{
         this.bank.push(e)
         })
       }

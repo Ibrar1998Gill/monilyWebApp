@@ -25,7 +25,7 @@ export class dashboardComponent implements OnInit {
   primary_color = localStorage.getItem("primary_color") || "#5330ab";
   companyid: any;
   mutablePieData: any = {};
-  totalExpenses: number = 0;
+  // totalExpenses: number = 0;
   profitAndLoss: number = 0;
   otherIncome: number = 0;
   otherExpenses: number = 0;
@@ -60,7 +60,7 @@ export class dashboardComponent implements OnInit {
     series: [
       {
         name: "USD",
-        data: [this.profitAndLoss,this.otherIncome, this.expensesBar,this.otherIncome],
+        data: [this.profitAndLoss, this.otherIncome, this.expensesBar, this.otherIncome],
       },
     ],
     noData: {
@@ -79,23 +79,26 @@ export class dashboardComponent implements OnInit {
     dataLabels: {
       enabled: true,
       style: {
-        color:"black"
+        fontWeight: 'light',
+        colors: ["#000"]
       },
-      formatter: function(val, opt) {
+      formatter: function (val, opt) {
         return "$" + val?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-    }
+      }
     },
     xaxis: {
-      categories: ["Income","Other Income", "Expenses", "Other Expenses"],
+      categories: ["Income", "Other Income", "Expenses", "Other Expenses"],
     },
   };
   lastyear: any = moment().format('YYYY')
   startDate: any = moment(new Date(this.lastyear, 0, 1)).format('YYYY-MM-DD')
   endDate: any = moment().format('YYYY-MM-DD')
   redrawChart() {
-    let ccComponent = this.pieChart3.component;
-    //force a redraw
-    ccComponent.draw();
+    if(this.pieChart3){
+      let ccComponent = this.pieChart3?.component;
+      //force a redraw
+      ccComponent?.draw();
+    }
   }
   ngOnInit(): void {
     this.observe();
@@ -108,7 +111,7 @@ export class dashboardComponent implements OnInit {
       // this.revenueGenerate();
       // this.paymentGenerate();
     } else return;
-    
+
   }
 
   // observing company selected or not
@@ -152,16 +155,15 @@ export class dashboardComponent implements OnInit {
               }
             }
           }
-          
+
         });
         this.chart?.updateSeries([
           {
             name: "USD",
-            data: [this.profitAndLoss,this.otherIncome, this.expensesBar,this.otherExpenses],
+            data: [this.profitAndLoss, this.otherIncome, this.expensesBar, this.otherExpenses],
           },
         ]);
         this.redrawChart()
-        this.totalExpenses = this.expensesBar;
       }
       else {
         this.toasterService.error("No data found, please try again after few minutes")
@@ -177,11 +179,11 @@ export class dashboardComponent implements OnInit {
       console.log('====================================');
       console.log(err, "error hai");
       console.log('====================================');
-    }),err=>{
+    }), err => {
       console.log(err);
-      
+
     }
-    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Quarter&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`,true).subscribe((res:any)=>{
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Quarter&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
         res.data.Rows.Row.map((v) => {
           if (v.hasOwnProperty("group")) {
@@ -197,10 +199,10 @@ export class dashboardComponent implements OnInit {
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }),err=>{
+    }), err => {
       console.log(err);
     }
-    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Month&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`,true).subscribe((res:any)=>{
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Month&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
         res.data.Rows.Row.map((v) => {
           if (v.hasOwnProperty("group")) {
@@ -215,11 +217,11 @@ export class dashboardComponent implements OnInit {
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }),err=>{
+    }), err => {
       console.log(err);
     }
   }
-  loopAppendRows(v, array){
+  loopAppendRows(v, array) {
     v?.Rows?.Row?.map((e) => {
       if (e?.hasOwnProperty('ColData')) {
         array.push([e?.ColData[0]?.value ? e?.ColData[0]?.value : null, Math.round(e?.ColData[1]?.value ? e?.ColData[1]?.value : 0)]);

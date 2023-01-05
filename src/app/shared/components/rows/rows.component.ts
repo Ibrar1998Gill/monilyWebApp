@@ -14,11 +14,8 @@ export class RowsComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.data, "data");
-
   }
   replace(val: any) {
-    console.log(val);
     if (val == '') {
       return 0
     }

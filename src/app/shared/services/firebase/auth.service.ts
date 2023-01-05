@@ -23,9 +23,7 @@ export class AuthService implements OnInit {
     public toster: ToastrService,
     private cookieService: CookieService,
     private localService: LocalService) {
-      this.authToken = this.localService.getJsonValue('authUser')
-      console.log(this.authToken,'hello token from auth service');
-      
+      this.authToken = this.localService.getJsonValue('authUser')      
   }
 
   ngOnInit(): void { }
@@ -67,8 +65,6 @@ export class AuthService implements OnInit {
       Authorization: `Bearer ${this.authToken?.authtoken}`,
       Accept: "application/json",
     };
-    console.log(this.authToken?.authtoken,"hellotoken");
-    
     return this.http.get(
       environment.api.chatURL + link,
       {
@@ -83,8 +79,6 @@ export class AuthService implements OnInit {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
     };
-    console.log(this.authToken?.authtoken,"hellotoken");
-    
     return this.http.get(
       environment.api.chatURL + link,
       {

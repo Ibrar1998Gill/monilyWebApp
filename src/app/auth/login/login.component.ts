@@ -34,8 +34,6 @@ export class LoginComponent implements OnInit {
   login() {
     this.showLoader = true;
     this.authService.SignIn(this.loginForm.value['email'], this.loginForm.value['password']).subscribe((res: any) => {
-      console.log(res);
-
       this.toaster.success('Login Successfull')
       this.loginData = {
         authtoken: res?.user?.authtoken,

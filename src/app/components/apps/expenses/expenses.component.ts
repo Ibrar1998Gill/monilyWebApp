@@ -149,7 +149,6 @@ export class expensesComponent implements OnInit {
     this.http.getMonilyData(
       `report?entity=TransactionList&id=${this.companyid.id}&transaction_type=bill`, true
     ).subscribe((res: any) => {
-      let mutableData = [];
       res.data.Rows.Row?.map(e => {
         if (e?.ColData[e?.ColData?.length - 1].value != '' && e?.ColData[e?.ColData?.length - 1].value < 0) {
           this.top10Transactions?.push(e?.ColData)
@@ -160,7 +159,10 @@ export class expensesComponent implements OnInit {
         let end: any = a?.[b?.length - 1]?.value
         return end - start
       });
-      this.top10Transactions = transactions.slice(0,10)
+      if(transactions?.length > 10){
+        this.top10Transactions = transactions.slice(0,10)
+      }
+      else return;
     });
     this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`,true).subscribe(res=>{
         console.log(res,'queryres');
@@ -171,9 +173,9 @@ export class expensesComponent implements OnInit {
     
   }
   redrawChart() {
-    let ccComponent = this.pieChart3.component;
+    let ccComponent = this.pieChart3?.component;
     //force a redraw
-    ccComponent.draw();
+    ccComponent?.draw();
   }
   rowsPush(v, array){
       v?.Rows?.Row?.map((e, i) => {
