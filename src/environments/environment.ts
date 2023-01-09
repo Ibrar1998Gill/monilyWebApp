@@ -8,7 +8,8 @@ export const environment = {
     loginUrl:"https://monilyapp.yourhealthgrades.com/api/quickbooks/",
     chatURL:'https://monilyapp.yourhealthgrades.com/api/chat/',
     quickbooksURL:'https://quickbooks.api.intuit.com/v3/company',
-    monilyURL:'https://monilyapp.yourhealthgrades.com/api/quickbooks/'
+    monilyURL:'https://monilyapp.yourhealthgrades.com/api/quickbooks/',
+    monilyUsers:'https://monilyapp.yourhealthgrades.com/api/'
   }
 };
 /*

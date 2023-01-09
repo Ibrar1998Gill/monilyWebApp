@@ -26,7 +26,8 @@ export class AuthService implements OnInit {
       this.authToken = this.localService.getJsonValue('authUser')      
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+   }
 
   // sign in function
   // SignIn(email, password) {
@@ -126,6 +127,37 @@ export class AuthService implements OnInit {
       environment.api.monilyURL + link,
       {
         headers: !token ? header : headerT,
+      }
+    );
+  }
+  getUsers(link, token) {
+    let header = {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": '*',
+      Accept: "application/json",
+    };
+    let headerT = {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": '*',
+      Authorization: `Bearer 713|AbACuYf9XztrvrMDnZ3BheUsdY9HYG2VFQL7gX4d`,
+      Accept: "application/json",
+    };
+    return this.http.get(
+      environment.api.monilyUsers + link,
+      {
+        headers: !token ? header : headerT,
+      }
+    );
+  }
+  postUsers(link,data) {
+    let headerT = {
+      Authorization: `Bearer 713|AbACuYf9XztrvrMDnZ3BheUsdY9HYG2VFQL7gX4d`,
+      Accept: "application/json",
+    };
+    return this.http.post(
+      environment.api.monilyUsers + link, data,
+      {
+        headers: headerT,
       }
     );
   }

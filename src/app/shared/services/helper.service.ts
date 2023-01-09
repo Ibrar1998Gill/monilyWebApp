@@ -181,9 +181,6 @@ export class HelperService {
             formData.append('user_id', this.authToken.userId);
             formData.append("file", file);
             this.httpService.uploadImage('uploadFile', formData).subscribe(res=>{
-              console.log('====================================');
-              console.log(res);
-              console.log('====================================');
             }),err=>{
               console.log('====================================');
               console.log(err);
@@ -205,4 +202,7 @@ export class HelperService {
     const yyyy = inputDate.substring(0, 4);
     return `${mm}/${dd}/${yyyy}`;
   }
+  getUniqueListBy(arr, key) {
+    return [...new Map(arr.map(item => [item[key], item])).values()]
+}
 }

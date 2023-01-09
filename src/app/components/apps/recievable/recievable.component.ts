@@ -4,6 +4,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import * as moment from "moment";
 import { AuthService } from 'src/app/shared/services/firebase/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { UniversalService } from 'src/app/shared/services/universal.service';
 
 @Component({
   selector: 'app-recievable',
@@ -179,8 +180,8 @@ export class recievableComponent implements OnInit {
           if (v.hasOwnProperty("group")) {
             if (v.group == "Income") {
               if (v?.hasOwnProperty("Summary")) {
-                this.YearlyprofitAndLoss = Math.round(v?.Summary?.ColData[v?.Summary?.ColData?.length - 1]?.value);
-                this.QuaterlyprofitAndLoss = Math.round(v?.Summary?.ColData[v?.Summary?.ColData?.length - 2]?.value);
+                this.YearlyprofitAndLoss = v?.Summary?.ColData[v?.Summary?.ColData?.length - 1]?.value;
+                this.QuaterlyprofitAndLoss = v?.Summary?.ColData[v?.Summary?.ColData?.length - 2]?.value;
               }
             }
           }
@@ -204,6 +205,33 @@ export class recievableComponent implements OnInit {
           }
         });
       }
+      else {
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }),err=>{
+      console.log(err);
+    }
+    this.http.getMonilyData(`report?entity=AgedPayableDetail&id=${this.companyid?.id}`,true).subscribe((res:any)=>{
+      let data = []
+      if (res?.data != null) {
+        if(res?.data?.Rows?.Row){
+          res?.data?.Rows?.Row?.map(e=>{
+            if(e?.Rows?.Row){
+              e?.Rows?.Row?.map(i=>{
+                if(i?.hasOwnProperty('ColData')){
+                  data.push(i?.ColData)
+                }
+                else{
+                  this.recursion(i, data)
+                }
+              })
+            }
+        })
+      }
+      console.log('====================================');
+      console.log(data,"datadata");
+      console.log('====================================');
+    }
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
@@ -316,4 +344,20 @@ export class recievableComponent implements OnInit {
     // })
     
   // }
+  recursion(data, formattedData){
+    if(data?.Rows?.Row){
+      data?.Rows?.Row?.map(e=>{
+        if(e?.Rows?.Row){
+          e?.Rows?.Row?.map(i=>{
+            if(i?.hasOwnProperty('ColData')){
+              formattedData.push(i?.ColData)
+            }
+            else{
+              this.recursion(i, formattedData)
+            }
+          })
+        }
+      })
+    }
+  }
 }
