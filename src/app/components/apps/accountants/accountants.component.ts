@@ -20,6 +20,8 @@ export class AccountantsComponent implements OnInit {
   permissions;
   selectedPermissions: Array<Object> = [];
   public accountants;
+  public roles;
+  selectedRole;
   public rights: Array<Object> = [
     { item: 'dashboard' },
     { item: 'expenses' },
@@ -38,54 +40,50 @@ export class AccountantsComponent implements OnInit {
   ngOnInit(): void {
     this.getData()
   }
-  getData(){
-    this.http.getUsers(`permission/all`, true).subscribe((res: any) => {
-      let permissions = []
-      if (res?.data) {
-        res?.data?.map(i => {
-          permissions.push(i)
-        })
-      }
-      this.permissions = this.help.getUniqueListBy(permissions, 'name')
-    }), err => {
-      console.log(err);
-    }
+  getData() {
+    // this.http.getUsers(`permission/all`, true).subscribe((res: any) => {
+    //   let permissions = []
+    //   if (res?.data) {
+    //     res?.data?.map(i => {
+    //       permissions.push(i)
+    //     })
+    //   }
+    //   this.permissions = this.help.getUniqueListBy(permissions, 'name')
+    // }), err => {
+    //   console.log(err);
+    // }
     this.http.getUsers('user/all', true).subscribe((res: any) => {
       this.accountants = res?.data?.data
     }), err => {
       console.log(err);
     }
+    this.http.getUsers('role/all', true).subscribe((res: any) => {
+      this.roles = res?.data
+      this.selectedRole = res?.data[0]?.name
+    }), err => {
+      console.log(err);
+    }
   }
-  selectAccountant(item) {
-    this.selectedAccountant = item
+  selectAccountant(item: any) {
+    // this.selectedAccountant = item
   }
   permissionArray(event) {
     this.selectedPermissions.push(event?.target?.value)
   }
-  assignPermission() {
-    this.http.postUsers(`role/assign-permissions/${this.selectedAccountant?.id}`, { permissions: this.selectedPermissions }).subscribe((res: any) => {
-      this.toasterService.success(res?.message)
-      this.uncheckAll()
-    }), err => {
-      console.log(err);
-      this.uncheckAll()
-    }
-  }
-  uncheckAll() {
-    this.checkboxes.forEach((element) => {
-      element.nativeElement.checked = false;
-    });
-  }
-  checkSelectedPermission(){
-    this.selectedPermissions?.map((e:any)=>{
-      this.checkboxes.forEach((element:any) => {
-        if(e == element?.nativeElement?.value){
+  
+  checkSelectedPermission() {
+    this.selectedPermissions?.map((e: any) => {
+      this.checkboxes.forEach((element: any) => {
+        if (e == element?.nativeElement?.value) {
           element.nativeElement.checked = true;
         }
-        else{
+        else {
           element.nativeElement.checked = false;
         }
       });
     })
+  }
+  selectRole(event) {
+    this.selectedRole = event;
   }
 }

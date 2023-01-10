@@ -205,4 +205,20 @@ export class HelperService {
   getUniqueListBy(arr, key) {
     return [...new Map(arr.map(item => [item[key], item])).values()]
 }
+recursion(data, formattedData){
+  if(data?.Rows?.Row){
+    data?.Rows?.Row?.map(e=>{
+      if(e?.Rows?.Row){
+        e?.Rows?.Row?.map(i=>{
+          if(i?.hasOwnProperty('ColData')){
+            formattedData.push(i?.ColData)
+          }
+          else{
+            this.recursion(i, formattedData)
+          }
+        })
+      }
+    })
+  }
+}
 }

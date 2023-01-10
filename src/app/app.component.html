@@ -5,7 +5,8 @@
 <!-- company select modal -->
 <!-- Button trigger modal -->
 <button type="button" id="companyModal" data-bs-toggle="modal" hidden data-bs-target="#staticBackdrop"></button>
-
+<button hidden class="btn btn-success ml-1 me-1" id="permissionModal" (click)="checkSelectedPermission();"
+        data-bs-toggle="modal" data-bs-target="#rightsModal">Assign Roles</button>
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
   aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -23,6 +24,43 @@
         <button type="button" class="btn btn-secondary" *ngIf="!companyFound" (click)="logout()">Logout</button>
         <button type="button" data-bs-dismiss="modal" hidden id="closeModal"></button>
         <button type="button" class="btn btn-primary" [disabled]="companySelected == null" (click)="select()">Select</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="rightsModal" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1"
+  aria-labelledby="rightsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fa fa-times" data-bs-dismiss="modal" aria-label="Close"></i>
+        <h5 class="modal-title" id="rightsModalLabel">Rights & Roles</h5>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12 mt-3 mb-3">
+              <ng-select [(ngModel)]="selectedRole" placeholder="search" (change)="selectRole($event)">
+                <ng-option *ngFor="let role of roles" [value]="role">{{role?.name}}</ng-option>
+             </ng-select>
+            </div>
+            <div class="col-sm-3 mt-3 mb-3 d-flex align-items-center checks" *ngFor="let item of permissions; let i = index">
+              <label>{{i+1}}. </label>
+              <input #checkboxes (change)="permissionArray($event)" type="checkbox" value="{{item?.name}}"
+                name="{{item?.name}}" id="{{i}}">
+              <label for="{{i}}">{{item?.name}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row">
+          <div class="col-lg-12 d-flex justify-content-end">
+            <button class="btn btn-primary mt-3 mb-3" data-bs-dismiss="modal" (click)="assignPermission()">
+              Save
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

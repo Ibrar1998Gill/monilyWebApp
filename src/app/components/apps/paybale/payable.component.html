@@ -12,50 +12,59 @@
             [closeOthers]="true"
             activeIds="static-1"
           >
-            <ngb-panel title="Payments" id="static-1">
+            <ngb-panel title="Over Due Payments" id="static-1">
               <ng-template ngbPanelContent>
-                <div class="card o-hidden cstmCard">
-                  <div class="bg-primary b-r-4 card-body">
-                    <div class="media static-top-widget flex-column">
-                      <div class="media-body w-100">
-                        <div class="row mt-3 mb-3">
-                          <div class="col-sm-6">
-                            <span class="m-0">Yearly</span>
-                          </div>
-                          <div class="col-sm-6">
-                            
-                            <span class="mb-0 counter">{{
-                              YTD ? (YTD | currency:'USD') : 0 | currency:'USD'
-                            }}</span>
-                          </div>
-                        </div>
-                        <div class="row mt-3 mb-3">
-                          <div class="col-sm-6">
-                            <span class="m-0">Quaterly</span>
-                          </div>
-                          <div class="col-sm-6">
-                            
-                            <span class="mb-0 counter">{{
-                              QTD ? (QTD | currency:'USD') : 0 | currency:'USD'
-                            }}</span>
-                          </div>
-                        </div>
-                        <div class="row mt-3 mb-3">
-                          <div class="col-sm-6">
-                            <span class="m-0">Monthly</span>
-                          </div>
-                          <div class="col-sm-6">
-                            
-                            <span class="mb-0 counter">{{
-                              MTD
-                                ? (MTD | currency:'USD')
-                                : 0 | currency:'USD'
-                            }}</span>
-                          </div>
-                        </div>
-                        <i class="icon-bg" data-feather="dollar-sign"></i>
-                      </div>
-                    </div>
+                <div class="col-sm-12">
+                  <div class="d-flex align-items-baseline justify-content-end">
+                    <label class="me-3">Sort By:</label>
+                    <ng-select [(ngModel)]="sortText" placeholder="Sort By" (change)="sort($event)">
+                      <ng-option value="Latest">Latest</ng-option>
+                      <ng-option value="Earlier">Earlier</ng-option>
+                   </ng-select>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Transaction Type</th>
+                          <th scope="col">Location</th>
+                          <th scope="col">Due Date</th>
+                          <th scope="col">Past Due</th>
+                          <th scope="col">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="
+                            let due of overDuePayments
+                              | paginate
+                                : {
+                                    itemsPerPage: 10,
+                                    currentPage: duePayment,
+                                    totalItems: total
+                                  };let i = index
+                          "
+                        >
+                          <th scope="row">{{ i }}</th>
+                          <td>
+                            <label>{{ (due[0]?.value != '0-00-00') ? (due[0]?.value | date: 'dd/MM/yyyy') : "N/A" }}</label>
+                          </td>
+                          <td><label>{{ due[1]?.value ? due[1]?.value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol" ngbTooltip={{due[4]?.value}}>{{ due[4]?.value ? due[4]?.value : "N/A" }}</label></td>
+                          <td><label>{{ (due[5]?.value != '0-00-00') ? (due[5]?.value | date: 'dd/MM/yyyy') : "N/A" }}</label></td>
+                          <td><label>{{ due[6]?.value ? due[6]?.value : "N/A" }}</label></td>
+                          <td><label>{{ due[7]?.value ? (due[7]?.value | currency : "USD") : (0 | currency: "USD") }}</label></td>
+                        </tr>
+                        <!-- <tr *ngIf="dueData?.length < 1">
+                          <label>No Data</label>
+                        </tr> -->
+                      </tbody>
+                    </table>
+                    <pagination-controls
+                    (pageChange)="duePayment = $event"
+                    ></pagination-controls>
                   </div>
                 </div>
               </ng-template>
@@ -110,7 +119,7 @@
                             let due of dueData
                               | paginate
                                 : {
-                                    itemsPerPage: 20,
+                                    itemsPerPage: 10,
                                     currentPage: duePage,
                                     totalItems: total
                                   };let i = index
@@ -121,7 +130,7 @@
                             <label>{{ due?.ColData[0]?.value ? (due?.ColData[0]?.value | date: 'dd/MM/yyyy') : "N/A" }}</label>
                           </td>
                           <td><label class="descriptionCol" ngbTooltip={{due?.ColData[4]?.value}}>{{ due?.ColData[4]?.value ? due?.ColData[4]?.value : "N/A" }}</label></td>
-                          <td><label class="descriptionCol" ngbTooltip={{due?.ColData[6]?.value}}>{{ due?.ColData[6]?.value ? due?.ColData[6]?.value : "N/A" }}</label></td>
+                          <td><label class="descriptionCol" ngbTooltip={{due?.ColData[4]?.value}}>{{ due?.ColData[6]?.value ? due?.ColData[6]?.value : "N/A" }}</label></td>
                           <td><label>{{ due?.ColData[7]?.value ? due?.ColData[7]?.value : "N/A" }}</label></td>
                           <td><label>{{ due?.ColData[9]?.value ? (formatMinus(due?.ColData[9]?.value) | currency : "USD") : (0 | currency: "USD") }}</label></td>
                         </tr>

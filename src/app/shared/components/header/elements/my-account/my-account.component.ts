@@ -22,4 +22,7 @@ export class MyAccountComponent implements OnInit {
     this.authService.SignOut();
     UniversalService.logout.next(true)
   }
+  permissionModal(){
+    UniversalService.permissionModal.next(true)
+  }
 }

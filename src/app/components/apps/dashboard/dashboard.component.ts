@@ -97,7 +97,9 @@ export class dashboardComponent implements OnInit {
     if(this.pieChart3){
       let ccComponent = this.pieChart3?.component;
       //force a redraw
-      ccComponent?.draw();
+      if(ccComponent){
+        ccComponent?.draw();
+      }
     }
   }
   ngOnInit(): void {

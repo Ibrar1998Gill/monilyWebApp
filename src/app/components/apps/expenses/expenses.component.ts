@@ -164,11 +164,11 @@ export class expensesComponent implements OnInit {
       }
       else return;
     });
-    this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`,true).subscribe(res=>{
-        console.log(res,'queryres');
-    }),err=>{
-        console.log(err,'queryerr');
-    }
+    // this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`,true).subscribe(res=>{
+    //     console.log(res,'queryres');
+    // }),err=>{
+    //     console.log(err,'queryerr');
+    // }
     
     
   }

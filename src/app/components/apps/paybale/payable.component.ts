@@ -43,12 +43,13 @@ export class payableComponent implements OnInit {
   currentNotDue;
   currentOverDue;
   timeSelected;
-  today:any = new Date();
-  quarter:any
-  MTD:any;
-  YTD:any;
-  QTD:any;
-  quarterMonth:any = Math.ceil(this.today.getMonth() / 3);
+  today: any = new Date();
+  quarter: any
+  MTD: any;
+  YTD: any;
+  QTD: any;
+  sortText:string = 'latest';
+  quarterMonth: any = Math.ceil(this.today.getMonth() / 3);
   times: any = [
     { value: "Last 12 months" },
     { value: "Last 6 months" },
@@ -127,6 +128,7 @@ export class payableComponent implements OnInit {
       ],
     },
   };
+  overDuePayments;
   constructor(
     private helperService: HelperService,
     private localService: LocalService,
@@ -139,6 +141,7 @@ export class payableComponent implements OnInit {
     // this.observe()
     if (this.companyid != null) {
       this.getpayments();
+      this.overduePayments()
       // this.selectTime();
     } else return;
   }
@@ -170,46 +173,81 @@ export class payableComponent implements OnInit {
     let mtd = []
     let qtd = []
     let ytd = []
-    this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&transaction_type=bill&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`,true).subscribe((res:any)=>{
-      console.log(res,this.startDate, this.endDate,"resres");
-      res?.data?.Rows?.Row?.map(e=>{
+    this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&transaction_type=bill&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+      // console.log(res, this.startDate, this.endDate, "resres");
+      res?.data?.Rows?.Row?.map(e => {
         var item = e?.ColData?.[9]?.value
         var month = e?.ColData?.[0]?.value.split('-')[1]
         var currentMonth = moment().format("MM")
-        if(e?.ColData[9]?.value < 0){
+        if (e?.ColData[9]?.value < 0) {
           this.dueData.push(e)
           ytd.push(this.formatMinus(item))
-          if(this.quarterMonth == 1 && (month >= 1 && month <= 3)){
+          if (this.quarterMonth == 1 && (month >= 1 && month <= 3)) {
             qtd.push(this.formatMinus(item))
           }
-          if(this.quarterMonth == 2 && (month >= 4 && month <= 6)){
+          if (this.quarterMonth == 2 && (month >= 4 && month <= 6)) {
             qtd.push(this.formatMinus(item))
           }
-          if(this.quarterMonth == 3 && (month >= 7 && month <= 9)){
+          if (this.quarterMonth == 3 && (month >= 7 && month <= 9)) {
             qtd.push(this.formatMinus(item))
           }
-          if(this.quarterMonth == 4 && (month >= 10 && month <= 12)){
+          if (this.quarterMonth == 4 && (month >= 10 && month <= 12)) {
             qtd.push(this.formatMinus(item))
-            
+
           }
-          if(month == currentMonth){
+          if (month == currentMonth) {
             mtd.push(this.formatMinus(item))
           }
         }
       })
-      if(mtd?.length > 0) {this.MTD = this.addItems(mtd)}
-      if(qtd?.length > 0) {this.QTD = this.addItems(qtd)}
-      if(ytd?.length > 0) {this.YTD = this.addItems(ytd)}
-    }),err=>{
+      if (mtd?.length > 0) { this.MTD = this.addItems(mtd) }
+      if (qtd?.length > 0) { this.QTD = this.addItems(qtd) }
+      if (ytd?.length > 0) { this.YTD = this.addItems(ytd) }
+    }), err => {
       console.log(err);
     }
   }
-  formatMinus(value){
+  overduePayments(){
+    this.http.getMonilyData(`report?entity=AgedPayableDetail&id=${this.companyid?.id}`, true).subscribe((res: any) => {
+      let data = []
+      if (res?.data != null) {
+        if (res?.data?.Rows?.Row) {
+          res?.data?.Rows?.Row?.map(e => {
+            if (e?.Rows?.Row) {
+              e?.Rows?.Row?.map(i => {
+                if (i?.hasOwnProperty('ColData')) {
+                  data.push(i?.ColData)
+                }
+                else {
+                  this.helperService.recursion(i, data)
+                }
+              })
+            }
+          })
+        }
+        this.overDuePayments = data
+      }
+      else {
+        this.toasterService.error("No data found, please try again after few minutes")
+      }
+    }), err => {
+      console.log(err);
+    }
+  }
+  formatMinus(value) {
     return value?.replace(/-/g, '');
   }
-  addItems(array){
-   return array?.reduce(function(prev, curr){
+  addItems(array) {
+    return array?.reduce(function (prev, curr) {
       return (Number(prev) || 0) + (Number(curr) || 0);
-  });
+    });
+  }
+  sort(event){
+    if(event == 'Earlier'){
+      this.overDuePayments.reverse()
+    }
+    if(event == 'Latest'){
+      this.overduePayments()
+    }
   }
 }

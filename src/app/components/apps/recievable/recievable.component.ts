@@ -211,33 +211,6 @@ export class recievableComponent implements OnInit {
     }),err=>{
       console.log(err);
     }
-    this.http.getMonilyData(`report?entity=AgedPayableDetail&id=${this.companyid?.id}`,true).subscribe((res:any)=>{
-      let data = []
-      if (res?.data != null) {
-        if(res?.data?.Rows?.Row){
-          res?.data?.Rows?.Row?.map(e=>{
-            if(e?.Rows?.Row){
-              e?.Rows?.Row?.map(i=>{
-                if(i?.hasOwnProperty('ColData')){
-                  data.push(i?.ColData)
-                }
-                else{
-                  this.recursion(i, data)
-                }
-              })
-            }
-        })
-      }
-      console.log('====================================');
-      console.log(data,"datadata");
-      console.log('====================================');
-    }
-      else {
-        this.toasterService.error("No data found, please try again after few minutes")
-      }
-    }),err=>{
-      console.log(err);
-    }
   }
     // this.http.getMonilyData(`report?entity=AgedReceivables&id=${this.companyid.id}`,true).subscribe(res=>{
     // }),err=>{
@@ -344,20 +317,4 @@ export class recievableComponent implements OnInit {
     // })
     
   // }
-  recursion(data, formattedData){
-    if(data?.Rows?.Row){
-      data?.Rows?.Row?.map(e=>{
-        if(e?.Rows?.Row){
-          e?.Rows?.Row?.map(i=>{
-            if(i?.hasOwnProperty('ColData')){
-              formattedData.push(i?.ColData)
-            }
-            else{
-              this.recursion(i, formattedData)
-            }
-          })
-        }
-      })
-    }
-  }
 }
