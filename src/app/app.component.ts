@@ -23,7 +23,7 @@ export class AppComponent {
   companies: any = [];
   companySelected: any = null;
   selectedPermissions: Array<Object> = [];
-  selectedRole: any;
+  selectedRole: any = null;
   roles: Array<Object>;
   permissions: Array<Object>;
   // For Progressbar
@@ -48,6 +48,7 @@ export class AppComponent {
     this.companySelected = null
     this.observe()
     this.getData()
+    this.getUsers()
     if (this.localService.getJsonValue('company') == null) {
       this.getRecentUser()
     }
@@ -129,6 +130,7 @@ export class AppComponent {
     })
     UniversalService.permissionModal.subscribe((res: any) => {
       if (res) {
+        this.uncheckAll()
         $("#permissionModal").trigger('click')
       }
       else {
@@ -170,18 +172,23 @@ export class AppComponent {
     }), err => {
       console.log(err);
     }
+  }
+  getUsers(){
     this.http.getUsers('role/all', true).subscribe((res: any) => {
       this.roles = res?.data
-      this.selectedRole = res?.data[0]?.name
-      this.selectRole(res?.data[0])
     }), err => {
       console.log(err);
     }
   }
   selectRole(event) {
+    this.selectedPermissions = []
     this.uncheckAll()
     this.selectedRole = event;
+    console.log('====================================');
+    console.log(this.selectedRole);
+    console.log('====================================');
     this.selectedRole?.permissions.map(e => {
+      this.selectedPermissions.push(e?.name)
       this.checkboxes.forEach((element) => {
         if (element.nativeElement.name == e.name) {
           element.nativeElement.checked = true;
@@ -189,21 +196,38 @@ export class AppComponent {
       });
     })
   }
+  
   assignPermission() {
-    this.http.postUsers(`role/assign-permissions/${this.selectedRole?.id}`, { permissions: this.selectedPermissions }).subscribe((res: any) => {
-      this.toasterService.success(res?.message)
-      this.uncheckAll()
-    }), err => {
-      console.log(err);
-      this.uncheckAll()
+    if(this.selectedRole != null){
+      this.http.postUsers(`role/assign-permissions/${this.selectedRole?.id}`, { permissions: this.selectedPermissions }).subscribe((res: any) => {
+        this.toasterService.success(res?.message)
+        this.getUsers()
+      this.selectedPermissions = []
+      this.uncheckAll();
+      }), err => {
+        console.log(err);
+        this.uncheckAll();
+      }
+    }
+    else{
+      this.toasterService.error("Select Role First!")
     }
   }
   permissionArray(event) {
-    this.selectedPermissions.push(event?.target?.value)
+    if (this.selectedPermissions.indexOf(event?.target?.value) != -1) {
+      this.selectedPermissions.splice(this.selectedPermissions.indexOf(event?.target?.value), 1)
+    } else {
+      this.selectedPermissions.push(event?.target?.value);
+    }
+    console.log('====================================');
+    console.log(this.selectedPermissions);
+    console.log('====================================');
   }
   uncheckAll() {
     this.checkboxes.forEach((element) => {
       element.nativeElement.checked = false;
     });
+    this.selectedRole=null
   }
+  
 }

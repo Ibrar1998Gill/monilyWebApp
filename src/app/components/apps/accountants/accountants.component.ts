@@ -57,15 +57,15 @@ export class AccountantsComponent implements OnInit {
     }), err => {
       console.log(err);
     }
-    this.http.getUsers('role/all', true).subscribe((res: any) => {
-      this.roles = res?.data
-      this.selectedRole = res?.data[0]?.name
-    }), err => {
-      console.log(err);
-    }
+    // this.http.getUsers('role/all', true).subscribe((res: any) => {
+    //   this.roles = res?.data
+    //   this.selectedRole = res?.data[0]?.name
+    // }), err => {
+    //   console.log(err);
+    // }
   }
   selectAccountant(item: any) {
-    // this.selectedAccountant = item
+    this.selectedAccountant = item
   }
   permissionArray(event) {
     this.selectedPermissions.push(event?.target?.value)

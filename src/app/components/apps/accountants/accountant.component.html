@@ -2,29 +2,39 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
-      <form class="theme-form">
+      <form [formGroup]="accountant" class="theme-form">
         <div class="form-group">
           <div class="container">
             <div class="row">
               <div class="col-lg-6 mt-3">
                 <label class="col-form-label">Name</label>
-                <input class="form-control" type="text" required="" placeholder="Name">
+                <input class="form-control" type="text" formControlName="name" placeholder="Name">
               </div>
+              <div *ngIf="accountant.controls['name'].touched &&
+                            accountant.controls['name'].invalid" class="text text-danger mt-1">Name is required</div>
               <div class="col-lg-6 mt-3">
                 <label class="col-form-label">Number</label>
-                <input class="form-control" type="text" required="" placeholder="Number">
+                <input class="form-control" type="text" formControlName="phone" placeholder="Number">
               </div>
+              <div *ngIf="accountant.controls['phone'].touched &&
+                            accountant.controls['phone'].invalid" class="text text-danger mt-1">Phone number is
+                required</div>
               <div class="col-lg-6 mt-3">
                 <label class="col-form-label">Email</label>
-                <input class="form-control" type="text" required="" placeholder="Email">
+                <input class="form-control" type="text" formControlName="email" placeholder="Email">
               </div>
+              <div *ngIf="accountant.controls['email'].touched &&
+                            accountant.controls['email'].invalid" class="text text-danger mt-1">Valid email is
+                required</div>
               <div class="col-lg-6 mt-3">
                 <label class="col-form-label">Role</label>
-                <ng-select placeholder="Select Role">
-                  <ng-option>Admin</ng-option>
-                  <ng-option>User</ng-option>
+                <ng-select formControlName="role" placeholder="search">
+                  <ng-option *ngFor="let role of roles" [value]="role">{{role?.name}}</ng-option>
                 </ng-select>
               </div>
+              <div *ngIf="accountant.controls['role'].touched &&
+                            accountant.controls['role'].invalid" class="text text-danger mt-1">Role is
+                required</div>
               <!-- <div class="col-lg-6 mt-3">
                 <label class="col-form-label">Clients</label>
                 <div class="d-flex w-100">
@@ -47,8 +57,8 @@
                     <ng-option>Farwah</ng-option>
                     <ng-option>Wajiha</ng-option>
                     <ng-option>Azeem</ng-option>
-                 </ng-select>
-                 <!-- <a routerLink="/companies/add-company">
+                  </ng-select>
+                  <!-- <a routerLink="/companies/add-company">
                   <button class="btn btn-primary ml-3">
                     <i class="fa fa-plus"></i>
                   </button>
@@ -56,10 +66,10 @@
                 </div>
               </div>
               <div class="col-lg-12 d-flex justify-content-end">
-                <button class="btn btn-primary mt-3 mb-3">
-                  <a routerLink="..">
-                    Save
-                  </a>
+                <button class="btn btn-primary mt-3 mb-3" (click)="create()">
+                  <!-- <a routerLink=".."> -->
+                  Save
+                  <!-- </a> -->
                 </button>
               </div>
             </div>
