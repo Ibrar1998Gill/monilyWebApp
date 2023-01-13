@@ -78,10 +78,9 @@ export class expensesComponent implements OnInit {
       else{
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }, err => {
-      console.log('====================================');
-      console.log(err, "error hai");
-      console.log('====================================');
+    },
+    error => {
+      this.toasterService.error(error)
     })
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Month&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if(res?.data != null){
@@ -95,10 +94,9 @@ export class expensesComponent implements OnInit {
       else{
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }, err => {
-      console.log('====================================');
-      console.log(err, "error hai");
-      console.log('====================================');
+    },
+    error => {
+      this.toasterService.error(error)
     })
     // annual data
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
@@ -117,15 +115,9 @@ export class expensesComponent implements OnInit {
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }, err => {
-      if (err.hasOwnProperty('error')) {
-        if (err?.error?.hasOwnProperty('errors')) {
-          for (const key in err?.error?.errors) {
-            this.toasterService.error(err?.error?.errors[key])
-          }
-        }
-      }
-      console.log(err, "error hai");
+    },
+    error => {
+      this.toasterService.error(error)
     })
     // recent transactions
     this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&start_date=${this.lastMonthStartDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
@@ -142,9 +134,10 @@ export class expensesComponent implements OnInit {
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }), err => {
-      console.log(err);
-    }
+    },
+    error => {
+      this.toasterService.error(error)
+    })
     // top 10 transactions
     this.http.getMonilyData(
       `report?entity=TransactionList&id=${this.companyid.id}&transaction_type=bill`, true
@@ -163,6 +156,9 @@ export class expensesComponent implements OnInit {
         this.top10Transactions = transactions.slice(0,10)
       }
       else return;
+    },
+    error => {
+      this.toasterService.error(error)
     });
     // this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`,true).subscribe(res=>{
     //     console.log(res,'queryres');

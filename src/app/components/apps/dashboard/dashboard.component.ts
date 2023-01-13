@@ -94,7 +94,7 @@ export class dashboardComponent implements OnInit {
   startDate: any = moment(new Date(this.lastyear, 0, 1)).format('YYYY-MM-DD')
   endDate: any = moment().format('YYYY-MM-DD')
   redrawChart() {
-    if(this.pieChart3){
+    if(this.pieChart3 != undefined){
       let ccComponent = this.pieChart3?.component;
       //force a redraw
       if(ccComponent){
@@ -109,9 +109,6 @@ export class dashboardComponent implements OnInit {
     }
     if (this.companyid != null) {
       this.getExpenses();
-      // this.dashboardCharts();
-      // this.revenueGenerate();
-      // this.paymentGenerate();
     } else return;
 
   }
@@ -122,9 +119,6 @@ export class dashboardComponent implements OnInit {
       if (res) {
         this.companyid = this.localService.getJsonValue("company");
         this.getExpenses();
-        // this.dashboardCharts();
-        // this.revenueGenerate();
-        // this.paymentGenerate();
       } else return;
     });
   }
@@ -170,21 +164,10 @@ export class dashboardComponent implements OnInit {
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }, err => {
-      if (err.hasOwnProperty('error')) {
-        if (err?.error?.hasOwnProperty('errors')) {
-          for (const key in err?.error?.errors) {
-            this.toasterService.error(err?.error?.errors[key])
-          }
-        }
-      }
-      console.log('====================================');
-      console.log(err, "error hai");
-      console.log('====================================');
-    }), err => {
-      console.log(err);
-
-    }
+    },
+    error => {
+      this.toasterService.error(error)
+    })
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Quarter&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
         res.data.Rows.Row.map((v) => {
@@ -201,9 +184,10 @@ export class dashboardComponent implements OnInit {
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }), err => {
-      console.log(err);
-    }
+    },
+    error => {
+      this.toasterService.error(error)
+    })
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Month&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
         res.data.Rows.Row.map((v) => {
@@ -219,9 +203,10 @@ export class dashboardComponent implements OnInit {
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }), err => {
-      console.log(err);
-    }
+    },
+    error => {
+      this.toasterService.error(error)
+    })
   }
   loopAppendRows(v, array) {
     v?.Rows?.Row?.map((e) => {
@@ -235,125 +220,4 @@ export class dashboardComponent implements OnInit {
       }
     })
   }
-  // revenueGenerate() {
-  //   this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from invoice startposition 1`, true).subscribe((res: any) => {
-  //     let mutableData = [];
-  //     if (res?.data != null) {
-  //       res.data.QueryResponse.Invoice.map((inv) => {
-  //         let txnDate = moment(inv.TxnDate).format("MM/DD/YYYY");
-  //         let dueDate = this.helperService.calculateDays(inv.DueDate);
-  //         mutableData.push({
-  //           Date: txnDate,
-  //           num: inv.DocNumber,
-  //           Customer: inv.CustomerRef.name,
-  //           Amount: inv.Balance,
-  //           TotalAmt: inv.TotalAmt,
-  //           Status: dueDate,
-  //           id: inv.Id,
-  //         });
-  //       });
-  //       this.monthlyDataRevenue =
-  //         this.helperService.getCurrentMonthExpenses(mutableData);
-  //       this.yearlyDataRevenue = this.helperService.getYearlyExpenses(mutableData);
-  //       const mutableQuarterly =
-  //         this.helperService.getQuarterlyExpenses(mutableData);
-  //       this.quaterlyDataRevenue = parseFloat(
-  //         mutableQuarterly[Object.keys(mutableQuarterly).pop()]
-  //       ).toFixed(2);
-  //     }
-  //     else {
-  //       this.toasterService.error("No data found, please try again after few minutes")
-  //     }
-  //   }, err => {
-  //     if (err.hasOwnProperty('error')) {
-  //       if (err?.error?.hasOwnProperty('errors')) {
-  //         for (const key in err?.error?.errors) {
-  //           this.toasterService.error(err?.error?.errors[key])
-  //         }
-  //       }
-  //     }
-  //     console.log(err);
-  //   })
-  // }
-  // paymentGenerate() {
-  //   this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`, true).subscribe((res: any) => {
-  //     let mutableData = [];
-  //     if (res?.data != null) {
-  //       res.data.QueryResponse.Bill.map((bill) => {
-  //         let txnDate = new Date(bill.TxnDate).toLocaleString();
-  //         txnDate = txnDate.substring(0, txnDate.indexOf(","));
-  //         txnDate = this.helperService.formattedDate(bill.TxnDate);
-  //         const vendorName = bill.VendorRef.name;
-  //         const pastDue = this.helperService.calculateDays(bill.DueDate);
-  //         mutableData.push({
-  //           Date: txnDate,
-  //           Customer: vendorName,
-  //           Status: this.helperService.calculateDays(bill.DueDate),
-  //           pastDue,
-  //           Amount: bill.Balance,
-  //           TotalAmt: bill.TotalAmt,
-  //           id: bill.Id,
-  //         });
-  //       });
-  //       this.monthlyDataPayments =
-  //         this.helperService.getCurrentMonthExpenses(mutableData);
-  //       this.yearlyDataPayments = this.helperService.getYearlyExpenses(mutableData);
-  //       const mutableQuarterly =
-  //         this.helperService.getQuarterlyExpenses(mutableData);
-  //       this.quaterlyDataPayments = parseFloat(
-  //         mutableQuarterly[Object.keys(mutableQuarterly).pop()]
-  //       ).toFixed(2);
-  //     }
-  //     else {
-  //       this.toasterService.error("No data found, please try again after few minutes")
-  //     }
-  //   }, err => {
-  //     if (err.hasOwnProperty('error')) {
-  //       if (err?.error?.hasOwnProperty('errors')) {
-  //         for (const key in err?.error?.errors) {
-  //           this.toasterService.error(err?.error?.errors[key])
-  //         }
-  //       }
-  //     }
-  //     console.log(err);
-  //   })
-  // }
-  // dashboardCharts() {
-  //   this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from purchase startposition 1`, true).subscribe((res: any) => {
-  //     let ExpenseDate = []
-  //     if (res?.data != null) {
-  //       res?.data?.QueryResponse?.Purchase.map(expense => {
-  //         ExpenseDate.push(expense)
-  //       })
-  //       let prices = [];
-  //       ExpenseDate.map((expense) => {
-  //         let category =
-  //           expense.Line[0].AccountBasedExpenseLineDetail.AccountRef.name;
-  //         if (this.mutablePieData[category]) {
-  //           this.mutablePieData[category] += parseFloat(expense.TotalAmt);
-  //         } else {
-  //           this.mutablePieData[category] = parseFloat(expense.TotalAmt);
-  //         }
-  //       });
-
-  //       var sum = prices.reduce(function (a, b) {
-  //         return a + b;
-  //       }, 0);
-  //       this.totalExpenses = this.expensesBar;
-  //       this.redrawChart()
-  //     }
-  //     else {
-  //       this.toasterService.error("No data found, please try again after few minutes")
-  //     }
-  //   }, err => {
-  //     if (err.hasOwnProperty('error')) {
-  //       if (err?.error?.hasOwnProperty('errors')) {
-  //         for (const key in err?.error?.errors) {
-  //           this.toasterService.error(err?.error?.errors[key])
-  //         }
-  //       }
-  //     }
-  //     console.log(err);
-  //   })
-  // }
 }

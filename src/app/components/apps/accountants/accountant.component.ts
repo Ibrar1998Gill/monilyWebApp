@@ -6,6 +6,8 @@ import { AuthService } from '../../../shared/services/firebase/auth.service';
 import { LocalService } from '../../../shared/services/local.service';
 import { Location } from '@angular/common';
 import { FormBuilder, Validators } from '@angular/forms';
+import { HelperService } from 'src/app/shared/services/helper.service';
+import { debounce } from 'lodash';
 
 @Component({
   selector: 'app-accountant',
@@ -20,15 +22,19 @@ export class AccountantComponent implements OnInit {
     email: [null],
     phone: [null],
     role: [null],
+    password: [null],
+    is_active: 1
   });
   roles: Array<Object> = [];
   selectedRole: string;
-  constructor(private http: AuthService, private localService: LocalService, private toasterService: ToastrService, private location: Location, private fb: FormBuilder) {
+  constructor(private help:HelperService,private http: AuthService, private localService: LocalService, private toasterService: ToastrService, private location: Location, private fb: FormBuilder) {
     this.accountant = this.fb.group({
       email: [null, [Validators.required, Validators.email]],
       name: [null, Validators.required],
       phone: [null, Validators.required],
       role: [null, Validators.required],
+      is_active: 1,
+      password: [null, Validators.required]
     });
   }
   ngOnInit(): void {
@@ -36,21 +42,25 @@ export class AccountantComponent implements OnInit {
     this.getRoles()
   }
   create() {
-    this.http.postUsers('user/create', this.accountant.value).subscribe(res=>{
+    this.http.postUsers('user/create', this.accountant.value).subscribe((res:any) => {
       console.log('====================================');
       console.log(res);
       console.log('====================================');
-    }),err=>{
-      console.log('====================================');
-      console.log(err);
-      console.log('====================================');
-    }
+      this.toasterService.success(res?.data?.message)
+    },
+    error => {
+      this.toasterService.error(error)
+    })
   }
   getRoles() {
     this.http.getUsers('role/all', true).subscribe((res: any) => {
       this.roles = res?.data
-    }), err => {
-      console.log(err);
-    }
+    },
+    error => {
+      this.toasterService.error(error)
+    })
+  }
+  change(event){
+    return this.help.numberOnly(event)
   }
 }

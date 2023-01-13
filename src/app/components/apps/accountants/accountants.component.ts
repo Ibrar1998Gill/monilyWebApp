@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { AuthService } from '../../../shared/services/firebase/auth.service';
 import { LocalService } from '../../../shared/services/local.service';
 import { HelperService } from 'src/app/shared/services/helper.service';
+// import { debounce } from 'rxjs/operators';
 
 @Component({
   selector: 'app-accountants',
@@ -41,28 +42,12 @@ export class AccountantsComponent implements OnInit {
     this.getData()
   }
   getData() {
-    // this.http.getUsers(`permission/all`, true).subscribe((res: any) => {
-    //   let permissions = []
-    //   if (res?.data) {
-    //     res?.data?.map(i => {
-    //       permissions.push(i)
-    //     })
-    //   }
-    //   this.permissions = this.help.getUniqueListBy(permissions, 'name')
-    // }), err => {
-    //   console.log(err);
-    // }
     this.http.getUsers('user/all', true).subscribe((res: any) => {
-      this.accountants = res?.data?.data
-    }), err => {
-      console.log(err);
-    }
-    // this.http.getUsers('role/all', true).subscribe((res: any) => {
-    //   this.roles = res?.data
-    //   this.selectedRole = res?.data[0]?.name
-    // }), err => {
-    //   console.log(err);
-    // }
+      this.accountants = res?.data?.data.reverse()
+    },
+    error => {
+      this.toasterService.error(error)
+    })
   }
   selectAccountant(item: any) {
     this.selectedAccountant = item

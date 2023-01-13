@@ -23,37 +23,39 @@ export class financialComponent implements OnInit {
     this.companyid = this.localService.getJsonValue("company");
     this.getFinancial()
   }
-  dynamicRows(v){
-    if(v){
-      if(v?.hasOwnProperty('Header')){
-        this.expenses.push({header:v?.Header})
+  dynamicRows(v) {
+    if (v) {
+      if (v?.hasOwnProperty('Header')) {
+        this.expenses.push({ header: v?.Header })
       }
-    }    
+    }
   }
   getFinancial() {
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
-        res?.data?.Rows?.Row?.map(e=>{
-        this.expenses.push(e)
+        res?.data?.Rows?.Row?.map(e => {
+          this.expenses.push(e)
         })
       }
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }, err => {
-      console.log(err);
-    })
+    },
+      error => {
+        this.toasterService.error(error)
+      })
     this.http.getMonilyData(`report?entity=BalanceSheet&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
-        res?.data?.Rows?.Row?.map(e=>{
-        this.bank.push(e)
+        res?.data?.Rows?.Row?.map(e => {
+          this.bank.push(e)
         })
       }
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }, err => {
-      console.log(err);
-    })
+    },
+      error => {
+        this.toasterService.error(error)
+      })
   }
 }

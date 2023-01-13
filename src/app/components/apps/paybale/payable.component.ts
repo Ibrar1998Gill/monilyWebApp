@@ -203,9 +203,10 @@ export class payableComponent implements OnInit {
       if (mtd?.length > 0) { this.MTD = this.addItems(mtd) }
       if (qtd?.length > 0) { this.QTD = this.addItems(qtd) }
       if (ytd?.length > 0) { this.YTD = this.addItems(ytd) }
-    }), err => {
-      console.log(err);
-    }
+    },
+    error => {
+      this.toasterService.error(error)
+    })
   }
   overduePayments(){
     this.http.getMonilyData(`report?entity=AgedPayableDetail&id=${this.companyid?.id}`, true).subscribe((res: any) => {
@@ -230,9 +231,10 @@ export class payableComponent implements OnInit {
       else {
         this.toasterService.error("No data found, please try again after few minutes")
       }
-    }), err => {
-      console.log(err);
-    }
+    },
+    error => {
+      this.toasterService.error(error)
+    })
   }
   formatMinus(value) {
     return value?.replace(/-/g, '');

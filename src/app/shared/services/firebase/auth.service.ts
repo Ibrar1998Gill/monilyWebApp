@@ -3,10 +3,13 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CookieService } from 'ngx-cookie-service';
 import * as firebase from 'firebase/app';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { UniversalService } from '../universal.service';
 import { LocalService } from '../local.service';
+import { Observable, throwError } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
+import { HelperService } from '../helper.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -20,14 +23,15 @@ export class AuthService implements OnInit {
     private http: HttpClient,
     public router: Router,
     public ngZone: NgZone,
-    public toster: ToastrService,
+    public help: HelperService,
     private cookieService: CookieService,
+    private toaster:ToastrService,
     private localService: LocalService) {
-      this.authToken = this.localService.getJsonValue('authUser')      
+    this.authToken = this.localService.getJsonValue('authUser')
   }
 
   ngOnInit(): void {
-   }
+  }
 
   // sign in function
   // SignIn(email, password) {
@@ -71,6 +75,9 @@ export class AuthService implements OnInit {
       {
         headers: !token ? header : headerT,
       }
+    ).pipe(
+      retry(1),
+      catchError(this.handleError)
     );
   }
   getChatWithToken(link, token) {
@@ -85,6 +92,9 @@ export class AuthService implements OnInit {
       {
         headers: headerT,
       }
+    ).pipe(
+      retry(1),
+      catchError(this.handleError)
     );
   }
   postChat(link) {
@@ -97,6 +107,9 @@ export class AuthService implements OnInit {
       {
         headers: headerT,
       }
+    ).pipe(
+      retry(1),
+      catchError(this.handleError)
     );
   }
   uploadImage(link, payload) {
@@ -109,6 +122,9 @@ export class AuthService implements OnInit {
       {
         headers: headerT,
       }
+    ).pipe(
+      retry(1),
+      catchError(this.handleError)
     );
   }
   getMonilyData(link, token) {
@@ -128,6 +144,9 @@ export class AuthService implements OnInit {
       {
         headers: !token ? header : headerT,
       }
+    ).pipe(
+      retry(1),
+      catchError(this.handleError)
     );
   }
   getUsers(link, token) {
@@ -147,11 +166,14 @@ export class AuthService implements OnInit {
       {
         headers: !token ? header : headerT,
       }
+    ).pipe(
+      retry(1),
+      catchError(this.handleError)
     );
   }
-  postUsers(link,data) {
+  postUsers(link, data) {
     let headerT = {
-      Authorization: `Bearer 713|AbACuYf9XztrvrMDnZ3BheUsdY9HYG2VFQL7gX4d`,
+      Authorization: `Bearer 716|HcG0gFtzsvq8G7w6xMaZCApdEuTCcE9FBKJeurdD`,
       Accept: "application/json",
     };
     return this.http.post(
@@ -159,6 +181,12 @@ export class AuthService implements OnInit {
       {
         headers: headerT,
       }
+    ).pipe(
+      retry(1),
+      catchError(this.handleError)
     );
+  }
+  private handleError(error: HttpErrorResponse) {
+    return error.error.message;
   }
 }

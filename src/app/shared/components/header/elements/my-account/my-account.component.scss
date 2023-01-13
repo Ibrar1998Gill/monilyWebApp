@@ -1,3 +1,18 @@
 .btn{
         padding: 5px 20px !important;
     }
+    .profile-dropdown{
+        li{
+            button{
+                svg{
+                    .fill{
+                        color: #fff;
+                    }
+                }
+                span{
+                    color: #fff;
+                    stroke: #fff;
+                }
+            }
+        }
+    }

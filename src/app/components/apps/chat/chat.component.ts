@@ -32,7 +32,7 @@ export class chatComponent implements OnInit {
   public editMsg: boolean = false
   public editId: number;
 
-  constructor(private http: AuthService, private toaster: ToastrService, private localService: LocalService) {
+  constructor(private toasterService:ToastrService, private http: AuthService, private toaster: ToastrService, private localService: LocalService) {
     this.searchTerm = debounce(this.searchTerm, 1000)
    }
   socket = io();
@@ -79,11 +79,10 @@ export class chatComponent implements OnInit {
       setTimeout(() => {
         this.scrollToBottom()
       }, 500);
-    }), err => {
-      console.log('====================================');
-      console.log(err);
-      console.log('====================================');
-    }
+    },
+    error => {
+      this.toasterService.error(error)
+    })
     }
     else{
       this.http.getChat(`getChat?to_id=${this.toUser?.to_id == this.userDetails?.userId ? this.toUser?.from_id : this.toUser?.to_id}&from_id=${this.userDetails?.userId}`, true).subscribe((res: any) => {
@@ -91,11 +90,10 @@ export class chatComponent implements OnInit {
         setTimeout(() => {
           this.scrollToBottom()
         }, 500);
-      }), err => {
-        console.log('====================================');
-        console.log(err);
-        console.log('====================================');
-      }
+      },
+      error => {
+        this.toasterService.error(error)
+      })
     }
   }
 
@@ -116,11 +114,10 @@ export class chatComponent implements OnInit {
           timestamp: time,
         });
         this.chatText = ''
-      }), err => {
-        console.log('====================================');
-        console.log(err);
-        console.log('====================================');
-      }
+      },
+      error => {
+        this.toasterService.error(error)
+      })
     }
     else{
       this.http.postChat(`updateMessage?id=${this.editId}&message=${form.value.message}`).subscribe(res => {
@@ -132,11 +129,10 @@ export class chatComponent implements OnInit {
          });
          this.chatText = ''
          this.editMsg = false
-       }), err => {
-         console.log('====================================');
-         console.log(err);
-         console.log('====================================');
-       }
+       },
+       error => {
+         this.toasterService.error(error)
+       })
     }
   }
 
@@ -162,11 +158,10 @@ export class chatComponent implements OnInit {
           }
         })
         this.searchUsers = users
-      }),err=>{
-        console.log('====================================');
-        console.log(err);
-        console.log('====================================');
-      }
+      },
+      error => {
+        this.toasterService.error(error)
+      })
     }
     // term = term.toLowerCase();
     // let user = []
@@ -200,11 +195,10 @@ export class chatComponent implements OnInit {
         }
       })
       this.userChat(this.messageLists[0])
-    }), err => {
-      console.log('====================================');
-      console.log(err);
-      console.log('====================================');
-    }
+    },
+    error => {
+      this.toasterService.error(error)
+    })
   }
   deleteMessage(chat) {
     this.http.postChat(`deleteMessage?id=${chat?.id}`).subscribe((res:any) => {
@@ -217,11 +211,10 @@ export class chatComponent implements OnInit {
       }
       this.socket.emit('delete', {});
       //  this.chatText = ''
-     }), err => {
-       console.log('====================================');
-       console.log(err);
-       console.log('====================================');
-     }
+     },
+     error => {
+       this.toasterService.error(error)
+     })
   };
   editMessage(chat){
     this.editMsg = true;
@@ -242,11 +235,10 @@ export class chatComponent implements OnInit {
       }
       this.socket.emit('deleteChat',{delete:'deleteChat'});
       //  this.chatText = ''
-     }), err => {
-       console.log('====================================');
-       console.log(err);
-       console.log('====================================');
-     }
+     },
+     error => {
+       this.toasterService.error(error)
+     })
   };
   selectUser(event){
     this.userChat(event)

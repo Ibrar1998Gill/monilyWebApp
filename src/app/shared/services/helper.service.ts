@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
+import { ToastrService } from 'ngx-toastr';
 import { AuthService } from './firebase/auth.service';
 import { LocalService } from './local.service';
 
@@ -21,7 +22,7 @@ export class HelperService {
     'Nov',
     'Dec',
   ]
-  constructor(private httpService: AuthService, private localService:LocalService) {
+  constructor(private httpService: AuthService, private localService:LocalService, private Toaster:ToastrService) {
    }
   public authToken = this.localService.getJsonValue('authUser')
   // yearly quaterly monthly sepration
@@ -220,5 +221,109 @@ recursion(data, formattedData){
       }
     })
   }
+}
+numberOnly(event): boolean {
+  const charCode = event.which ? event.which : event.keyCode;
+  if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+    this.Toaster.error("Use number only")
+    return false;
+  }
+  return true;
+}
+formattedInvoiceDataE = async companyId => {
+  this.httpService.getMonilyData(`query?id=${companyId}&_query=select * from invoice`,true).subscribe((res:any)=>{
+    const invoice = res?.data?.QueryResponse?.Invoice;
+    let mutableData = [];
+    let mutableSum = 0;
+    let mutable30DaysSum = 0;
+    let mutable6MonthsSum = 0;
+    let mutableOverDueSum = 0;
+    let mutable30DaysOverDueSum = 0;
+    let mutable6MonthsOverDueSum = 0;
+    let mutableNotDueSum = 0;
+    let mutable30DaysNotDueSum = 0;
+    let mutable6MonthsNotDueSum = 0;
+  
+    const today = new Date();
+    let last30Days = new Date();
+    last30Days.setDate(today.getDate() - 30);
+    let last6Months = new Date();
+    last6Months.setMonth(today.getMonth() - 6);
+    invoice.map(inv => {
+      let txnDate = this.formatMMDDYY(inv?.TxnDate);
+      let balance = parseFloat(inv?.Balance);
+      let tempDueDate = this.formatMMDDYY(inv?.DueDate);
+      let txnTime = inv?.MetaData?.LastUpdatedTime;
+      let date = txnDate;
+      if (new Date(date) <= last30Days && new Date(date) <= today) {
+        mutable30DaysSum += balance;
+        mutable30DaysOverDueSum +=
+          new Date(tempDueDate) < new Date() ? balance : 0;
+        mutable30DaysNotDueSum +=
+          new Date(tempDueDate) >= new Date() ? balance : 0;
+      }
+      if (new Date(tempDueDate) >= last6Months && new Date(date) <= today) {
+        mutable6MonthsSum = balance;
+        mutable6MonthsOverDueSum +=
+          new Date(tempDueDate) < new Date() ? balance : 0;
+        mutable6MonthsNotDueSum +=
+          new Date(tempDueDate) > new Date() ? balance : 0;
+      }
+      mutableSum += balance;
+  
+      mutableNotDueSum += new Date(tempDueDate) > new Date() ? balance : 0;
+      mutableOverDueSum += new Date(tempDueDate) < new Date() ? balance : 0;
+  
+      let dueDate = this.calculateDays(tempDueDate);
+      mutableData.push({
+        Date: txnDate,
+        Time: txnTime,
+        num: inv?.DocNumber,
+        Customer: inv?.CustomerRef?.name,
+        Amount: balance,
+        TotalAmt: parseFloat(inv?.TotalAmt),
+        Status: dueDate,
+        id: inv?.Id,
+        type: 'Invoice',
+      });
+    });
+    const dueData = mutableData.filter(item => {
+      return item?.Amount != 0;
+    });
+    const paidData = mutableData.filter(item => {
+      return item?.Amount == 0;
+    });
+  
+    const barData = this.getMonthlyExpenses(mutableData);
+    const totalSum = mutableSum;
+    const last30DaysSum = mutable30DaysSum;
+    const last6MonthsSum = mutable6MonthsSum;
+    const notDueSum = mutableNotDueSum;
+    const last30DaysNotDue = mutable30DaysNotDueSum;
+    const last6MonthsNotDue = mutable6MonthsNotDueSum;
+    const overDueSum = mutableOverDueSum;
+    const last30DaysOverDue = mutable30DaysOverDueSum;
+    const last6MonthsOverDue = mutable6MonthsOverDueSum;
+    const tableData = mutableData;
+    const returnedValue = {
+      totalSum,
+      last30DaysSum,
+      last6MonthsSum,
+      notDueSum,
+      last30DaysNotDue,
+      last6MonthsNotDue,
+      overDueSum,
+      last30DaysOverDue,
+      last6MonthsOverDue,
+      tableData,
+      barData,
+      paidData,
+      dueData,
+    };
+    return totalSum;
+  })
+};
+errToaster(err:string){
+  return alert('hello')
 }
 }

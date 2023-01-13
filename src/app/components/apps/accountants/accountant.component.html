@@ -9,32 +9,39 @@
               <div class="col-lg-6 mt-3">
                 <label class="col-form-label">Name</label>
                 <input class="form-control" type="text" formControlName="name" placeholder="Name">
+                <div *ngIf="accountant.controls['name'].touched &&
+                              accountant.controls['name'].invalid" class="text text-danger mt-1">Name is required</div>
               </div>
-              <div *ngIf="accountant.controls['name'].touched &&
-                            accountant.controls['name'].invalid" class="text text-danger mt-1">Name is required</div>
               <div class="col-lg-6 mt-3">
                 <label class="col-form-label">Number</label>
-                <input class="form-control" type="text" formControlName="phone" placeholder="Number">
+                <input class="form-control" type="text" formControlName="phone" placeholder="Number" (keypress)="change($event)">
+                <div *ngIf="accountant.controls['phone'].touched &&
+                              accountant.controls['phone'].invalid" class="text text-danger mt-1">Phone number is
+                  required</div>
               </div>
-              <div *ngIf="accountant.controls['phone'].touched &&
-                            accountant.controls['phone'].invalid" class="text text-danger mt-1">Phone number is
-                required</div>
               <div class="col-lg-6 mt-3">
                 <label class="col-form-label">Email</label>
                 <input class="form-control" type="text" formControlName="email" placeholder="Email">
+                <div *ngIf="accountant.controls['email'].touched &&
+                              accountant.controls['email'].invalid" class="text text-danger mt-1">Valid email is
+                  required</div>
               </div>
-              <div *ngIf="accountant.controls['email'].touched &&
-                            accountant.controls['email'].invalid" class="text text-danger mt-1">Valid email is
-                required</div>
+                <div class="col-lg-6 mt-3">
+                  <label class="col-form-label">Password</label>
+                  <input class="form-control" type="text" formControlName="password" placeholder="Password">
+                  <div *ngIf="accountant.controls['password'].touched &&
+                                accountant.controls['password'].invalid" class="text text-danger mt-1">Password is
+                    required</div>
+                </div>
               <div class="col-lg-6 mt-3">
                 <label class="col-form-label">Role</label>
                 <ng-select formControlName="role" placeholder="search">
-                  <ng-option *ngFor="let role of roles" [value]="role">{{role?.name}}</ng-option>
+                  <ng-option *ngFor="let role of roles" [value]="role?.name">{{role?.name}}</ng-option>
                 </ng-select>
+                <div *ngIf="accountant.controls['role'].touched &&
+                              accountant.controls['role'].invalid" class="text text-danger mt-1">Role is
+                  required</div>
               </div>
-              <div *ngIf="accountant.controls['role'].touched &&
-                            accountant.controls['role'].invalid" class="text text-danger mt-1">Role is
-                required</div>
               <!-- <div class="col-lg-6 mt-3">
                 <label class="col-form-label">Clients</label>
                 <div class="d-flex w-100">
