@@ -205,7 +205,7 @@ export class payableComponent implements OnInit {
       if (ytd?.length > 0) { this.YTD = this.addItems(ytd) }
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
   }
   overduePayments(){
@@ -233,7 +233,7 @@ export class payableComponent implements OnInit {
       }
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
   }
   formatMinus(value) {

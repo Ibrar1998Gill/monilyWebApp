@@ -166,7 +166,7 @@ export class dashboardComponent implements OnInit {
       }
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Quarter&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
@@ -186,7 +186,7 @@ export class dashboardComponent implements OnInit {
       }
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Month&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
@@ -205,7 +205,7 @@ export class dashboardComponent implements OnInit {
       }
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
   }
   loopAppendRows(v, array) {

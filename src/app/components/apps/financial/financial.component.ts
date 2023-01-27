@@ -42,7 +42,7 @@ export class financialComponent implements OnInit {
       }
     },
       error => {
-        this.toasterService.error(error)
+        this.toasterService.error(error?.error?.message)
       })
     this.http.getMonilyData(`report?entity=BalanceSheet&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
@@ -55,7 +55,7 @@ export class financialComponent implements OnInit {
       }
     },
       error => {
-        this.toasterService.error(error)
+        this.toasterService.error(error?.error?.message)
       })
   }
 }

@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { AuthService } from '../../../shared/services/firebase/auth.service';
 import { LocalService } from '../../../shared/services/local.service';
 import { HelperService } from 'src/app/shared/services/helper.service';
+import { ActivatedRoute } from '@angular/router';
 // import { debounce } from 'rxjs/operators';
 
 @Component({
@@ -23,6 +24,7 @@ export class AccountantsComponent implements OnInit {
   public accountants;
   public roles;
   selectedRole;
+  id;
   public rights: Array<Object> = [
     { item: 'dashboard' },
     { item: 'expenses' },
@@ -40,14 +42,15 @@ export class AccountantsComponent implements OnInit {
   constructor(private http: AuthService, private localService: LocalService, private toasterService: ToastrService, private help: HelperService) { }
   ngOnInit(): void {
     this.getData()
+    console.log(this.id);
   }
   getData() {
     this.http.getUsers('user/all', true).subscribe((res: any) => {
       this.accountants = res?.data?.data.reverse()
     },
-    error => {
-      this.toasterService.error(error)
-    })
+      error => {
+        this.toasterService.error(error?.error?.message)
+      })
   }
   selectAccountant(item: any) {
     this.selectedAccountant = item
@@ -55,7 +58,7 @@ export class AccountantsComponent implements OnInit {
   permissionArray(event) {
     this.selectedPermissions.push(event?.target?.value)
   }
-  
+
   checkSelectedPermission() {
     this.selectedPermissions?.map((e: any) => {
       this.checkboxes.forEach((element: any) => {

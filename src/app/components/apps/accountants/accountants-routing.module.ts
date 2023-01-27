@@ -17,7 +17,7 @@ const routes: Routes = [
         component:AccountantComponent
       },
       {
-        path:'edit-accountant',
+        path:'edit-accountant/:id',
         component:AccountantComponent
       }
     ]

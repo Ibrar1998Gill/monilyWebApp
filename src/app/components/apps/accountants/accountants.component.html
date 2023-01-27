@@ -46,7 +46,7 @@
                   <!-- <button class="btn btn-danger ml-1 me-1"><i class="fa fa-trash"></i> </button> -->
                   <button class="btn btn-primary ml-1 me-1" (click)="selectAccountant(item)" data-bs-toggle="modal"
                     data-bs-target="#staticBackdrop"><i class="fa fa-eye"></i> </button>
-                  <button class="btn btn-secondary ml-1 me-1" routerLink="edit-accountant">
+                  <button class="btn btn-secondary ml-1 me-1" [routerLink]="['edit-accountant', item?.id]">
                     <i class="fa fa-edit"></i>
                   </button>
                 </div>

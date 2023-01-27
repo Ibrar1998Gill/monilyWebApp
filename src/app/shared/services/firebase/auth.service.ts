@@ -75,10 +75,7 @@ export class AuthService implements OnInit {
       {
         headers: !token ? header : headerT,
       }
-    ).pipe(
-      retry(1),
-      catchError(this.handleError)
-    );
+    )
   }
   getChatWithToken(link, token) {
     let headerT = {
@@ -92,10 +89,7 @@ export class AuthService implements OnInit {
       {
         headers: headerT,
       }
-    ).pipe(
-      retry(1),
-      catchError(this.handleError)
-    );
+    )
   }
   postChat(link) {
     let headerT = {
@@ -107,10 +101,7 @@ export class AuthService implements OnInit {
       {
         headers: headerT,
       }
-    ).pipe(
-      retry(1),
-      catchError(this.handleError)
-    );
+    )
   }
   uploadImage(link, payload) {
     let headerT = {
@@ -122,10 +113,7 @@ export class AuthService implements OnInit {
       {
         headers: headerT,
       }
-    ).pipe(
-      retry(1),
-      catchError(this.handleError)
-    );
+    )
   }
   getMonilyData(link, token) {
     let header = {
@@ -144,10 +132,7 @@ export class AuthService implements OnInit {
       {
         headers: !token ? header : headerT,
       }
-    ).pipe(
-      retry(1),
-      catchError(this.handleError)
-    );
+    )
   }
   getUsers(link, token) {
     let header = {
@@ -166,10 +151,7 @@ export class AuthService implements OnInit {
       {
         headers: !token ? header : headerT,
       }
-    ).pipe(
-      retry(1),
-      catchError(this.handleError)
-    );
+    )
   }
   postUsers(link, data) {
     let headerT = {
@@ -181,10 +163,7 @@ export class AuthService implements OnInit {
       {
         headers: headerT,
       }
-    ).pipe(
-      retry(1),
-      catchError(this.handleError)
-    );
+    )
   }
   private handleError(error: HttpErrorResponse) {
     return error.error.message;

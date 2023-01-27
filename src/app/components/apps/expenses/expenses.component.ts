@@ -29,9 +29,6 @@ export class expensesComponent implements OnInit {
   totalExpenses: number;
   recentTransactions:any = []
   top10Transactions:any = []
-  lastyear: any = moment().format('YYYY')
-  startDate: any = moment(new Date(this.lastyear, 0, 1)).format('YYYY-MM-DD')
-  lastMonthStartDate: any = moment().subtract(1, "month").format('YYYY-MM-DD')
   endDate: any = moment().format('YYYY-MM-DD')
   pieChart3: any = {
     chartType: "PieChart",
@@ -64,8 +61,9 @@ export class expensesComponent implements OnInit {
     
   }
   getExpenses() {
+    const currentMonth = moment().month() + 1;
     // by columns
-    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Quarter&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Quarter&start_date=${moment().year() + '-' + moment(currentMonth).format('MM')}-01&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       // let ExpenseDate = []
       if(res?.data != null){
       res?.data?.Rows?.Row ? res?.data?.Rows?.Row?.map(e => {
@@ -80,9 +78,9 @@ export class expensesComponent implements OnInit {
       }
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
-    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Month&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&summarize_column_by=Month&start_date=${moment().year() + '-' + moment(currentMonth).format('MM')}-01&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if(res?.data != null){
       res?.data?.Rows?.Row ? res?.data?.Rows?.Row?.map(e => {
         if (e?.group == 'Expenses') {
@@ -96,10 +94,10 @@ export class expensesComponent implements OnInit {
       }
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
     // annual data
-    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+    this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid.id}&start_date=${moment().year() + '-' + moment(currentMonth).format('MM')}-01&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
         res.data.Rows.Row.map((v) => {
           if (v.hasOwnProperty("group")) {
@@ -117,10 +115,10 @@ export class expensesComponent implements OnInit {
       }
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
     // recent transactions
-    this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&start_date=${this.lastMonthStartDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
+    this.http.getMonilyData(`report?entity=TransactionList&id=${this.companyid.id}&start_date=${moment().year() + '-' + moment(currentMonth).format('MM')}-01&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe((res: any) => {
       if (res?.data != null) {
         res?.data?.Rows?.Row.reverse()?.map(e => {
           if (e?.ColData[e?.ColData?.length - 1].value != '' && e?.ColData[e?.ColData?.length - 1].value < 0) {
@@ -136,7 +134,7 @@ export class expensesComponent implements OnInit {
       }
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
     // top 10 transactions
     this.http.getMonilyData(
@@ -158,7 +156,7 @@ export class expensesComponent implements OnInit {
       else return;
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     });
     // this.http.getMonilyData(`query?id=${this.companyid.id}&_query=select * from Bill startposition 1`,true).subscribe(res=>{
     //     console.log(res,'queryres');

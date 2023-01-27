@@ -8,6 +8,7 @@ import { Location } from '@angular/common';
 import { FormBuilder, Validators } from '@angular/forms';
 import { HelperService } from 'src/app/shared/services/helper.service';
 import { debounce } from 'lodash';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-accountant',
@@ -25,42 +26,63 @@ export class AccountantComponent implements OnInit {
     password: [null],
     is_active: 1
   });
+  id;
   roles: Array<Object> = [];
   selectedRole: string;
-  constructor(private help:HelperService,private http: AuthService, private localService: LocalService, private toasterService: ToastrService, private location: Location, private fb: FormBuilder) {
-    this.accountant = this.fb.group({
-      email: [null, [Validators.required, Validators.email]],
-      name: [null, Validators.required],
-      phone: [null, Validators.required],
-      role: [null, Validators.required],
-      is_active: 1,
-      password: [null, Validators.required]
-    });
+  constructor(private route: ActivatedRoute, private router: Router, private help: HelperService, private http: AuthService, private localService: LocalService, private toasterService: ToastrService, private location: Location, private fb: FormBuilder) {
+    if (this.route.snapshot.paramMap.get("id")) {
+      this.id = this.route.snapshot.paramMap.get("id");
+      this.getUser();
+    }
   }
   ngOnInit(): void {
     this.path = location.pathname.split('/')[2]
     this.getRoles()
   }
+  getUser() {
+    this.http.getUsers(`user/${this.id}`, true).subscribe((res: any) => {
+      if (res?.data) {
+        this.accountant = this.fb.group({
+          email: [res?.data?.email, [Validators.required, Validators.email]],
+          name: [res?.data?.name, Validators.required],
+          phone: [res?.data?.phone, Validators.required],
+          role: [res?.data?.roles[0]?.name, Validators.required],
+          password: [null, Validators.required]
+        });
+      }
+    }, error => {
+      this.toasterService.error(error?.error?.message)
+    })
+  }
   create() {
-    this.http.postUsers('user/create', this.accountant.value).subscribe((res:any) => {
+    this.router.navigate(['accounts']);
+    this.http.postUsers('user/create', this.accountant.value).subscribe((res: any) => {
+      this.toasterService.success(res?.message)
+    },
+      error => {
+        this.toasterService.error(error?.error?.message)
+      })
+  }
+  update() {
+    this.http.postUsers(`user/update/${this.id}`, this.accountant.value).subscribe((res: any) => {
       console.log('====================================');
       console.log(res);
       console.log('====================================');
-      this.toasterService.success(res?.data?.message)
+      this.toasterService.success(res?.message)
     },
-    error => {
-      this.toasterService.error(error)
-    })
+      error => {
+        this.toasterService.error(error?.error?.message)
+      })
   }
   getRoles() {
     this.http.getUsers('role/all', true).subscribe((res: any) => {
       this.roles = res?.data
     },
-    error => {
-      this.toasterService.error(error)
-    })
+      error => {
+        this.toasterService.error(error?.error?.message)
+      })
   }
-  change(event){
+  change(event) {
     return this.help.numberOnly(event)
   }
 }

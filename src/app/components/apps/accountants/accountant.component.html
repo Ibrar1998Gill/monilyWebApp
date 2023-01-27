@@ -28,7 +28,7 @@
               </div>
                 <div class="col-lg-6 mt-3">
                   <label class="col-form-label">Password</label>
-                  <input class="form-control" type="text" formControlName="password" placeholder="Password">
+                  <input class="form-control" type="password" formControlName="password" placeholder="Password">
                   <div *ngIf="accountant.controls['password'].touched &&
                                 accountant.controls['password'].invalid" class="text text-danger mt-1">Password is
                     required</div>
@@ -72,10 +72,17 @@
                 </a> -->
                 </div>
               </div>
-              <div class="col-lg-12 d-flex justify-content-end">
+              <div *ngIf="path == 'add-accountant'" class="col-lg-12 d-flex justify-content-end">
                 <button class="btn btn-primary mt-3 mb-3" (click)="create()">
                   <!-- <a routerLink=".."> -->
                   Save
+                  <!-- </a> -->
+                </button>
+              </div>
+              <div *ngIf="path == 'edit-accountant'" class="col-lg-12 d-flex justify-content-end">
+                <button class="btn btn-primary mt-3 mb-3" (click)="update()">
+                  <!-- <a routerLink=".."> -->
+                  Update
                   <!-- </a> -->
                 </button>
               </div>

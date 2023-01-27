@@ -81,7 +81,7 @@ export class chatComponent implements OnInit {
       }, 500);
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
     }
     else{
@@ -92,7 +92,7 @@ export class chatComponent implements OnInit {
         }, 500);
       },
       error => {
-        this.toasterService.error(error)
+        this.toasterService.error(error?.error?.message)
       })
     }
   }
@@ -116,7 +116,7 @@ export class chatComponent implements OnInit {
         this.chatText = ''
       },
       error => {
-        this.toasterService.error(error)
+        this.toasterService.error(error?.error?.message)
       })
     }
     else{
@@ -131,7 +131,7 @@ export class chatComponent implements OnInit {
          this.editMsg = false
        },
        error => {
-         this.toasterService.error(error)
+         this.toasterService.error(error?.error?.message)
        })
     }
   }
@@ -160,7 +160,7 @@ export class chatComponent implements OnInit {
         this.searchUsers = users
       },
       error => {
-        this.toasterService.error(error)
+        this.toasterService.error(error?.error?.message)
       })
     }
     // term = term.toLowerCase();
@@ -197,7 +197,7 @@ export class chatComponent implements OnInit {
       this.userChat(this.messageLists[0])
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
   }
   deleteMessage(chat) {
@@ -213,7 +213,7 @@ export class chatComponent implements OnInit {
       //  this.chatText = ''
      },
      error => {
-       this.toasterService.error(error)
+       this.toasterService.error(error?.error?.message)
      })
   };
   editMessage(chat){
@@ -237,7 +237,7 @@ export class chatComponent implements OnInit {
       //  this.chatText = ''
      },
      error => {
-       this.toasterService.error(error)
+       this.toasterService.error(error?.error?.message)
      })
   };
   selectUser(event){

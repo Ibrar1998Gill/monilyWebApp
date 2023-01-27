@@ -149,7 +149,8 @@ export class recievableComponent implements OnInit {
     // this.observe()
     if (this.companyid?.id != null) {
       this.getpayments();
-      this.getArDues()
+      this.getArDues();
+      // this.getChartPayments();
       // this.selectTime();
     } else this.toasterService.error("No company found"); return;
   }
@@ -195,7 +196,7 @@ export class recievableComponent implements OnInit {
       }
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
     this.http.getMonilyData(`report?entity=ProfitAndLoss&id=${this.companyid?.id}&summarize_column_by=Month&start_date=${this.startDate.replace(/['"]+/g, '')}&end_date=${this.endDate.replace(/['"]+/g, '')}`, true).subscribe(
         (res: any) => {
@@ -215,7 +216,7 @@ export class recievableComponent implements OnInit {
         }
       },
       error => {
-        this.toasterService.error(error)
+        this.toasterService.error(error?.error?.message)
       }
     )
   }
@@ -299,7 +300,18 @@ export class recievableComponent implements OnInit {
       // });
     },
     error => {
-      this.toasterService.error(error)
+      this.toasterService.error(error?.error?.message)
     })
   }
+  // getChartPayments(){
+  //   this.http.getMonilyData(`query?id=${this.companyid?.id}&_query=select * from invoice`, true).subscribe((res:any)=>{
+  //     console.log('====================================');
+  //     console.log(res,'ressss');
+  //     console.log('====================================');
+  //   },
+  //   error => {
+  //     this.toasterService.error(error?.error?.message)
+  //   }
+  //   )
+  // }
 }
