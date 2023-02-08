@@ -34,14 +34,6 @@ export class HeaderComponent implements OnInit {
     this.layout.config.settings.layout_version = this.dark ? 'dark-only' : 'light';
   }
 
-  searchToggle() {
-    this.navServices.search = true;
-  }
-
-  languageToggle() {
-    this.navServices.language = !this.navServices.language;
-  }
-
   toggleFullScreen() {
     this.navServices.fullScreen = !this.navServices.fullScreen;
     if (this.navServices.fullScreen) {

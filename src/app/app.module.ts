@@ -28,8 +28,54 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { EchoConfig, NgxLaravelEchoModule } from 'ngx-laravel-echo';
+import Pusher from 'pusher-js';
+import axios from 'axios';
 
-
+declare global {
+  interface Window {
+    Echo?: any;
+    Pusher?: any;
+  }
+}
+export const echoConfig: EchoConfig = {
+  userModel: 'users',
+  notificationNamespace: 'App\\Notifications',
+  options: {
+    broadcaster: 'pusher',
+    key: 'ef1b143bb6fa93c2e337',
+    cluster: 'ap2',
+    forceTLS: true,
+    wsHost: 'monilyapp.yourhealthgrades.com',
+    authorizer: (channel, options) => {
+      console.log(channel);
+      
+      return {
+        authorize: (socketId, callback) => {
+          axios.defaults.withCredentials = true;
+            // axios.post('http://monilyapp.local/api/broadcasting/auth', {
+            axios.post('http://monilyapp.yourhealthgrades.com/api/broadcasting/auth', {
+                socket_id: socketId,
+                channel_name: channel.name
+            } , {
+              headers:{
+                Authorization:  'Bearer ' + "740|w6cUBvlIdDc6cvkaRKTxDwEERspEd9rncLyE4cn9"
+                // Authorization:  'Bearer ' + "65|HofL4bdlAosbK0mdqkqSNyz8u2zwj19Hbh9MNuMo"
+              }
+            })
+            .then(response => {
+              console.log(response);
+                callback(false, response.data);
+            })
+            .catch(error => {
+              console.log(error);
+                callback(true, error);
+            });
+        }
+      };
+    }
+  }
+};
 @NgModule({
   declarations: [
     AppComponent,
@@ -56,9 +102,12 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
     // for Core use:
     LoadingBarModule,
     NgSelectModule,
-    SweetAlert2Module
+    SweetAlert2Module,
+    NgxLaravelEchoModule.forRoot(echoConfig)
   ],
   providers: [AuthService, AdminGuard, SecureInnerPagesGuard, CookieService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(private http:HttpClient){}
+}

@@ -10,6 +10,9 @@ import { AuthService } from './shared/services/firebase/auth.service';
 import { LocalService } from './shared/services/local.service';
 import { ToastrService } from 'ngx-toastr';
 import { HelperService } from './shared/services/helper.service';
+import Pusher from "pusher-js";
+import { EchoService } from 'ngx-laravel-echo';
+window.Pusher = Pusher;
 declare var require
 const Swal = require('sweetalert2')
 @Component({
@@ -18,7 +21,7 @@ const Swal = require('sweetalert2')
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  // socket = io('https://monily-mobile-app.herokuapp.com');
+  // socket = io('https://main--stirring-lollipop-0834ee.netlify.app');
   @ViewChildren("checkboxes") checkboxes: QueryList<ElementRef>;
   companies: any = [];
   companySelected: any = null;
@@ -42,7 +45,14 @@ export class AppComponent {
     private authService: AuthService,
     private toasterService: ToastrService,
     private http: AuthService,
-    private help: HelperService) {
+    private help: HelperService,
+    private echo: EchoService) {
+      this.echo.echo.private('chat-channel')
+      .listen('MessageEvent', (e) => {
+          console.log(e.key);
+          console.log(e.message);
+          this.showPush(e.message)
+      })
   }
   ngOnInit() {
     this.companySelected = null
@@ -52,12 +62,6 @@ export class AppComponent {
     if (this.localService.getJsonValue('company') == null) {
       this.getRecentUser()
     }
-    // this.socket.on('message', (messageInfo) => {
-    //   var msg = JSON.parse(messageInfo)
-    //   if (msg?.to_id == this.userDetails?.userId) {
-    //     this.showPush(msg)
-    //   }
-    // });
   }
   getRecentUser() {
     this.userDetails = this.localService.getJsonValue('authUser')
@@ -173,7 +177,7 @@ export class AppComponent {
       console.log(err);
     }
   }
-  getUsers(){
+  getUsers() {
     this.http.getUsers('role/all', true).subscribe((res: any) => {
       this.roles = res?.data
     }), err => {
@@ -184,9 +188,6 @@ export class AppComponent {
     this.selectedPermissions = []
     this.uncheckAll()
     this.selectedRole = event;
-    console.log('====================================');
-    console.log(this.selectedRole);
-    console.log('====================================');
     this.selectedRole?.permissions.map(e => {
       this.selectedPermissions.push(e?.name)
       this.checkboxes.forEach((element) => {
@@ -196,20 +197,20 @@ export class AppComponent {
       });
     })
   }
-  
+
   assignPermission() {
-    if(this.selectedRole != null){
+    if (this.selectedRole != null) {
       this.http.postUsers(`role/assign-permissions/${this.selectedRole?.id}`, { permissions: this.selectedPermissions }).subscribe((res: any) => {
         this.toasterService.success(res?.message)
         this.getUsers()
-      this.selectedPermissions = []
-      this.uncheckAll();
+        this.selectedPermissions = []
+        this.uncheckAll();
       }), err => {
         console.log(err);
         this.uncheckAll();
       }
     }
-    else{
+    else {
       this.toasterService.error("Select Role First!")
     }
   }
@@ -219,15 +220,53 @@ export class AppComponent {
     } else {
       this.selectedPermissions.push(event?.target?.value);
     }
-    console.log('====================================');
-    console.log(this.selectedPermissions);
-    console.log('====================================');
   }
   uncheckAll() {
     this.checkboxes.forEach((element) => {
       element.nativeElement.checked = false;
     });
-    this.selectedRole=null
+    this.selectedRole = null
   }
-  
+  // pusher() {
+  //   window.Echo = new Echo({
+  //     broadcaster: 'pusher',
+  //     key: "ef1b143bb6fa93c2e337",
+  //     cluster: "ap2",
+  //     forceTLS: true,
+  //     wsHost: 'monilyapp.yourhealthgrades.com',
+  //     authorizer: (channel, options) => {
+  //       return {
+  //         authorize: (socketId, callback) => {
+  //           axios.defaults.withCredentials = true;
+  //             // axios.post('http://monilyapp.local/api/broadcasting/auth', {
+  //             axios.post('http://monilyapp.yourhealthgrades.com/api/broadcasting/auth', {
+  //                 socket_id: socketId,
+  //                 channel_name: channel.name
+  //             } , {
+  //               headers:{
+  //                 Authorization:  'Bearer ' + "740|w6cUBvlIdDc6cvkaRKTxDwEERspEd9rncLyE4cn9"
+  //                 // Authorization:  'Bearer ' + "65|HofL4bdlAosbK0mdqkqSNyz8u2zwj19Hbh9MNuMo"
+  //               }
+  //             })
+  //             .then(response => {
+  //                 callback(false, response.data);
+  //             })
+  //             .catch(error => {
+  //                 callback(true, error);
+  //             });
+  //           // this.http.postSocket('http://monilyapp.yourhealthgrades.com/api/broadcasting/auth',{
+  //           //   socket_id: socketId,
+  //           //   channel_name: channel.name
+  //           // }).subscribe(res => {
+  //           //   console.log('Authorization data:', res);
+  //           //   callback(null, res);
+  //           // }, error => {
+  //           //   console.log(error);
+  //           //   callback(error, null);
+  //           // });
+  //         }
+  //       };
+  //     }
+  //   });
+  // }
 }

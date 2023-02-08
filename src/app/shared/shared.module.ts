@@ -13,7 +13,6 @@ import { ContentComponent } from './components/layout/content/content.component'
 import { FullComponent } from './components/layout/full/full.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { TapToTopComponent } from './components/tap-to-top/tap-to-top.component';
 import { MessageBoxComponent } from './components/header/elements/message-box/message-box.component';
 import { MyAccountComponent } from './components/header/elements/my-account/my-account.component';
 // Directives
@@ -30,7 +29,6 @@ import {RowsComponent} from './components/rows/rows.component'
     FeatherIconsComponent,
     FullComponent,
     LoaderComponent,
-    TapToTopComponent,
     MessageBoxComponent,
     MyAccountComponent,
     RowsComponent
@@ -54,7 +52,6 @@ import {RowsComponent} from './components/rows/rows.component'
     LoaderComponent,
     BreadcrumbComponent,
     FeatherIconsComponent,
-    TapToTopComponent,
     RowsComponent
   ],
 })

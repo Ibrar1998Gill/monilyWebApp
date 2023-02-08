@@ -12,7 +12,7 @@ import { UniversalService } from 'src/app/shared/services/universal.service';
 export class MessageBoxComponent implements OnInit {
 
   public openMessageBox: boolean = false;
-  // socket = io('https://monily-mobile-app.herokuapp.com');
+  // socket = io('https://main--stirring-lollipop-0834ee.netlify.app');
   constructor(private http: AuthService, private localService: LocalService, private cd: ChangeDetectorRef) { }
   messageLists:any=[];
   userDetails:any;

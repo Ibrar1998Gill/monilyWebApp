@@ -103,6 +103,18 @@ export class AuthService implements OnInit {
       }
     )
   }
+  postSocket(link, data) {
+    let headerT = {
+      Authorization: `Bearer 740|w6cUBvlIdDc6cvkaRKTxDwEERspEd9rncLyE4cn9`,
+      Accept: "application/json",
+    };
+    return this.http.post(
+      link, data,
+      {
+        headers: headerT,
+      }
+    )
+  }
   uploadImage(link, payload) {
     let headerT = {
       Authorization: `Bearer ${this.authToken?.authtoken}`,

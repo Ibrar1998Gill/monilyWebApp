@@ -26,13 +26,6 @@ export class NavService implements OnDestroy {
   public screenWidth: BehaviorSubject<number> = new BehaviorSubject(
     window.innerWidth
   );
-
-  // Search Box
-  public search: boolean = false;
-
-  // Language
-  public language: boolean = false;
-
   // Mega Menu
   public megaMenu: boolean = false;
   public levelMenu: boolean = false;

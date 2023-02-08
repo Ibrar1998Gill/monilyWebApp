@@ -1,10 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
-import { io } from 'socket.io-client';
+// import { io } from 'socket.io-client';
 import { AuthService } from 'src/app/shared/services/firebase/auth.service';
 import { debounce } from 'lodash';
 import { LocalService } from 'src/app/shared/services/local.service';
+import { EchoService } from 'ngx-laravel-echo';
+
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -32,24 +34,30 @@ export class chatComponent implements OnInit {
   public editMsg: boolean = false
   public editId: number;
 
-  constructor(private toasterService:ToastrService, private http: AuthService, private toaster: ToastrService, private localService: LocalService) {
+  constructor(private toasterService: ToastrService, private http: AuthService, private toaster: ToastrService, private localService: LocalService, private echo: EchoService) {
+    this.echo.echo.private('chat-channel')
+      .listen('MessageEvent', (e) => {
+        console.log(e.key);
+        console.log(e.message, 'messgae');
+        this.userChat(this.messageLists[0])
+        this.getRecentUser()
+      })
     this.searchTerm = debounce(this.searchTerm, 1000)
-   }
-  socket = io();
-  // socket = io('https://monily-mobile-app.herokuapp.com');
+  }
+  // socket = io('https://main--stirring-lollipop-0834ee.netlify.app');
   results$: Observable<any>
   ngOnInit() {
     this.getRecentUser()
-    this.socket.on('message', (messageInfo) => {
-      this.userChat(this.messageLists[0])
-        this.getRecentUser()
-    });
-    this.socket.on('delete', message => {
-      this.getRecentUser()
-    });
-    this.socket.on('deleteChat', message => {
-      this.getRecentUser()
-    });
+    // this.socket.on('message', (messageInfo) => {
+    //   this.userChat(this.messageLists[0])
+    //     this.getRecentUser()
+    // });
+    // this.socket.on('delete', message => {
+    //   this.getRecentUser()
+    // });
+    // this.socket.on('deleteChat', message => {
+    //   this.getRecentUser()
+    // });
   }
   public toggleEmojiPicker() {
     this.showEmojiPicker = !this.showEmojiPicker;
@@ -73,27 +81,27 @@ export class chatComponent implements OnInit {
   // User Chat
   public userChat(user) {
     this.toUser = user
-    if(this.toUser?.hasOwnProperty('label')){
-    this.http.getChat(`getChat?to_id=${this.toUser?.id}&from_id=${this.userDetails?.userId}`, true).subscribe((res: any) => {
-      this.chatMessages = res?.data?.data
-      setTimeout(() => {
-        this.scrollToBottom()
-      }, 500);
-    },
-    error => {
-      this.toasterService.error(error?.error?.message)
-    })
+    if (this.toUser?.hasOwnProperty('label')) {
+      this.http.getChat(`getChat?to_id=${this.toUser?.id}&from_id=${this.userDetails?.userId}`, true).subscribe((res: any) => {
+        this.chatMessages = res?.data?.data
+        setTimeout(() => {
+          this.scrollToBottom()
+        }, 500);
+      },
+        error => {
+          this.toasterService.error(error?.error?.message)
+        })
     }
-    else{
+    else {
       this.http.getChat(`getChat?to_id=${this.toUser?.to_id == this.userDetails?.userId ? this.toUser?.from_id : this.toUser?.to_id}&from_id=${this.userDetails?.userId}`, true).subscribe((res: any) => {
         this.chatMessages = res?.data?.data
         setTimeout(() => {
           this.scrollToBottom()
         }, 500);
       },
-      error => {
-        this.toasterService.error(error?.error?.message)
-      })
+        error => {
+          this.toasterService.error(error?.error?.message)
+        })
     }
   }
 
@@ -105,49 +113,37 @@ export class chatComponent implements OnInit {
       return false
     }
     this.error = false
-    if(!this.editMsg){
+    if (!this.editMsg) {
       this.http.postChat(`sendMessage?to_id=${this.toUser?.hasOwnProperty('label') ? this.toUser?.id : this.toUser?.to_id == this.userDetails?.userId ? this.toUser?.from_id : this.toUser?.to_id}&from_id=${this.userDetails?.userId}&message=${form.value.message}&timestamp=${time}`).subscribe(res => {
-       this.socket.emit('message', {
-          message: form.value.message,
-          to_id: this.toUser?.to_id == this.userDetails?.userId ? this.toUser?.from_id : this.toUser?.to_id,
-          from_id: this.userDetails?.userId,
-          timestamp: time,
-        });
         this.chatText = ''
       },
-      error => {
-        this.toasterService.error(error?.error?.message)
-      })
+        error => {
+          this.toasterService.error(error?.error?.message)
+        })
     }
-    else{
+    else {
       this.http.postChat(`updateMessage?id=${this.editId}&message=${form.value.message}`).subscribe(res => {
-        this.socket.emit('message', {
-           message: form.value.message,
-           to_id: this.toUser?.to_id == this.userDetails?.userId ? this.toUser?.from_id : this.toUser?.to_id,
-           from_id: this.userDetails?.userId,
-           timestamp: time,
-         });
-         this.chatText = ''
-         this.editMsg = false
-       },
-       error => {
-         this.toasterService.error(error?.error?.message)
-       })
+        this.chatText = ''
+        this.editMsg = false
+      },
+        error => {
+          this.toasterService.error(error?.error?.message)
+        })
     }
   }
 
   searchTerm(event: any) {
-    if(!event.target.value){
+    if (!event.target.value) {
       return
     }
-    else{
-      this.http.getChat(`getUsers?keyword=${event?.target?.value}`,true).subscribe((res:any)=>{
-        let users:any=[]
-        res?.data?.map(v=>{
-          if(v?.id == this.userDetails?.userId){
+    else {
+      this.http.getChat(`getUsers?keyword=${event?.target?.value}`, true).subscribe((res: any) => {
+        let users: any = []
+        res?.data?.map(v => {
+          if (v?.id == this.userDetails?.userId) {
             return
           }
-          else{
+          else {
             // users.push(v)
             users.push({
               label: v.name,
@@ -159,9 +155,9 @@ export class chatComponent implements OnInit {
         })
         this.searchUsers = users
       },
-      error => {
-        this.toasterService.error(error?.error?.message)
-      })
+        error => {
+          this.toasterService.error(error?.error?.message)
+        })
     }
     // term = term.toLowerCase();
     // let user = []
@@ -185,7 +181,7 @@ export class chatComponent implements OnInit {
   getRecentUser() {
     this.userDetails = this.localService.getJsonValue('authUser')
     this.http.getChat(`getChatList?user_id=${this.userDetails?.userId}`, true).subscribe((res: any) => {
-      this.messageLists=[]
+      this.messageLists = []
       res?.data?.map(v => {
         if (v.from_id == this.userDetails?.userId && v.to_id == this.userDetails?.userId) {
           return
@@ -196,51 +192,49 @@ export class chatComponent implements OnInit {
       })
       this.userChat(this.messageLists[0])
     },
-    error => {
-      this.toasterService.error(error?.error?.message)
-    })
+      error => {
+        this.toasterService.error(error?.error?.message)
+      })
   }
   deleteMessage(chat) {
-    this.http.postChat(`deleteMessage?id=${chat?.id}`).subscribe((res:any) => {
-      if(res?.hasOwnProperty('messages')){
-        res?.messages?.map(v=>{
-          if(v == "Record deleted successfully"){
+    this.http.postChat(`deleteMessage?id=${chat?.id}`).subscribe((res: any) => {
+      if (res?.hasOwnProperty('messages')) {
+        res?.messages?.map(v => {
+          if (v == "Record deleted successfully") {
             this.toaster.success("Message deleted successfully")
           }
         })
       }
-      this.socket.emit('delete', {});
-      //  this.chatText = ''
-     },
-     error => {
-       this.toasterService.error(error?.error?.message)
-     })
+    },
+      error => {
+        this.toasterService.error(error?.error?.message)
+      })
   };
-  editMessage(chat){
+  editMessage(chat) {
     this.editMsg = true;
     this.chatText = chat?.message;
     this.editId = chat?.id
   }
   deleteChat(toUser) {
-    this.http.postChat(`deleteChat?to_id=${toUser?.to_id}&from_id=${toUser?.from_id}`).subscribe((res:any) => {
+    this.http.postChat(`deleteChat?to_id=${toUser?.to_id}&from_id=${toUser?.from_id}`).subscribe((res: any) => {
       console.log('====================================');
       console.log(res);
       console.log('====================================');
-      if(res?.hasOwnProperty('messages')){
-        res?.messages?.map(v=>{
-          if(v == "Chat deleted successfully"){
+      if (res?.hasOwnProperty('messages')) {
+        res?.messages?.map(v => {
+          if (v == "Chat deleted successfully") {
             this.toaster.success("Chat deleted successfully")
           }
         })
       }
-      this.socket.emit('deleteChat',{delete:'deleteChat'});
+      // this.socket.emit('deleteChat',{delete:'deleteChat'});
       //  this.chatText = ''
-     },
-     error => {
-       this.toasterService.error(error?.error?.message)
-     })
+    },
+      error => {
+        this.toasterService.error(error?.error?.message)
+      })
   };
-  selectUser(event){
+  selectUser(event) {
     this.userChat(event)
   }
 }
