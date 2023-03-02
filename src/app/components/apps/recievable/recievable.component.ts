@@ -2,10 +2,8 @@ import { LocalService } from 'src/app/shared/services/local.service';
 import { HelperService } from 'src/app/shared/services/helper.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import * as moment from "moment";
-import { AuthService } from 'src/app/shared/services/firebase/auth.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { UniversalService } from 'src/app/shared/services/universal.service';
-
 @Component({
   selector: 'app-recievable',
   templateUrl: './recievable.component.html',

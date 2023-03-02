@@ -3,7 +3,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { UniversalService } from 'src/app/shared/services/universal.service';
-import { AuthService } from '../../shared/services/firebase/auth.service';
+import { AuthService } from '../../shared/services/auth.service';
 import { LocalService } from '../../shared/services/local.service'
 @Component({
   selector: 'app-login',

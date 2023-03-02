@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
-import { AuthService } from '../../../shared/services/firebase/auth.service';
+import { AuthService } from '../../../shared/services/auth.service';
 import { LocalService } from '../../../shared/services/local.service';
 import { Location } from '@angular/common';
 

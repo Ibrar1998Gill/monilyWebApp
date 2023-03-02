@@ -3,7 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { Menu, NavService } from '../../services/nav.service';
 import { LayoutService } from '../../services/layout.service';
 import { ThrowStmt } from '@angular/compiler';
-import { AuthService } from '../../services/firebase/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',

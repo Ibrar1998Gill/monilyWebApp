@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from './firebase/auth.service';
+import { AuthService } from './auth.service';
 import { LocalService } from './local.service';
 
 @Injectable({

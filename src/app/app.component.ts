@@ -6,7 +6,7 @@ import { PushNotificationService } from 'ng-push-notification';
 import { io } from 'socket.io-client';
 import { UniversalService } from './shared/services/universal.service'
 import * as $ from 'jquery'
-import { AuthService } from './shared/services/firebase/auth.service';
+import { AuthService } from './shared/services/auth.service';
 import { LocalService } from './shared/services/local.service';
 import { ToastrService } from 'ngx-toastr';
 import { HelperService } from './shared/services/helper.service';
@@ -47,11 +47,11 @@ export class AppComponent {
     private http: AuthService,
     private help: HelperService,
     private echo: EchoService) {
-      this.echo.echo.private('chat-channel')
+    this.echo.echo.private('chat-channel')
       .listen('MessageEvent', (e) => {
-          console.log(e.key);
-          console.log(e.message);
-          this.showPush(e.message)
+        if (e?.message?.to_id == this.localService?.getJsonValue('authUser')?.userId) {
+          this.showPush(e?.message)
+        }
       })
   }
   ngOnInit() {
@@ -227,46 +227,4 @@ export class AppComponent {
     });
     this.selectedRole = null
   }
-  // pusher() {
-  //   window.Echo = new Echo({
-  //     broadcaster: 'pusher',
-  //     key: "ef1b143bb6fa93c2e337",
-  //     cluster: "ap2",
-  //     forceTLS: true,
-  //     wsHost: 'monilyapp.yourhealthgrades.com',
-  //     authorizer: (channel, options) => {
-  //       return {
-  //         authorize: (socketId, callback) => {
-  //           axios.defaults.withCredentials = true;
-  //             // axios.post('http://monilyapp.local/api/broadcasting/auth', {
-  //             axios.post('http://monilyapp.yourhealthgrades.com/api/broadcasting/auth', {
-  //                 socket_id: socketId,
-  //                 channel_name: channel.name
-  //             } , {
-  //               headers:{
-  //                 Authorization:  'Bearer ' + "740|w6cUBvlIdDc6cvkaRKTxDwEERspEd9rncLyE4cn9"
-  //                 // Authorization:  'Bearer ' + "65|HofL4bdlAosbK0mdqkqSNyz8u2zwj19Hbh9MNuMo"
-  //               }
-  //             })
-  //             .then(response => {
-  //                 callback(false, response.data);
-  //             })
-  //             .catch(error => {
-  //                 callback(true, error);
-  //             });
-  //           // this.http.postSocket('http://monilyapp.yourhealthgrades.com/api/broadcasting/auth',{
-  //           //   socket_id: socketId,
-  //           //   channel_name: channel.name
-  //           // }).subscribe(res => {
-  //           //   console.log('Authorization data:', res);
-  //           //   callback(null, res);
-  //           // }, error => {
-  //           //   console.log(error);
-  //           //   callback(error, null);
-  //           // });
-  //         }
-  //       };
-  //     }
-  //   });
-  // }
 }

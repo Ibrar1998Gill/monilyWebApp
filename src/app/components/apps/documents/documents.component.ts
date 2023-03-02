@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { AuthService } from 'src/app/shared/services/firebase/auth.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 import { HelperService } from 'src/app/shared/services/helper.service';
 import { LocalService } from 'src/app/shared/services/local.service';
 import * as moment from 'moment';
@@ -47,7 +47,7 @@ export class documentsComponent implements OnInit {
     this.helperService.uploadImage(event, "reven")
   }
   getImages() {
-    this.httpService.getChat(`getFiles?user_id=${this.authToken.userId}`, true).subscribe((res: any) => {
+    this.httpService.getChatToken(`getFiles?user_id=${this.authToken.userId}`, this.authToken.authtoken).subscribe((res: any) => {
       this.filesData = this.sortData(res.data.data)
       this.fileNames=[]
       this.filesData?.map(e=>{
@@ -80,7 +80,7 @@ export class documentsComponent implements OnInit {
   searchDate() {
     let start: any = moment(this.startDate).format('YYYY-MM-DD')
     let end: any = moment(this.endDate).format('YYYY-MM-DD')
-    this.httpService.getChat(`getFiles?user_id=${this.authToken.userId}`, true).subscribe((res: any) => {
+    this.httpService.getChatToken(`getFiles?user_id=${this.authToken.userId}`, this.authToken.authtoken).subscribe((res: any) => {
       this.filesData = []
       res.data.data.map(d => {
         var time = moment(d.created_at).format('YYYY-MM-DD');
@@ -95,7 +95,7 @@ export class documentsComponent implements OnInit {
     }
   }
   searchByName() {
-    this.httpService.getChat(`getFiles?user_id=${this.authToken.userId}`, true).subscribe((res: any) => {
+    this.httpService.getChatToken(`getFiles?user_id=${this.authToken.userId}`, this.authToken.authtoken).subscribe((res: any) => {
       if (this.searchbynameForm.controls['searchByName'].value == '') {
         this.filesData = this.sortData(res.data.data)
       }

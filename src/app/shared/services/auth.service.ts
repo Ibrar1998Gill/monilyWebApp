@@ -5,11 +5,11 @@ import { CookieService } from 'ngx-cookie-service';
 import * as firebase from 'firebase/app';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { UniversalService } from '../universal.service';
-import { LocalService } from '../local.service';
+import { UniversalService } from './universal.service';
+import { LocalService } from './local.service';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
-import { HelperService } from '../helper.service';
+import { HelperService } from './helper.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -70,10 +70,27 @@ export class AuthService implements OnInit {
       Authorization: `Bearer ${this.authToken?.authtoken}`,
       Accept: "application/json",
     };
+    console.log('====================================');
+    console.log(this.authToken?.authtoken);
+    console.log('====================================');
     return this.http.get(
       environment.api.chatURL + link,
       {
         headers: !token ? header : headerT,
+      }
+    )
+  }
+  getChatToken(link, token) {
+    let headerT = {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": '*',
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    };
+    return this.http.get(
+      environment.api.chatURL + link,
+      {
+        headers: headerT,
       }
     )
   }

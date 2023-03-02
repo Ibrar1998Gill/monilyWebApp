@@ -11,7 +11,6 @@ import { LayoutService } from '../../services/layout.service';
 export class HeaderComponent implements OnInit {
 
   public elem: any;
-  public dark: boolean = this.layout.config.settings.layout_version == 'dark-only' ? true : false;
 
   constructor(public layout: LayoutService,
     public navServices: NavService, 
@@ -30,8 +29,6 @@ export class HeaderComponent implements OnInit {
   }
 
   layoutToggle() {
-    this.dark = !this.dark;
-    this.layout.config.settings.layout_version = this.dark ? 'dark-only' : 'light';
   }
 
   toggleFullScreen() {

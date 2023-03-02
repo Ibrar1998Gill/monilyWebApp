@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-import { AuthService } from 'src/app/shared/services/firebase/auth.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 import { LocalService } from 'src/app/shared/services/local.service';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';

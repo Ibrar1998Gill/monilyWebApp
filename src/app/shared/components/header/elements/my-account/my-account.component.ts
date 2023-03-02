@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalService } from 'src/app/shared/services/local.service';
 import { UniversalService } from 'src/app/shared/services/universal.service';
-import { AuthService } from '../../../../services/firebase/auth.service';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-my-account',

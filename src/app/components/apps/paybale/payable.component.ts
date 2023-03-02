@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import * as moment from "moment";
 import { ToastrService } from "ngx-toastr";
-import { AuthService } from "src/app/shared/services/firebase/auth.service";
+import { AuthService } from "src/app/shared/services/auth.service";
 import { HelperService } from "src/app/shared/services/helper.service";
 import { LocalService } from "src/app/shared/services/local.service";
 

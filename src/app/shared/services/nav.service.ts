@@ -111,12 +111,6 @@ export class NavService implements OnDestroy {
       icon: "users",
       type: "link",
     },
-    // {
-    //   path: "clients",
-    //   title: "Clients",
-    //   icon: "users",
-    //   type: "link",
-    // },
     {
       path: "companies",
       title: "Companies",

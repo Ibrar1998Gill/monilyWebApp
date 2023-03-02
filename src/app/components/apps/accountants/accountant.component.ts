@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import * as moment from 'moment';
-import { AuthService } from '../../../shared/services/firebase/auth.service';
+import { AuthService } from '../../../shared/services/auth.service';
 import { LocalService } from '../../../shared/services/local.service';
 import { Location } from '@angular/common';
 import { FormBuilder, Validators } from '@angular/forms';
 import { HelperService } from 'src/app/shared/services/helper.service';
-import { debounce } from 'lodash';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -47,7 +44,8 @@ export class AccountantComponent implements OnInit {
           name: [res?.data?.name, Validators.required],
           phone: [res?.data?.phone, Validators.required],
           role: [res?.data?.roles[0]?.name, Validators.required],
-          password: [null, Validators.required]
+          password: [null, Validators.required],
+          is_active: 1
         });
       }
     }, error => {
@@ -55,15 +53,18 @@ export class AccountantComponent implements OnInit {
     })
   }
   create() {
-    this.router.navigate(['accounts']);
     this.http.postUsers('user/create', this.accountant.value).subscribe((res: any) => {
       this.toasterService.success(res?.message)
+      this.router.navigate(['accountants']);
     },
       error => {
         this.toasterService.error(error?.error?.message)
       })
   }
   update() {
+    console.log('====================================');
+    console.log(this.accountant.value);
+    console.log('====================================');
     this.http.postUsers(`user/update/${this.id}`, this.accountant.value).subscribe((res: any) => {
       console.log('====================================');
       console.log(res);

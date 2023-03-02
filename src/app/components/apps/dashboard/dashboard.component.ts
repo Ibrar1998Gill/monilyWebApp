@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from "@angular/core";
 import { UniversalService } from "src/app/shared/services/universal.service";
 import * as $ from "jquery";
-import { AuthService } from "src/app/shared/services/firebase/auth.service";
+import { AuthService } from "src/app/shared/services/auth.service";
 import { LocalService } from "src/app/shared/services/local.service";
 import { HelperService } from "../../../shared/services/helper.service";
 import * as moment from "moment";
@@ -151,7 +151,7 @@ export class dashboardComponent implements OnInit {
               }
             }
           }
-
+    // console.log(this.pieArray)
         });
         this.chart?.updateSeries([
           {
@@ -211,7 +211,8 @@ export class dashboardComponent implements OnInit {
   loopAppendRows(v, array) {
     v?.Rows?.Row?.map((e) => {
       if (e?.hasOwnProperty('ColData')) {
-        array.push([e?.ColData[0]?.value ? e?.ColData[0]?.value : null, Math.round(e?.ColData[1]?.value ? e?.ColData[1]?.value : 0)]);
+        array.push([e?.ColData[0]?.value && e?.ColData[1]?.value > 0 ? e?.ColData[0]?.value : null, Math.round(e?.ColData[1]?.value && e?.ColData[1]?.value > 0  ? e?.ColData[1]?.value : 0)]);
+        // debugger
       }
       else {
         e?.Rows?.Row?.map((s) => {

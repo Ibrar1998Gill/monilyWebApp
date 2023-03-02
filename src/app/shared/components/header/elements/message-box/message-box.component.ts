@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { io } from 'socket.io-client';
-import { AuthService } from 'src/app/shared/services/firebase/auth.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 import { LocalService } from 'src/app/shared/services/local.service';
 import { UniversalService } from 'src/app/shared/services/universal.service';
 
@@ -12,21 +12,12 @@ import { UniversalService } from 'src/app/shared/services/universal.service';
 export class MessageBoxComponent implements OnInit {
 
   public openMessageBox: boolean = false;
-  // socket = io('https://main--stirring-lollipop-0834ee.netlify.app');
   constructor(private http: AuthService, private localService: LocalService, private cd: ChangeDetectorRef) { }
   messageLists:any=[];
   userDetails:any;
   ngOnInit() {
     this.observe()
     this.getRecentUser()
-    // this.socket.on('message', (messageInfo) => {
-    //   var msg = JSON.parse(messageInfo)
-    //   if(this.userDetails != null){
-    //     if(msg?.to_id == this.userDetails?.userId || msg?.from_id == this.userDetails?.userId){
-    //       this.getChat()
-    //     }
-    //   }
-    // });
   }
 async observe() {
     UniversalService.companyModal.subscribe((res: any) => {

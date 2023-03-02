@@ -15,7 +15,7 @@ import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
 // for Core import:
 import { LoadingBarModule } from '@ngx-loading-bar/core';
 
-import { AuthService } from './shared/services/firebase/auth.service';
+import { AuthService } from './shared/services/auth.service';
 import { AdminGuard } from './shared/guard/admin.guard';
 import { SecureInnerPagesGuard } from './shared/guard/SecureInnerPagesGuard.guard';
 import { CookieService } from 'ngx-cookie-service';
